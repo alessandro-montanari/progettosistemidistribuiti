@@ -72,7 +72,6 @@ public class FileUploadBean implements FileUploadListener
 		uploadedFiles.add(path);
 	}
 	
-	@Observer({"contentDeleted", "operationCancelled"})
 	public void deleteReferencedFile(Content content)
 	{
 		Material material = (Material)content;
@@ -80,7 +79,6 @@ public class FileUploadBean implements FileUploadListener
 		file.delete();
 	}
 	
-	@Observer("contentSaved")
 	public void contentSaved(int contentId)
 	{
 		
