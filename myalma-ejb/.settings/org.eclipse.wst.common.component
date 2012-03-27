@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="myalma-ejb">
+        <wb-resource deploy-path="/" source-path="/ejbModule" tag="defaultRootSource"/>
+        <property name="java-output-path" value="/myalma-ejb/build/classes"/>
+        <property name="ClientProject" value="myalma-ejbClient"/>
+        <property name="ClientJARURI" value="myalma-ejbClient.jar"/>
+    </wb-module>
+</project-modules>

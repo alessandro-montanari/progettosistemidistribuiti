@@ -1,0 +1,17 @@
+#Fri Mar 02 19:12:17 CET 2012
+action.package=it.unibo.myalma.business
+action.sources=/myalma-ejb/ejbModule
+eclipse.preferences.version=1
+model.package=it.unibo.myalma.model
+model.sources=/myalma-jpa/src
+seam.ejb.project=myalma-ejb
+seam.project.connection.profile=New MySQL(0)
+seam.project.deployment.type=ear
+seam.project.settings.version=1.1
+seam.project.web.root.folder=/myalma-web/WebContent
+seam.runtime.name=jboss-seam-2.2.2.Final
+seam.settings.changed.by.user=true
+seam.test.creating=false
+seam.test.project=myalma-ejb
+test.package=org.domain.myalmaejb.test
+test.sources=/myalma-ejb/ejbModule
