@@ -1,0 +1,67 @@
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:s="http://jboss.com/products/seam/taglib" 
+	xmlns:rich="http://richfaces.org/rich">
+	<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>myAlma</title>
+<link rel="shortcut icon" href="#{request.contextPath}/favicon.ico" />
+<a:loadStyle src="/stylesheet/theme.xcss" />
+<a:loadStyle src="/stylesheet/theme.css" />
+<ui:insert name="head" />
+</head>
+<body>
+	<div align="center">
+		<h:panelGrid columns="2">
+			<h:graphicImage value="/img/myalma-logo.png" height="500" />
+			<rich:panel style="width:450px;">
+				<div style="font-size:14px;">MyAlma è la soluzione definitiva per gestire in maniera
+					integrata e con semplicità il materiale e le informazioni di
+					supporto alla didattica universitaria. 
+					<br/>
+					Il docente non dovrà più
+					preoccuparsi della gestione tecnica di un proprio sito web e
+					dell’archiviazione delle dispense dei suoi corsi, grazie a MyAlma
+					ha a disposizione una dashboard integrata da cui erogare tutte le
+					informazioni e raggiungere immediatamente tutti gli studenti.
+					<br/>
+					Lo
+					studente ha, in MyAlma, un solo portale che aggrega tutte le
+					informazioni di cui ha necessità per fruire al meglio ogni corso e
+					tiene traccia degli aggiornamenti comunicandoli direttamente. La
+					forza di MyAlma sta nell’ offrire tutto e subito, avere tutte le
+					informazioni a portata di mouse senza doversi più preoccupare di
+					cercare il sito giusto per il corso giusto.
+					<br/>
+					<br/>
+					<div align="center">
+					Inizia subito!
+					<br/>
+					<a href="restricted/student/FirstPage.seam">Studente</a> |
+					<a href="restricted/professor/TeachingSelect.seam">Docente</a>
+					
+					
+					<!--  <s:link value="Docente2" view="/restricted/professor/InformationModificationCenter.xhtml"  outcome="docente">
+						<f:param name="name" value="Ales"/>
+					</s:link>
+					
+					<h:form>
+					<h:commandLink  action="docente" value="Docente3">
+						<f:param name="name" value="Ales"></f:param>
+					</h:commandLink>
+					</h:form>-->
+					
+					</div>
+				</div>
+
+			</rich:panel>
+
+		</h:panelGrid>
+		</div>
+</body>
+	</html>
+</f:view>

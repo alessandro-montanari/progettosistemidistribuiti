@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:rich="http://richfaces.org/rich">
+
+<ui:composition
+	template="/restricted/professor/ModificationTemplate.xhtml">
+
+	<!--  <ui:param name="renderTop" value="true"/> -->
+	<ui:param name="renderLeft" value="true" />
+	<ui:param name="renderRight" value="false" />
+
+	<ui:define name="center">
+		<rich:layout>
+			<rich:layoutPanel position="top"
+				style="border-bottom-width: 1px; 
+				border-bottom-style: solid; 
+				border-bottom-color: silver; 
+				padding-bottom:10px">
+				<s:button value="Nuova Informazione" action="#{contentManager.newContent('INFORMATION')}" />
+				<s:button value="Nuova Notizia" action="#{contentManager.newContent('NOTICE')}" />
+				<s:button value="Nuovo Materiale" action="#{contentManager.newContent('MATERIAL')}" />
+				<s:button value="Nuova Categoria" action="#{contentManager.newContent('CATEGORY')}" />
+				<s:button value="Indietro" action="cancel" />
+				
+			</rich:layoutPanel>
+
+			<rich:layoutPanel position="center" style="padding-top:10px">
+				<h:messages id="messages" globalOnly="true" style="padding-bottom:5px; padding-top:5px;background:yellow;"/>
+				
+				<h:outputText style="font-size:20px;font-weight:bold;" id="selectedContentTitle" value="#{teachingControllerBean.selectedContent.title}" />
+				<span>
+					<s:link id="modifyCategoryLink" value="Modifica Categoria" action="modifyContent" rendered="true">
+						<f:param name="contentId" value="#{teachingControllerBean.selectedContent.id}"/>
+					</s:link>
+				</span>
+				
+				<rich:dataTable style="font-size:12px;"
+				onRowMouseOver="this.style.backgroundColor='#F1F1F1'"
+				onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'"
+				value="#{teachingControllerBean.childsOfSelectedContent}"
+				var="content"
+				id="contentsTable">
+				<rich:column>
+					<f:facet name="header">Tipo</f:facet>
+					<h:outputText value="#{content.contentType}" />
+				</rich:column>
+				<rich:column>
+					<f:facet name="header">Titolo</f:facet>
+					<h:outputText value="#{content.title}" />
+				</rich:column>
+				<rich:column>
+					<f:facet name="header">Creatore</f:facet>
+					 <h:outputText value="#{content.creator.name} #{content.creator.surname}" />
+				</rich:column>
+				<rich:column>
+					<f:facet name="header">Modificatore</f:facet>
+					<h:outputText value="#{content.modifier.name} #{content.modifier.surname}" />
+				</rich:column>
+				<rich:column>
+					<f:facet name="header">Ultima modifica</f:facet>
+					<h:outputText value="#{content.modificationDate}" /> 
+				</rich:column>
+				<rich:column width="65px">
+					<!-- Vedere pages.xml per regole di navigazione -->
+					<s:button value="Modifica" action="modifyContent">
+						<f:param name="contentId" value="#{content.id}"/>
+					</s:button>
+					
+				</rich:column>
+			</rich:dataTable>
+			</rich:layoutPanel>
+		</rich:layout>
+
+
+
+	</ui:define>
+</ui:composition>
+</html>
