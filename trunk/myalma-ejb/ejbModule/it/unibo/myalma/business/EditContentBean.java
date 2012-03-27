@@ -206,7 +206,7 @@ public class EditContentBean implements IEditContent
 	@Remove @Destroy
 	public void cancel() 
 	{
-		events.raiseTransactionSuccessEvent("operationCancelled",content);
+//		events.raiseTransactionSuccessEvent("operationCancelled",content);
 	}
 
 	@Override
