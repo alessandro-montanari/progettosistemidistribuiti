@@ -16,6 +16,7 @@
 	<page view-id="/restricted/professor/TeachingExplore.xhtml">
 		<!-- Con questo parametro conviene fare come con i materiali, inserirlo solo dopo ogni click su modifica o aggiungi -->
 		<param name="contentId" value="#{contentManager.contentId}" />
+		
 		<navigation from-action="cancel">
 			<rule>
 				<end-conversation />
