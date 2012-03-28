@@ -12,9 +12,6 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.mail.Session;
 
-import it.unibo.myalma.model.Content;
-import it.unibo.myalma.model.ContentType;
-import it.unibo.myalma.model.TypeOfChange;
 
 public class MailNotifier implements INotifier 
 {

@@ -5,7 +5,8 @@ import it.unibo.myalma.model.ContentType;
 
 public interface IEditContent 
 {
-
+	//TODO Ripulire l'interfaccia dai metodi inutili
+	
 	// Binding methods
 	void setContentId(int contentId);
 	int getContentId();

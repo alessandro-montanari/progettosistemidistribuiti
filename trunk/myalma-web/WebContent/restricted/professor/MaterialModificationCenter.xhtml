@@ -23,11 +23,11 @@
 				border-bottom-color: silver; 
 				padding-bottom:10px">
 
-					<h:commandButton value="Salva" action="#{contentManager.save}" />
+					<h:commandButton value="Salva" action="#{materialManager.save}" />
 					<h:commandButton value="Salva in sessione">
 						<f:param name="new" value="true" />
 					</h:commandButton>
-					<h:commandButton value="Elimina" action="#{contentManager.delete}"
+					<h:commandButton value="Elimina" action="#{materialManager.delete}"
 						disabled="#{param['new']}" />
 					<h:commandButton value="Annulla" action="cancel" />
 				</rich:layoutPanel>
