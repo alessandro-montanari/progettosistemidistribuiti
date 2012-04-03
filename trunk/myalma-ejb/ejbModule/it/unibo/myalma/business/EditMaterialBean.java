@@ -62,16 +62,25 @@ public class EditMaterialBean extends EditContentBean implements IEditMaterial
 	@Override
 	public void save() 
 	{
+		String path = "";
 		Material material = (Material)this.getContent();
 		
-		//Controllo se c'è già un file collegato al conteuto
-		File file = new File(material.getPath());
-		if(file.exists())
-			fileManager.deleteFile(material.getPath());
+		// Se è stato caricato un nuovo file fileName sarà diverso da stringa vuota
+		// Quindi se al contenuto era già associato un file lo elimino e poi salvo il nuovo file
+		if(!(fileName.equals("")))
+		{
+			//Controllo se c'è già un file collegato al conteuto
+			File file = new File(material.getPath());
+			if(file.exists())
+				fileManager.deleteFile(material.getPath());
+			
+			// Devo salvare il file prima di salvare il contenuto nel DB perché mi serve il path
+			path = fileManager.saveFile(fileName, fileData);
+			material.setPath(path);
+		}
 		
-		// Devo salvare il file prima di salvare il contenuto nel DB perché mi serve il path
-		String path = fileManager.saveFile(fileName, fileData);
-		material.setPath(path);
+		// Se salto il primo if significa che non è stato caricato un nuovo file
+		// ma sono state modificate altre proprietà del contenuto quindi non faccio niente
 		
 		try
 		{

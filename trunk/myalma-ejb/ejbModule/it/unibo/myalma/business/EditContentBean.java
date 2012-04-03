@@ -60,9 +60,7 @@ public class EditContentBean implements IEditContent
 	private SessionContext context;
 
 	public EditContentBean() 
-	{
-		// TODO Costruttore bean
-	}
+	{ }
 
 	@Create
 	public void init()
@@ -167,8 +165,6 @@ public class EditContentBean implements IEditContent
 	
 	public void setContentId(int contentId) 
 	{	
-		// Oppure il content da modificare lo si pu˜ settare solo una volta
-		
 		// Setto solo contenuti non nulli
 		Content contentDB = entityManager.find(Content.class, contentId);
 		if(contentDB != null)
@@ -208,6 +204,6 @@ public class EditContentBean implements IEditContent
 		
 		profManager.removeContent(parentContent.getId(), content.getId());
 		
-		events.raiseTransactionSuccessEvent("contentDeleted",content);
+		events.raiseTransactionSuccessEvent("contentDeleted",content.getId());
 	}
 }

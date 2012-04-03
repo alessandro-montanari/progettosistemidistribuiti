@@ -111,7 +111,7 @@ public class Category extends Content implements Serializable {
 	@Override
 	public List<Content> getChildContents() 
 	{
-		return new ArrayList<Content>(contents);
+		return contents;
 	}
    
 }
