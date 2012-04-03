@@ -7,11 +7,14 @@ public interface IEditContent
 {
 	//TODO Ripulire l'interfaccia dai metodi inutili
 	
+	//@Create
+	void init();
+	
 	// Binding methods
 	void setContentId(int contentId);
 	int getContentId();
 	Content getContent();
-	void setContent(Content content);
+//	void setContent(Content content);
 
 	
 	void setParentContentId(int parentId);						// Serve per l'aggiunta di nuovi contenuti, per sapere dove inserirlo
@@ -21,7 +24,6 @@ public interface IEditContent
 	
 	// Business methods
 	void newContent(ContentType type);
-//	void edit();
 	void updateContent(String whatToModify, String newValue); 	// Questo metodo si usa con client remoti dato che ricevono una copia del content
 																// i client locali (Seam) invece utilizzano lo stesso riferimento a content mantenuto
 																// dal bean, quindi modificano lo stesso entity (che dovrˆ essere detached)
