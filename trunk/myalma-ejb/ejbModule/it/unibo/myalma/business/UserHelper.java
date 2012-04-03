@@ -1,6 +1,5 @@
 package it.unibo.myalma.business;
 
-
 import javax.annotation.Resource;
 import javax.ejb.Remote;
 import javax.ejb.SessionContext;
@@ -16,26 +15,15 @@ public class UserHelper implements IUserHelper
 	@Resource
 	SessionContext context;
 	
+	@Override
 	public String getMail()
 	{
 		return context.getCallerPrincipal().getName();
 	}
 	
+	@Override
 	public boolean isLogged()
 	{
 		return context.getCallerPrincipal() != null;
 	}
-
-//	@Override
-//	public String getType() 
-//	{
-//		return
-//	}
-
-	@Override
-	public boolean isUserInRole(String roleName) 
-	{
-		return context.isCallerInRole(roleName);
-	}
-
 }

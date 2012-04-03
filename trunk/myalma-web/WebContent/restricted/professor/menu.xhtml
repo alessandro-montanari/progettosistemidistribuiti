@@ -5,14 +5,12 @@
 	xmlns:s="http://jboss.com/products/seam/taglib"
 	xmlns:rich="http://richfaces.org/rich" height="30">
 
+	<!-- userName viene passato da ModificationTemplate.xhtml -->
 	<rich:toolBarGroup>
 		<!--  <rich:separator lineType="none" style="width:70%"></rich:separator>-->
 		<s:link view="/restricted/professor/TeachingSelect.xhtml" value="myAlma" />
 		<h:outputText>
-			Benvenuto,  
-			<s:link view="/restricted/professor/PersonalInfo.xhtml">
-				#{userName}
-			</s:link>
+			Benvenuto,  #{userName}
 		</h:outputText>
 		<s:link id="menuLogoutId" view="/Home.seam"
 			action="#{org.jboss.seam.web.session.invalidate}" value="Logout"
