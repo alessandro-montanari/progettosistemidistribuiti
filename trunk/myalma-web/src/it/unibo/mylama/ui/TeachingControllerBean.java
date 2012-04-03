@@ -16,6 +16,7 @@ import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Observer;
 import org.jboss.seam.annotations.Name;
+import org.jboss.seam.annotations.Out;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.contexts.Contexts;
 import org.jboss.seam.core.Events;
@@ -35,7 +36,9 @@ public class TeachingControllerBean
 {
 
 	// Entity manager esteso alla conversazione corrente e gestito da Seam
+	// Faccio l'Out così lo posso usare in EditContentBean
 	@In
+	@Out(scope=ScopeType.CONVERSATION,value="ExtendedPersistenceContext")
 	private EntityManager entityManager;
 	
 	@In
@@ -52,7 +55,7 @@ public class TeachingControllerBean
 	private final TreeNodeImpl<Content> dummyElement = new TreeNodeImpl<Content>();
 	
 	@Observer("contentDeleted")
-	public void contentDeleted(Content content)
+	public void contentDeletedListener(Content content)
 	{
 // -------------------------------------------------------------
 //		Content parent = entityManager.merge(parentContent);
@@ -107,7 +110,7 @@ public class TeachingControllerBean
 	}
 	
 	@Observer("contentSaved")
-	public void contentSaved(int contentId)
+	public void contentSavedListener(int contentId)
 	{
 		// In questo modo si riduce l'accesso al DB ma non mi piace molto dal punto di visto logico
 		// dato che viene fatta una nuova scrittura con ciò che è già stato scritto prima (quindi forse 
