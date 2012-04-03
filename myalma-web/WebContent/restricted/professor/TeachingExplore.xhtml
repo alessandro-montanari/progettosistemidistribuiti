@@ -7,7 +7,7 @@
 	xmlns:rich="http://richfaces.org/rich">
 
 <ui:composition
-	template="/restricted/professor/ModificationTemplate.xhtml">
+	template="/restricted/professor/modificationPages/ModificationTemplate.xhtml">
 
 	<!--  <ui:param name="renderTop" value="true"/> -->
 	<ui:param name="renderLeft" value="true" />
@@ -20,10 +20,22 @@
 				border-bottom-style: solid; 
 				border-bottom-color: silver; 
 				padding-bottom:10px">
-				<s:button value="Nuova Informazione" action="#{contentManager.newContent('INFORMATION')}" />
-				<s:button value="Nuova Notizia" action="#{contentManager.newContent('NOTICE')}" />
-				<s:button value="Nuovo Materiale" action="#{contentManager.newContent('MATERIAL')}" />
-				<s:button value="Nuova Categoria" action="#{contentManager.newContent('CATEGORY')}" />
+				<s:button value="Nuova Informazione" action="#{contentManager.newContent('INFORMATION')}" >
+					<f:param name="contentType" value="INFORMATION"/>
+				</s:button>
+				
+				<s:button value="Nuova Notizia" action="#{contentManager.newContent('NOTICE')}" >
+					<f:param name="contentType" value="NOTICE"/>
+				</s:button>
+				
+				<s:button value="Nuovo Materiale" action="#{materialManager.newContent('MATERIAL')}" >
+					<f:param name="contentType" value="MATERIAL"/>
+				</s:button>
+				
+				<s:button value="Nuova Categoria" action="#{contentManager.newContent('CATEGORY')}" >
+					<f:param name="contentType" value="CATEGORY"/>
+				</s:button>
+				
 				<s:button value="Indietro" action="cancel" />
 				
 			</rich:layoutPanel>
@@ -33,7 +45,8 @@
 				
 				<h:outputText style="font-size:20px;font-weight:bold;" id="selectedContentTitle" value="#{teachingControllerBean.selectedContent.title}" />
 				<span>
-					<s:link id="modifyCategoryLink" value="Modifica Categoria" action="modifyContent" rendered="true">
+					<s:link id="modifyCategoryLink" value="Modifica Categoria" action="modifyContent" >
+						<f:param name="contentType" value="CATEGORY"/>
 						<f:param name="contentId" value="#{teachingControllerBean.selectedContent.id}"/>
 					</s:link>
 				</span>
@@ -68,6 +81,7 @@
 					<!-- Vedere pages.xml per regole di navigazione -->
 					<s:button value="Modifica" action="modifyContent">
 						<f:param name="contentId" value="#{content.id}"/>
+						<f:param name="contentType" value="#{content.contentType}"/>
 					</s:button>
 					
 				</rich:column>

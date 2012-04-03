@@ -13,9 +13,63 @@
 		</navigation>
 	</page>
 	
-	<page view-id="/restricted/professor/TeachingExplore.xhtml">
+	<page view-id="/restricted/professor/modificationPages/MaterialModificationCenter.xhtml">
+		<param name="contentId" value="#{materialManager.contentId}"/>
+		
+		<!--  Vedere di utilizzare una factory bean -->
+		<navigation from-action="#{materialManager.save}">
+			<end-conversation />
+			<redirect view-id="/restricted/professor/TeachingExplore.xhtml">
+				<message>Contenuto salvato correttamente</message>
+			</redirect>
+		</navigation>
+		
+		<navigation from-action="#{materialManager.delete}">
+			<end-conversation />
+			<redirect view-id="/restricted/professor/TeachingExplore.xhtml">
+				<message>Contenuto eliminato correttamente</message>
+			</redirect>
+		</navigation>
+	</page>
+	
+	<page view-id="/restricted/professor/modificationPages/InformationModificationCenter.xhtml">
+		<param name="contentId" value="#{contentManager.contentId}"/>
+	</page>
+	
+	<page view-id="/restricted/professor/modificationPages/CategoryModificationCenter.xhtml">
+		<param name="contentId" value="#{contentManager.contentId}"/>
+	</page>
+
+	<!-- Questa regola cattura gli eventi che provengono dalle pagine di modifica, così non ripeto le regole (ci deve essere asterisco) -->
+	<page view-id="/restricted/professor/modificationPages/*">
+		<navigation from-action="cancel">
+			<end-conversation />
+			<redirect view-id="/restricted/professor/TeachingExplore.xhtml">
+				<message>Modifiche annullate</message>
+			</redirect>
+		</navigation>
+		
+		<navigation from-action="#{contentManager.save}">
+			<end-conversation />
+			<redirect view-id="/restricted/professor/TeachingExplore.xhtml">
+				<message>Contenuto salvato correttamente</message>
+			</redirect>
+		</navigation>
+		
+		<navigation from-action="#{contentManager.delete}">
+			<end-conversation />
+			<redirect view-id="/restricted/professor/TeachingExplore.xhtml">
+				<message>Contenuto eliminato correttamente</message>
+			</redirect>
+		</navigation>
+	</page>
+	
+	
+
+
+	<page view-id="/restricted/professor/TeachingExplore.xhtml"> 
 		<!-- Con questo parametro conviene fare come con i materiali, inserirlo solo dopo ogni click su modifica o aggiungi -->
-		<param name="contentId" value="#{contentManager.contentId}" />
+		<param name="contentId"/>
 		
 		<navigation from-action="cancel">
 			<rule>
@@ -25,117 +79,74 @@
 		</navigation>
 		
 		<!-- Questa regola cattura gli eventi di MODIFICA di contenuti (vedi from-action) -->
-		<navigation evaluate="#{contentManager.content.contentType}" from-action="modifyContent">
+		<navigation evaluate="#{param['contentType']}" from-action="modifyContent">
 			<rule if-outcome="INFORMATION">
 				<begin-conversation nested="true"/>
-				<redirect view-id="/restricted/professor/InformationModificationCenter.xhtml" >
+				<redirect view-id="/restricted/professor/modificationPages/InformationModificationCenter.xhtml" >
 					<param name="new" value="false"/>
+					<param name="contentId" value="#{param['contentId']}" />
 				</redirect>
 			</rule>
 			<rule if-outcome="NOTICE">
 				<begin-conversation nested="true" />
-				<redirect view-id="/restricted/professor/InformationModificationCenter.xhtml" >
+				<redirect view-id="/restricted/professor/modificationPages/InformationModificationCenter.xhtml" >
 					<param name="new" value="false"/>
+					<param name="contentId" value="#{param['contentId']}" />
 				</redirect>
 			</rule>
 			<rule if-outcome="CATEGORY">
 				<begin-conversation nested="true" />
-				<redirect view-id="/restricted/professor/CategoryModificationCenter.xhtml" >
+				<redirect view-id="/restricted/professor/modificationPages/CategoryModificationCenter.xhtml" >
 					<param name="new" value="false"/>
+					<param name="contentId" value="#{param['contentId']}" />
 				</redirect>
 			</rule>
 			<rule if-outcome="MATERIAL">
 				<begin-conversation nested="true" />
-				<redirect view-id="/restricted/professor/MaterialModificationCenter.xhtml">
+				<redirect view-id="/restricted/professor/modificationPages/MaterialModificationCenter.xhtml">
 					<param name="new" value="false"/>
 					<param name="multi" value="false"/>
-					<param name="contentId" value="#{materialManager.contentId}" />
+					<param name="contentId" value="#{param['contentId']}" />
 				</redirect>
 			</rule>
 		</navigation>
 		
 		<!-- Questa regola cattura gli eventi di aggiunta di NUOVI contenuti -->
-		<navigation evaluate="#{contentManager.content.contentType}">
+		<navigation evaluate="#{param['contentType']}">
 			<rule if-outcome="INFORMATION">
 				<begin-conversation nested="true" />
-				<redirect view-id="/restricted/professor/InformationModificationCenter.xhtml">
+				<redirect view-id="/restricted/professor/modificationPages/InformationModificationCenter.xhtml">
 					<param name="new" value="true"/>
 				</redirect>
 			</rule>
 			<rule if-outcome="NOTICE">
 				<begin-conversation nested="true" />
-				<redirect view-id="/restricted/professor/InformationModificationCenter.xhtml">
+				<redirect view-id="/restricted/professor/modificationPages/InformationModificationCenter.xhtml">
 					<param name="new" value="true"/>
 				</redirect>
 			</rule>
 			<rule if-outcome="CATEGORY">
 				<begin-conversation nested="true" />
-				<redirect view-id="/restricted/professor/CategoryModificationCenter.xhtml">
+				<redirect view-id="/restricted/professor/modificationPages/CategoryModificationCenter.xhtml">
 					<param name="new" value="true"/>
 				</redirect>
 			</rule>
 			<rule if-outcome="MATERIAL">
 				<begin-conversation nested="true" />
-				<redirect view-id="/restricted/professor/MaterialModificationCenter.xhtml">
+				<redirect view-id="/restricted/professor/modificationPages/MaterialModificationCenter.xhtml">
 					<param name="new" value="true"/>
 					<param name="multi" value="true"/>
-					<param name="contentId" value="#{materialManager.contentId}" />
 				</redirect>
 			</rule>
 		</navigation>
 	</page>
 	
+
 	
-	<page view-id="/restricted/professor/MaterialModificationCenter.xhtml">
-		<navigation from-action="cancel">
-			<end-conversation />
-			<redirect view-id="/restricted/professor/TeachingExplore.xhtml">
-				<message>Modifiche annullate</message>
-			</redirect>
-		</navigation>
-		
-		<!-- Qui potrei usare anche l'action che effettivamente uso in Salva -->
-		<navigation from-action="#{materialManager.save}">
-			<end-conversation />
-			<redirect view-id="/restricted/professor/TeachingExplore.xhtml">
-				<message>Contenuto salvato correttamente</message>
-			</redirect>
-		</navigation>
-		
-		<!-- Qui potrei usare anche l'action che effettivamente uso in Elimina -->
-		<navigation from-action="#{materialManager.delete}">
-			<end-conversation />
-			<redirect view-id="/restricted/professor/TeachingExplore.xhtml">
-				<message>Contenuto eliminato correttamente</message>
-			</redirect>
-		</navigation>
-	</page>
 	
-	<!-- Questa regola cattura gli eventi che provengono dalle pagine di modifica, così non ripeto le regole (ci deve essere asterisco) -->
-	<page view-id="*">
-		<navigation from-action="cancel">
-			<end-conversation />
-			<redirect view-id="/restricted/professor/TeachingExplore.xhtml">
-				<message>Modifiche annullate</message>
-			</redirect>
-		</navigation>
-		
-		<!-- Qui potrei usare anche l'action che effettivamente uso in Salva -->
-		<navigation from-action="#{contentManager.save}">
-			<end-conversation />
-			<redirect view-id="/restricted/professor/TeachingExplore.xhtml">
-				<message>Contenuto salvato correttamente</message>
-			</redirect>
-		</navigation>
-		
-		<!-- Qui potrei usare anche l'action che effettivamente uso in Elimina -->
-		<navigation from-action="#{contentManager.delete}">
-			<end-conversation />
-			<redirect view-id="/restricted/professor/TeachingExplore.xhtml">
-				<message>Contenuto eliminato correttamente</message>
-			</redirect>
-		</navigation>
-	</page>
+	
+	
+	
 	
 	
 	

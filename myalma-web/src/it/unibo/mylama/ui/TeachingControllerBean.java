@@ -18,6 +18,7 @@ import org.jboss.seam.annotations.Observer;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.contexts.Contexts;
+import org.jboss.seam.core.Events;
 import org.richfaces.component.UITree;
 import org.richfaces.event.NodeExpandedEvent;
 import org.richfaces.event.NodeSelectedEvent;
@@ -36,6 +37,9 @@ public class TeachingControllerBean
 	// Entity manager esteso alla conversazione corrente e gestito da Seam
 	@In
 	private EntityManager entityManager;
+	
+	@In
+	private Events events;
 
 	private int teachingId = -1;
 	private Content contentsRoot = null;
@@ -228,17 +232,23 @@ public class TeachingControllerBean
 
 	public void setSelectedContent(Content selectedContent) 
 	{
-		if(contentManager == null)
-		{
-			// Così non viene creata l'istanza ma solo cercata nel contesto specificato, se non c'è null
-			contentManager = (IEditContent) Contexts.getConversationContext().get("contentManager");
-		}
+//		if(contentManager == null)
+//		{
+//			// Così non viene creata l'istanza ma solo cercata nel contesto specificato, se non c'è null
+//			// TODO vedere di utilizzare una bean factory (così che sia EditContent che EditMaterial abbiano lo stesso nome) 
+//			// o utlizzare gli eventi, altrimenti la modifica del parent non arriva a EditMaterial
+//			contentManager = (IEditContent) Contexts.getConversationContext().get("contentManager");
+//		}
+//		
+//		// Se si sta modificando un contenuto, riporto il cambiamento della categoria padre
+//		if(contentManager != null)
+//		{
+//			contentManager.setParentContentId(selectedContent.getId());
+//		}
 		
-		// Se si sta modificando un contenuto, riporto il cambiamento della categoria padre
-		if(contentManager != null)
-		{
-			contentManager.setParentContentId(selectedContent.getId());
-		}
+		events.raiseTransactionSuccessEvent("parentContentSelectionChanged",selectedContent.getId());
+		
+		
 		
 		// TODO Molto pesante per il DB
 //		entityManager.refresh(selectedContent);

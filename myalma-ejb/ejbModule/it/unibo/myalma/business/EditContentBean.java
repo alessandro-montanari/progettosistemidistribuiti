@@ -16,11 +16,14 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.jboss.seam.ScopeType;
+import org.jboss.seam.annotations.Create;
 import org.jboss.seam.annotations.Destroy;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
+import org.jboss.seam.annotations.Observer;
 import org.jboss.seam.annotations.Out;
 import org.jboss.seam.annotations.Scope;
+import org.jboss.seam.annotations.web.RequestParameter;
 import org.jboss.seam.core.Events;
  
 /**
@@ -50,7 +53,7 @@ public class EditContentBean implements IEditContent
 	// E se il client è remoto (stand-alone)
 	// In realtà io potrei utilizzare qui un contesto classico, dato che di fatto non mi serve esteso qui, mi serve esteso nella
 	// interfaccia web, per sempleficarmi il lavoro, quindi lo posso utilizzare esteso via Seam direttamente
-	@PersistenceContext
+	@In
 	private EntityManager entityManager;
 
 	@EJB
@@ -64,8 +67,8 @@ public class EditContentBean implements IEditContent
 		// TODO Costruttore bean
 	}
 
-	@PostConstruct
-	private void init()
+	@Create
+	public void init()
 	{
 		user = entityManager.find(User.class, context.getCallerPrincipal().getName());
 	}
@@ -154,6 +157,7 @@ public class EditContentBean implements IEditContent
 	}
 
 	@Override
+	@Observer(create=false, value="parentContentSelectionChanged")
 	public void setParentContentId(int contentId) 
 	{
 		this.parentContent = entityManager.find(Content.class, contentId);
@@ -173,12 +177,16 @@ public class EditContentBean implements IEditContent
 		return parentContent;
 	}
 
-
 	public void setContentId(int contentId) 
-	{		
-		content = entityManager.find(Content.class, contentId);
-		if(content != null)
-		{																// Inizializzo il parent che mi servirà nella UI
+	{	
+		// Oppure il content da modificare lo si può settare solo una volta
+		
+		// Setto solo contenuti non nulli
+		Content contentDB = entityManager.find(Content.class, contentId);
+		if(contentDB != null)
+		{	
+			this.content = contentDB;
+			// Inizializzo il parent che mi servirà nella UI
 			parentContent = content.getParentContent();
 			parentContent.getTitle();
 		}
@@ -197,11 +205,11 @@ public class EditContentBean implements IEditContent
 		return content;
 	}
 	
-	@Override
-	public void setContent(Content content) 
-	{
-		this.content = content;
-	}
+//	@Override
+//	public void setContent(Content content) 
+//	{
+//		this.content = content;
+//	}
 
 	@Remove @Destroy
 	public void cancel() 
