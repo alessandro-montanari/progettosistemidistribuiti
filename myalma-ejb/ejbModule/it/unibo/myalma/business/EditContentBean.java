@@ -4,7 +4,6 @@ import java.lang.reflect.Method;
 
 import it.unibo.myalma.model.*;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
@@ -13,7 +12,6 @@ import javax.ejb.Remove;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateful;
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Create;
@@ -23,7 +21,6 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Observer;
 import org.jboss.seam.annotations.Out;
 import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.annotations.web.RequestParameter;
 import org.jboss.seam.core.Events;
  
 /**
@@ -50,10 +47,10 @@ public class EditContentBean implements IEditContent
 
 	private User user = null;
 
-	// E se il client è remoto (stand-alone)
-	// In realtà io potrei utilizzare qui un contesto classico, dato che di fatto non mi serve esteso qui, mi serve esteso nella
-	// interfaccia web, per sempleficarmi il lavoro, quindi lo posso utilizzare esteso via Seam direttamente
-	@In
+	// Qui utilizzo lo stesso contesto utilizzato in TeachingController così che tutto ciò che carica lui
+	// io da qui non lo devo ricaricare (e viceversa) (ad esempio ogni volta che seleziono un diverso nodo padre)
+	@In(scope=ScopeType.CONVERSATION, value="ExtendedPersistenceContext", create=false)
+	@Out(scope=ScopeType.CONVERSATION, value="ExtendedPersistenceContext")
 	private EntityManager entityManager;
 
 	@EJB
@@ -89,15 +86,6 @@ public class EditContentBean implements IEditContent
 		// mi assicuro che il parent sia null
 		parentContent = null;
 	}
-
-//	@Override
-//	public void edit()
-//	{
-//		if(content == null)
-//			throw new IllegalStateException("Impossible to edit a null content");
-//
-//		entityManager.detach(content);	// Mi assicuro che il content sia detached perché devo riportare le modifiche sul DB solo al salvataggio
-//	}
 
 	@Override
 	public void updateContent(String whatToModify, String newValue) 
@@ -153,7 +141,6 @@ public class EditContentBean implements IEditContent
 		}
 		
 		events.raiseTransactionSuccessEvent("contentSaved",contentId);
-	
 	}
 
 	@Override
@@ -177,6 +164,7 @@ public class EditContentBean implements IEditContent
 		return parentContent;
 	}
 
+	
 	public void setContentId(int contentId) 
 	{	
 		// Oppure il content da modificare lo si può settare solo una volta
@@ -192,6 +180,7 @@ public class EditContentBean implements IEditContent
 		}
 	}
 
+	@Override
 	public int getContentId() 
 	{
 		if(content == null)
@@ -204,18 +193,10 @@ public class EditContentBean implements IEditContent
 	{
 		return content;
 	}
-	
-//	@Override
-//	public void setContent(Content content) 
-//	{
-//		this.content = content;
-//	}
 
-	@Remove @Destroy
+	@Override @Remove @Destroy
 	public void cancel() 
-	{
-//		events.raiseTransactionSuccessEvent("operationCancelled",content);
-	}
+	{ }
 
 	@Override
 	public void delete() 
