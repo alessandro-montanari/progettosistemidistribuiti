@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Usiamo version="3.0" così posso passare i parametri nelle invocazioni di meotdo da dentro una pagina JSF (Servlet 3.0) -->
+<web-app id="WebApp_ID" version="3.0"
+ xmlns="http://java.sun.com/xml/ns/javaee"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+ <display-name>myalma-web</display-name>
+ <context-param>
+  <param-name>facelets.DEVELOPMENT</param-name>
+  <param-value>true</param-value>
+ </context-param>
+ <context-param>
+  <param-name>javax.faces.DEFAULT_SUFFIX</param-name>
+  <param-value>.xhtml</param-value>
+ </context-param>
+ <context-param>
+  <param-name>org.jboss.jbossfaces.JSF_CONFIG_NAME</param-name>
+  <param-value>Mojarra-1.2</param-value>
+ </context-param>
+ <context-param>
+  <param-name>org.richfaces.SKIN</param-name>
+  <param-value>blueSky</param-value>
+ </context-param>
+ <filter>
+  <filter-name>Seam Filter</filter-name>
+  <filter-class>org.jboss.seam.servlet.SeamFilter</filter-class>
+  <init-param>
+   <description>I file caricati non sono salvati in una cartella temporanea ma sono mantenuti in ram (byte[]) fino al processamento.</description>
+   <param-name>createTempFiles</param-name>
+   <param-value>false</param-value>
+  </init-param>
+  <init-param>
+   <description>Dimensione massima di file caricabili = 20MB</description>
+   <param-name>maxRequestSize</param-name>
+   <param-value>20480000</param-value>
+  </init-param>
+ </filter>
+ <filter-mapping>
+  <filter-name>Seam Filter</filter-name>
+  <url-pattern>/*</url-pattern>
+ </filter-mapping>
+ <listener>
+  <listener-class>org.jboss.seam.servlet.SeamListener</listener-class>
+ </listener>
+ <servlet>
+  <servlet-name>Faces Servlet</servlet-name>
+  <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+  <load-on-startup>1</load-on-startup>
+ </servlet>
+ <servlet>
+  <servlet-name>Seam Resource Servlet</servlet-name>
+  <servlet-class>org.jboss.seam.servlet.SeamResourceServlet</servlet-class>
+ </servlet>
+ <servlet-mapping>
+  <servlet-name>Faces Servlet</servlet-name>
+  <url-pattern>*.seam</url-pattern>
+ </servlet-mapping>
+ <servlet-mapping>
+  <servlet-name>Seam Resource Servlet</servlet-name>
+  <url-pattern>/seam/resource/*</url-pattern>
+ </servlet-mapping>
+ <welcome-file-list>
+  <welcome-file>index.html</welcome-file>
+  <welcome-file>index.htm</welcome-file>
+  <welcome-file>index.jsp</welcome-file>
+  <welcome-file>default.html</welcome-file>
+  <welcome-file>default.htm</welcome-file>
+  <welcome-file>default.jsp</welcome-file>
+ </welcome-file-list>
+ <error-page>
+  <error-code>403</error-code>
+  <location>/errors/403.jsp</location>
+ </error-page>
+ <security-constraint>
+  <display-name>Professor</display-name>
+  <web-resource-collection>
+   <web-resource-name>XHTML</web-resource-name>
+   <url-pattern>/restricted/professor/*</url-pattern>
+   <http-method>GET</http-method>
+   <http-method>POST</http-method>
+  </web-resource-collection>
+  <auth-constraint>
+   <role-name>admin</role-name>
+   <role-name>professor</role-name>
+  </auth-constraint>
+ </security-constraint>
+ <security-constraint>
+  <display-name>Student</display-name>
+  <web-resource-collection>
+   <web-resource-name>XHTML</web-resource-name>
+   <url-pattern>/restricted/student/*</url-pattern>
+   <http-method>GET</http-method>
+   <http-method>POST</http-method>
+  </web-resource-collection>
+  <auth-constraint>
+   <role-name>admin</role-name>
+   <role-name>student</role-name>
+  </auth-constraint>
+ </security-constraint>
+ <login-config>
+  <auth-method>FORM</auth-method>
+  <form-login-config>
+   <form-login-page>/PreLogin.html</form-login-page>
+   <form-error-page>/error.xhtml</form-error-page>
+  </form-login-config>
+ </login-config>
+ <security-role>
+  <role-name>admin</role-name>
+ </security-role>
+ <security-role>
+  <role-name>professor</role-name>
+ </security-role>
+ <security-role>
+  <role-name>student</role-name>
+ </security-role>
+</web-app>

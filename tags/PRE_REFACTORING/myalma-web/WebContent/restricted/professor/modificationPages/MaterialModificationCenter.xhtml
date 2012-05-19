@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:a4j="http://richfaces.org/a4j">
+
+<ui:composition
+	template="/restricted/professor/modificationPages/ModificationTemplate.xhtml">
+
+	<ui:param name="renderLeft" value="true" />
+	<ui:param name="renderRight" value="true" />
+
+	<ui:define name="center">
+		<h:form>
+			<rich:layout>
+
+				<rich:layoutPanel position="top"
+					style="border-bottom-width: 1px; 
+				border-bottom-style: solid; 
+				border-bottom-color: silver; 
+				padding-bottom:10px">
+
+					<h:commandButton value="Salva" action="#{materialManager.save}" />
+					<h:commandButton value="Salva in sessione">
+						<f:param name="new" value="true" />
+					</h:commandButton>
+					<h:commandButton value="Elimina" action="#{materialManager.delete}"
+						disabled="#{param['new']}" />
+					<h:commandButton value="Annulla" action="cancel" />
+				</rich:layoutPanel>
+
+				<rich:layoutPanel  id="contentInfos" position="center" style="padding-top:10px">
+
+					<!-- ================================================================ -->
+					<table cellpadding="5px">
+						<tr>
+							<td><b>Categoria:</b> <br /> <h:outputLabel
+									value="#{currentParentContent.title}" /></td>
+						</tr>
+						<tr>
+							<td><b>Titolo:</b> <br /> <h:inputText size="100"
+									value="#{currentContent.title}" /></td>
+						</tr>
+						<tr>
+							<td><b>Descrizione:</b></td>
+						</tr>
+						<tr>
+							<td><h:inputTextarea cols="90" rows="5"
+									value="#{currentContent.description}" /></td>
+						</tr>
+						<tr>
+							<td><b>Vecchio file:</b> <br /> <h:outputText
+									value="#{currentContent.path}" /></td>
+						</tr>
+					</table>
+				</rich:layoutPanel>
+
+
+
+			</rich:layout>
+		</h:form>
+
+		<table>
+			<tr>
+				<td><b>Nuovo file:</b> <br /> <h:form>
+						<rich:fileUpload noDuplicate="true" maxFilesQuantity="1"
+							fileUploadListener="#{fileUploadBean.processUpload}">
+							<!-- <a4j:support event="onuploadcomplete" reRender="contentInfos"/>  -->
+						</rich:fileUpload>
+					</h:form></td>
+
+			</tr>
+		</table>
+
+	</ui:define>
+</ui:composition>
+</html>
