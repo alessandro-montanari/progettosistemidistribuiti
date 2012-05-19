@@ -2,7 +2,7 @@ package it.unibo.myalma.business;
 
 import java.util.List;
 
-import javax.ejb.Remote;
+import javax.ejb.Local;
 
 import it.unibo.myalma.model.Content;
 import it.unibo.myalma.model.ContentType;
@@ -12,7 +12,7 @@ import it.unibo.myalma.model.Role;
 import it.unibo.myalma.model.Teaching;
 import it.unibo.myalma.model.User;
 
-@Remote
+@Local
 public interface SearchBeanRemote 
 {
 	List<User> getAllProfessors();

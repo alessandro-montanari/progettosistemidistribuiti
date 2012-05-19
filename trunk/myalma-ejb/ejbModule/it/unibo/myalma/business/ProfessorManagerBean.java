@@ -11,7 +11,6 @@ import it.unibo.myalma.testejb.TestBean;
 
 import javax.annotation.Resource;
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.EJB;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.jms.Connection;
@@ -27,16 +26,14 @@ import org.jboss.logging.Logger;
 import org.jboss.seam.annotations.Name;
 
 import java.lang.reflect.Method;
-import java.util.Date;
-import javax.ejb.Remote;
+import javax.ejb.Local;
 
 /**
  * Session Bean implementation class ProfessorManagerBean
  */
 @Stateless
 @Name("professorManager")
-@Remote(IProfessorManager.class)
-//@Local(IProfessorManager.class)
+@Local(IProfessorManager.class)
 @RolesAllowed({"professor", "admin"})
 public class ProfessorManagerBean implements IProfessorManager 
 {

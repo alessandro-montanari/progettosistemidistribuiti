@@ -1,15 +1,12 @@
 package it.unibo.myalma.business;
-import java.util.List;
-import java.util.Set;
 
-import it.unibo.myalma.model.Content;
 import it.unibo.myalma.model.Role;
 import it.unibo.myalma.model.Teaching;
 import it.unibo.myalma.model.User;
 
-import javax.ejb.Remote;
+import javax.ejb.Local;
 
-@Remote
+@Local
 public interface AdministrationBeanRemote 
 {
 	// Da rivedere------

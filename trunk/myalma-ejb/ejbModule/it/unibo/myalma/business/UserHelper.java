@@ -1,7 +1,7 @@
 package it.unibo.myalma.business;
 
 import javax.annotation.Resource;
-import javax.ejb.Remote;
+import javax.ejb.Local;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 
@@ -9,7 +9,7 @@ import org.jboss.seam.annotations.Name;
 
 @Name("userHelper")
 @Stateless
-@Remote(IUserHelper.class)
+@Local(IUserHelper.class)
 public class UserHelper implements IUserHelper
 {
 	@Resource
