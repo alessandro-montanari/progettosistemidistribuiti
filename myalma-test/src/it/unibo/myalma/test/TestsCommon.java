@@ -69,12 +69,12 @@ public abstract class TestsCommon
 
 	protected static void fillDB()
 	{
-		//		helper.login("", "");	// Cos“ viene utilizzato il LoginModule di test per l'inserimento degli utenti
+		helper.login("", "");	// Cos“ viene utilizzato il LoginModule di test per l'inserimento degli utenti
 		initStudents();
 //		initProfessors();
-		//		helper.logout();
-		initTeachings();
-		initContents();
+		helper.logout();
+//		initTeachings();
+//		initContents();
 		initSubscriptions();
 
 	}
@@ -197,10 +197,22 @@ public abstract class TestsCommon
 	
 	private static void initStudents()
 	{
-		Role student = new Role("student");
-		Role admin = new Role("admin");
-		admin = adminBean.addRole(admin);
-		student = adminBean.addRole(student);
+//		Role student = new Role("student");
+//		Role admin = new Role("admin");
+//		admin = adminBean.addRole(admin);
+//		student = adminBean.addRole(student);
+		
+		Role student = null;
+		Role admin = null;
+		List<Role> roles = searchBean.getAllRoles();
+		for(Role r : roles)
+		{
+			if(r.getRoleName().equalsIgnoreCase("student"))
+				student = r;
+			
+			if(r.getRoleName().equalsIgnoreCase("admin"))
+				admin = r;
+		}
 		
 		Subscriber me = new Subscriber("alessandro.montanar5@studio.unibo.it", "ale", "Alessandro", "Montanari", new Role[]{admin, student});
 		Subscriber lorena = new Subscriber("lorena.qendro@studio.unibo.it", "lorena", "Lorena", "Qendro", new Role[]{student});
@@ -225,7 +237,7 @@ public abstract class TestsCommon
 
 		deleteStudents();
 		deleteNotifications();
-		deleteTeachings();
+//		deleteTeachings();
 //		deleteProfessors();
 //		deleteRoles();
 
