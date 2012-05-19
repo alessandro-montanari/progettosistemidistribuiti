@@ -7,7 +7,7 @@ import it.unibo.myalma.model.*;
 import javax.annotation.Resource;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
-import javax.ejb.Remote;
+import javax.ejb.Local;
 import javax.ejb.Remove;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateful;
@@ -30,7 +30,7 @@ import org.jboss.seam.core.Events;
 @Stateful
 @Name("contentManager")
 @Scope(ScopeType.CONVERSATION)
-@Remote(IEditContent.class)
+@Local(IEditContent.class)
 @RolesAllowed({"professor", "admin"})
 public class EditContentBean implements IEditContent 
 {

@@ -1,7 +1,5 @@
 package it.unibo.myalma.business;
 
-import it.unibo.myalma.model.Content;
-import it.unibo.myalma.model.TypeOfChange;
 
 public interface INotifier 
 {

@@ -1,6 +1,5 @@
 package it.unibo.myalma.business;
 
-import it.unibo.myalma.model.Content;
 import it.unibo.myalma.model.ContentsRoot;
 import it.unibo.myalma.model.Notification;
 import it.unibo.myalma.model.Role;
@@ -8,7 +7,6 @@ import it.unibo.myalma.model.Teaching;
 import it.unibo.myalma.model.User;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.annotation.security.RolesAllowed;

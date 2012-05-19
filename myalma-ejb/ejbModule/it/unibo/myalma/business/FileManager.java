@@ -8,7 +8,7 @@ import java.io.IOException;
 public class FileManager 
 {
 	// TODO Per cluster forse bisogna cambiare percorso
-	private String serverPath = "../server/default/data/myalma/";
+	private String serverPath = "./server/default/data/myalma/";
 
 	public String saveFile(String fileName, byte[] fileData)
 	{

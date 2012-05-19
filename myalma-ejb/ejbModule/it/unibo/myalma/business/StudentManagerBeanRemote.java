@@ -2,9 +2,9 @@ package it.unibo.myalma.business;
 import it.unibo.myalma.model.Teaching;
 import it.unibo.myalma.model.User;
 
-import javax.ejb.Remote;
+import javax.ejb.Local;
 
-@Remote
+@Local
 public interface StudentManagerBeanRemote 
 {
 	void subscribeToTeaching(Teaching teaching);

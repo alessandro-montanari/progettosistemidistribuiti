@@ -3,7 +3,7 @@ package it.unibo.myalma.business;
 import java.io.File;
 
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.Remote;
+import javax.ejb.Local;
 import javax.ejb.Stateful;
 
 import org.jboss.seam.ScopeType;
@@ -15,7 +15,7 @@ import it.unibo.myalma.model.Material;
 @Stateful
 @Name("materialManager")
 @Scope(ScopeType.CONVERSATION)
-@Remote(IEditMaterial.class)
+@Local(IEditMaterial.class)
 @RolesAllowed({"professor", "admin"})
 public class EditMaterialBean extends EditContentBean implements IEditMaterial 
 {
