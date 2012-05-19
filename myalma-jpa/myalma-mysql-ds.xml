@@ -17,6 +17,9 @@ http://www.mysql.com/downloads/api-jdbc-stable.html
     <password></password>
     <exception-sorter-class-name>org.jboss.resource.adapter.jdbc.vendor.MySQLExceptionSorter</exception-sorter-class-name>
     
+    <!-- Altrimenti con tanti utenti non gli sta dietro e scatta LazyLoadException -->
+     <max-pool-size>40</max-pool-size>
+     
     <!-- should only be used on drivers after 3.22.1 with "ping" support
     <valid-connection-checker-class-name>org.jboss.resource.adapter.jdbc.vendor.MySQLValidConnectionChecker</valid-connection-checker-class-name>
     -->

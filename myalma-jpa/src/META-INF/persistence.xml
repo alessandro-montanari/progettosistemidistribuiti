@@ -12,6 +12,9 @@
             
             <!-- Per poter referenziare la factory in Seam (vedi components.xml) -->
             <property name="jboss.entity.manager.factory.jndi.name" value="myalma-jpaManagerFactory"/>
+            
+     
+            
         </properties>
 	</persistence-unit>
 </persistence>
