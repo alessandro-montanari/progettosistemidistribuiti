@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+	<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>myAlma - Login</title>
+<link rel="shortcut icon" href="#{request.contextPath}/favicon.ico" />
+<a:loadStyle src="/stylesheet/theme.xcss" />
+<a:loadStyle src="/stylesheet/theme.css" />
+</head>
+<body>
+
+	<rich:modalPanel id="panel" autosized="true" shadowDepth="10"
+		width="500">
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText value="Cos'è myAlma?"></h:outputText>
+			</h:panelGroup>
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:graphicImage value="/img/close.png" styleClass="hidelink"
+					id="hidelink" height="16" width="16" />
+				<rich:componentControl for="panel" attachTo="hidelink"
+					operation="hide" event="onclick" />
+			</h:panelGroup>
+		</f:facet>
+		<div style="font-size: 14px;">
+			MyAlma è la soluzione definitiva per gestire in maniera integrata e
+			con semplicità il materiale e le informazioni di supporto alla
+			didattica universitaria. <br />
+			<br /> Il docente non dovrà più preoccuparsi della gestione tecnica
+			di un proprio sito web e dell’archiviazione delle dispense dei suoi
+			corsi, grazie a MyAlma ha a disposizione una dashboard integrata da
+			cui erogare tutte le informazioni e raggiungere immediatamente tutti
+			gli studenti. <br />
+			<br /> Lo studente ha, in MyAlma, un solo portale che aggrega tutte
+			le informazioni di cui ha necessità per fruire al meglio ogni corso
+			e tiene traccia degli aggiornamenti comunicandoli direttamente. La
+			forza di MyAlma sta nell’ offrire tutto e subito, avere tutte le
+			informazioni a portata di mouse senza doversi più preoccupare di
+			cercare il sito giusto per il corso giusto.
+		</div>
+	</rich:modalPanel>
+
+<rich:effect for="window" event="onload" type="Highlight" params="targetId:'loginbox',duration:1," />
+    
+	<div align="center">
+		<h:panelGrid columns="2">
+			<h:graphicImage value="/img/myalma-logo.png" height="500" />
+			<rich:panel id="loginbox" style="width:370px;height:120px;">
+				<!--  <rich:effect event="onload"  type="Highlight" params="duration:0.8" /> -->
+				<!--  <rich:effect event="onsubmit" for="loginbox" type="Appear" params="delay:3.0,duration:0.5" /> -->
+				
+				<f:facet name="header">
+					<h:outputText value="Login"></h:outputText>
+				</f:facet>
+				<div>
+					<form style="font-size: 14px;" name="loginForm" method="post"
+						action="j_security_check">
+						<table>
+							<tr>
+								<td><h:outputText style="font-weight:bold" value="Mail: " />
+								</td>
+								<td><input name="j_username" type="text" size="45" /></td>
+							</tr>
+							<tr>
+								<td><h:outputText style="font-weight:bold"
+										value="Password: " /></td>
+								<td><input name="j_password" type="password" size="45" /></td>
+							</tr>
+							<tr>
+								<td><input type="submit" value="Login" /></td>
+							</tr>
+						</table>
+					</form>
+				</div>
+
+			</rich:panel>
+
+		</h:panelGrid>
+		<h:outputLink value="#" id="link">
+       	Cos'e myAlma?
+        <rich:componentControl for="panel" attachTo="link"
+				operation="show" event="onclick" />
+		</h:outputLink>
+
+	</div>
+
+</body>
+	</html>
+</f:view>
