@@ -1,4 +1,4 @@
-package it.unibo.mylama.ui;
+package it.unibo.myalma.ui;
 
 import java.util.List;
 

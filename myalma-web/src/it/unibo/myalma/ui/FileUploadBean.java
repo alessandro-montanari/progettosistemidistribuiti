@@ -1,10 +1,8 @@
-package it.unibo.mylama.ui;
+package it.unibo.myalma.ui;
 
 import it.unibo.myalma.business.IEditContent;
 import it.unibo.myalma.business.IEditMaterial;
 import it.unibo.myalma.model.Content;
-import it.unibo.myalma.model.ContentType;
-import it.unibo.myalma.model.Material;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -23,6 +21,7 @@ import org.jboss.seam.contexts.Contexts;
 import org.richfaces.event.FileUploadListener;
 import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
+
 
 // Vedi opzioni in web.xml per dimensione massima e salvataggio in cartella temporanea
 @Name("fileUploadBean")
