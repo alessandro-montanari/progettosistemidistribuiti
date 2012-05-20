@@ -1,7 +1,7 @@
 package it.unibo.myalma.ui;
 
-import it.unibo.myalma.business.IEditContent;
-import it.unibo.myalma.business.IEditMaterial;
+import it.unibo.myalma.business.professor.IEditContent;
+import it.unibo.myalma.business.professor.IEditMaterial;
 import it.unibo.myalma.model.Content;
 
 import java.io.File;

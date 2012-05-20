@@ -2,10 +2,10 @@ package it.unibo.myalma.test;
 
 import java.util.List;
 
-import it.unibo.myalma.business.IAdministration;
-import it.unibo.myalma.business.IProfessorManager;
+import it.unibo.myalma.business.administration.IAdministration;
+import it.unibo.myalma.business.professor.IProfessorManager;
 import it.unibo.myalma.business.search.ISearch;
-import it.unibo.myalma.business.IStudentManager;
+import it.unibo.myalma.business.student.IStudentManager;
 import it.unibo.myalma.model.Category;
 import it.unibo.myalma.model.Content;
 import it.unibo.myalma.model.ContentType;

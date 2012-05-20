@@ -1,4 +1,4 @@
-package it.unibo.myalma.business;
+package it.unibo.myalma.business.util;
 
 
 public interface IUserHelper

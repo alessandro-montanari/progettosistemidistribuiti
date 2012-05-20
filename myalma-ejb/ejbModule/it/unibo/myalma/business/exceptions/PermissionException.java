@@ -1,4 +1,4 @@
-package it.unibo.myalma.business;
+package it.unibo.myalma.business.exceptions;
 
 public class PermissionException extends RuntimeException {
 

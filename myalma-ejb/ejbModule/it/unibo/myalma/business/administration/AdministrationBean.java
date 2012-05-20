@@ -1,4 +1,4 @@
-package it.unibo.myalma.business;
+package it.unibo.myalma.business.administration;
 
 import it.unibo.myalma.model.ContentsRoot;
 import it.unibo.myalma.model.Notification;

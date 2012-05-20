@@ -1,4 +1,4 @@
-package it.unibo.myalma.business;
+package it.unibo.myalma.business.professor;
 
 import it.unibo.myalma.model.Content;
 import it.unibo.myalma.model.ContentsRoot;
@@ -7,7 +7,6 @@ import it.unibo.myalma.model.Material;
 import it.unibo.myalma.model.Teaching;
 import it.unibo.myalma.model.TypeOfChange;
 import it.unibo.myalma.model.User;
-import it.unibo.myalma.testejb.TestBean;
 
 import javax.annotation.Resource;
 import javax.annotation.security.RolesAllowed;
@@ -29,6 +28,8 @@ import org.jboss.seam.annotations.Name;
 import java.lang.reflect.Method;
 import javax.ejb.Local;
 
+import it.unibo.myalma.business.exceptions.*;
+
 /**
  * Session Bean implementation class ProfessorManagerBean
  */
@@ -39,7 +40,7 @@ import javax.ejb.Local;
 @RolesAllowed({"professor", "admin"})
 public class ProfessorManagerBean implements IProfessorManager 
 {
-	private static final Logger log = Logger.getLogger(TestBean.class.getName());
+	private static final Logger log = Logger.getLogger(ProfessorManagerBean.class.getName());
 
 	@PersistenceContext
 	private EntityManager entityManager;

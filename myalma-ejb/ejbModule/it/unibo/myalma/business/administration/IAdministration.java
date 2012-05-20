@@ -1,4 +1,4 @@
-package it.unibo.myalma.business;
+package it.unibo.myalma.business.administration;
 
 import it.unibo.myalma.model.Role;
 import it.unibo.myalma.model.Teaching;

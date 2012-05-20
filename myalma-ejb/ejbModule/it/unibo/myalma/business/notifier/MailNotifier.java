@@ -1,4 +1,4 @@
-package it.unibo.myalma.business;
+package it.unibo.myalma.business.notifier;
 
 import java.util.Date;
 import java.util.Hashtable;

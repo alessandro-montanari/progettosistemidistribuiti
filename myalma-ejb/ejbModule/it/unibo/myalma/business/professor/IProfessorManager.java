@@ -1,4 +1,4 @@
-package it.unibo.myalma.business;
+package it.unibo.myalma.business.professor;
 
 import it.unibo.myalma.model.Content;
 

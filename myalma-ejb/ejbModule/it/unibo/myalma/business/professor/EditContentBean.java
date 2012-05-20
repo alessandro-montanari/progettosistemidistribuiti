@@ -1,4 +1,4 @@
-package it.unibo.myalma.business;
+package it.unibo.myalma.business.professor;
 
 import java.lang.reflect.Method;
 
@@ -22,6 +22,8 @@ import org.jboss.seam.annotations.Observer;
 import org.jboss.seam.annotations.Out;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.core.Events;
+
+import it.unibo.myalma.business.professor.IProfessorManager;
  
 /**
  * Session Bean implementation class ContentManagerBean

@@ -1,4 +1,4 @@
-package it.unibo.myalma.business;
+package it.unibo.myalma.business.util;
 
 import javax.annotation.Resource;
 import javax.ejb.Local;
