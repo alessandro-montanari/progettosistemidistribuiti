@@ -1,4 +1,4 @@
-package it.unibo.myalma.business;
+package it.unibo.myalma.business.professor;
 
 import java.io.File;
 
@@ -10,6 +10,7 @@ import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 
+import it.unibo.myalma.business.util.FileManager;
 import it.unibo.myalma.model.Material;
 
 @Stateful

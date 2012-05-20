@@ -1,8 +1,8 @@
-package it.unibo.myalma.business;
+package it.unibo.myalma.business.notifier;
 
-import it.unibo.myalma.business.Destination;
-import it.unibo.myalma.business.INotifier;
-import it.unibo.myalma.business.NotifierFactory;
+import it.unibo.myalma.business.notifier.Destination;
+import it.unibo.myalma.business.notifier.INotifier;
+import it.unibo.myalma.business.notifier.NotifierFactory;
 import it.unibo.myalma.model.TypeOfChange;
 import it.unibo.myalma.business.search.ISearch;
 

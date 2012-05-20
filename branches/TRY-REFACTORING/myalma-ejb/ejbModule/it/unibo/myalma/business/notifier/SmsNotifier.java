@@ -1,7 +1,5 @@
-package it.unibo.myalma.business;
+package it.unibo.myalma.business.notifier;
 
-import it.unibo.myalma.model.Content;
-import it.unibo.myalma.model.TypeOfChange;
 
 public class SmsNotifier implements INotifier 
 {

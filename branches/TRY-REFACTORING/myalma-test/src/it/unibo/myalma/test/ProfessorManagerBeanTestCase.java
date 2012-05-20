@@ -4,9 +4,9 @@ import static org.junit.Assert.*;
 
 import javax.ejb.EJBException;
 
-import it.unibo.myalma.business.IAdministration;
-import it.unibo.myalma.business.IProfessorManager;
-import it.unibo.myalma.business.PermissionException;
+import it.unibo.myalma.business.administration.IAdministration;
+import it.unibo.myalma.business.professor.IProfessorManager;
+import it.unibo.myalma.business.exceptions.PermissionException;
 import it.unibo.myalma.business.search.ISearch;
 import it.unibo.myalma.model.Category;
 import it.unibo.myalma.model.Content;

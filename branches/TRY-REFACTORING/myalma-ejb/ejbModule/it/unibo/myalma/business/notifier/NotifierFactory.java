@@ -1,4 +1,4 @@
-package it.unibo.myalma.business;
+package it.unibo.myalma.business.notifier;
 
 public class NotifierFactory 
 {
