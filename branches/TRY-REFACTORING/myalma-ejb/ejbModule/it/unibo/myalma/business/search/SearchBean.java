@@ -47,10 +47,6 @@ public class SearchBean implements ISearch
 	@RolesAllowed({ "professor", "student", "admin"})
 	public List<User> findProfessorsByName(String name) 
 	{
-		//		return entityManager.createQuery("SELECT u FROM User u, IN( u.roles ) r WHERE r.roleName='professor' and u.name LIKE :name")
-		//				.setParameter("name", name)
-		//				.getResultList();
-
 		return entityManager.createQuery("SELECT u FROM User u WHERE u.name LIKE :name")
 				.setParameter("name", name)
 				.getResultList();
