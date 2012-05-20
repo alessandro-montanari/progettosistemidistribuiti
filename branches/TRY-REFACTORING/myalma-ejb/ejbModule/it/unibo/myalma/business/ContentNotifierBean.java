@@ -4,8 +4,10 @@ import it.unibo.myalma.business.Destination;
 import it.unibo.myalma.business.INotifier;
 import it.unibo.myalma.business.NotifierFactory;
 import it.unibo.myalma.model.TypeOfChange;
+import it.unibo.myalma.business.search.ISearch;
 
 import javax.ejb.ActivationConfigProperty;
+import javax.ejb.EJB;
 import javax.ejb.MessageDriven;
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -66,6 +68,9 @@ public class ContentNotifierBean implements MessageListener
 	private EntityManager entityManager;
 
 	private INotifier mailNotifier;
+	
+	@EJB
+	private ISearch searchBean;
 
 	/**
 	 * Default constructor. 
@@ -181,9 +186,7 @@ public class ContentNotifierBean implements MessageListener
 			sub.getUnreadNotifications().add(notification);
 
 			// Invio la mail
-			User u = (User) entityManager.createQuery("SELECT s FROM Subscriber s, IN ( s.subscriptions ) sub WHERE sub.id=?")
-											.setParameter(1, sub.getId())
-											.getSingleResult();
+			User u = searchBean.findUserBySubscription(sub.getId());
 			Destination dest = new Destination(u.getMail());
 
 //			TODO Decommenta per inviare le mail
@@ -191,17 +194,12 @@ public class ContentNotifierBean implements MessageListener
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private List<Subscription> getSubscriptions(Content content) 
 	{
 		int rootId = content.getRoot() == null ? content.getId() : content.getRoot().getId();
-		Teaching teaching = (Teaching)entityManager.createQuery("SELECT t FROM Teaching t WHERE t.contentsRoot.id=?")
-				.setParameter(1, rootId)
-				.getSingleResult();
+		Teaching teaching = searchBean.findTeachingByContentsRoot(rootId);
 
-		return entityManager.createQuery("SELECT sub FROM Subscription sub WHERE sub.teaching.id=?")
-				.setParameter(1, teaching.getId())
-				.getResultList();
+		return searchBean.findSubscriptionsToTeaching(teaching.getId());
 	}
 
 }

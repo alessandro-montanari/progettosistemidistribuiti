@@ -4,10 +4,10 @@ import static org.junit.Assert.*;
 
 import javax.ejb.EJBException;
 
-import it.unibo.myalma.business.AdministrationBeanRemote;
+import it.unibo.myalma.business.IAdministration;
 import it.unibo.myalma.business.IProfessorManager;
 import it.unibo.myalma.business.PermissionException;
-import it.unibo.myalma.business.SearchBeanRemote;
+import it.unibo.myalma.business.search.ISearch;
 import it.unibo.myalma.model.Category;
 import it.unibo.myalma.model.Content;
 import it.unibo.myalma.model.ContentType;
@@ -29,6 +29,7 @@ public class ProfessorManagerBeanTestCase extends TestsCommon {
 	public static void setUp() throws Exception 
 	{
 		init();
+		cleanDB();
 		fillDB();
 	}
 
@@ -44,13 +45,13 @@ public class ProfessorManagerBeanTestCase extends TestsCommon {
 		helper.login("silvano.martello@unibo.it", "silvano");
 		// Controllo l'aggiunta dall'inizializzazione
 		Teaching teaching1 = searchBean.findTeachingByName(teaching1Name);
-		assertEquals(1, searchBean.findAllAssistantsByTeaching(teaching1.getId()).size());
+		assertEquals(1, searchBean.findAssistantsByTeaching(teaching1.getId()).size());
 
 		// Controllo l'aggiunta DAL titolare
 		User u = searchBean.findProfessorsByName(assistant2Name).get(0);
 		profManager.addAssistant(teaching1.getId(), u.getMail());
-		assertEquals(2, searchBean.findAllAssistantsByTeaching(teaching1.getId()).size());
-		assertEquals(2, searchBean.findAllTeachingsByAssistantName(u.getName()).size());
+		assertEquals(2, searchBean.findAssistantsByTeaching(teaching1.getId()).size());
+		assertEquals(2, searchBean.findTeachingsByAssistantName(u.getName()).size());
 
 		// Controllo l'aggiunta DI un utente che non esiste
 		User notPersistentuser = new User("da", "sds", "adds", "dsd");
@@ -87,7 +88,7 @@ public class ProfessorManagerBeanTestCase extends TestsCommon {
 
 		User u = searchBean.findProfessorsByName(assistant1Name).get(0);
 		profManager.removeAssistant(teaching1.getId(), u.getMail());
-		assertEquals(0, searchBean.findAllTeachingsByAssistantName(u.getName()).size());
+		assertEquals(0, searchBean.findTeachingsByAssistantName(u.getName()).size());
 		profManager.addAssistant(teaching1.getId(), u.getMail());
 		helper.logout();
 	}
@@ -128,7 +129,7 @@ public class ProfessorManagerBeanTestCase extends TestsCommon {
 		Category content = new Category("Categoria Nuova","",null);
 		int nuovaCatId = profManager.appendContent(teaching1.getContentsRoot().getId(), content);
 		assertEquals(12, searchBean.getAllContents().size());
-		assertEquals(4, searchBean.findContensByType(ContentType.CATEGORY).size());
+		assertEquals(4, searchBean.findContentsByType(ContentType.CATEGORY).size());
 		assertEquals(1, searchBean.findContentsByTitle("Categoria Nuova").size());
 		helper.logout();
 
@@ -136,7 +137,7 @@ public class ProfessorManagerBeanTestCase extends TestsCommon {
 		helper.login("paolo.bellavista@unibo.it", "paolo");
 		Information notice = new Information(ContentType.NOTICE,"Notizia Nuova","Notizia","",null);
 		profManager.appendContent(nuovaCatId, notice);
-		assertEquals(1, searchBean.findContensByType(ContentType.NOTICE).size());
+		assertEquals(1, searchBean.findContentsByType(ContentType.NOTICE).size());
 		assertEquals(1, searchBean.findContentsByTitle("Notizia Nuova").size());
 		helper.logout();
 
@@ -153,7 +154,7 @@ public class ProfessorManagerBeanTestCase extends TestsCommon {
 			// Controllo che sia lanciata la giusta eccezione
 			assertEquals(PermissionException.class, e.getCause().getClass());
 		}
-		assertEquals(1, searchBean.findContensByType(ContentType.NOTICE).size());
+		assertEquals(1, searchBean.findContentsByType(ContentType.NOTICE).size());
 		helper.logout();
 	}
 
@@ -166,7 +167,7 @@ public class ProfessorManagerBeanTestCase extends TestsCommon {
 		Content cat1 = searchBean.findContentsByTitle(category1Name).get(0);
 		Content mat1 = searchBean.findContentsByTitle(material1Name).get(0);
 		profManager.removeContent(cat1.getId(), mat1.getId());
-		assertEquals(3, searchBean.findContensByType(ContentType.MATERIAL).size());
+		assertEquals(3, searchBean.findContentsByType(ContentType.MATERIAL).size());
 		assertEquals(0, searchBean.findContentsByTitle(material1Name).size());
 		helper.logout();
 	}
@@ -182,9 +183,9 @@ public class ProfessorManagerBeanTestCase extends TestsCommon {
 		profManager.removeAllContents(teaching.getContentsRoot().getId());
 		// Rimangono solo i contentsRoot e i contenuti del secondo teaching
 		assertEquals(2+4, searchBean.getAllContents().size());
-		assertEquals(1, searchBean.findContensByType(ContentType.CATEGORY).size());
-		assertEquals(1, searchBean.findContensByType(ContentType.INFORMATION).size());
-		assertEquals(0, searchBean.findContensByType(ContentType.NOTICE).size());
+		assertEquals(1, searchBean.findContentsByType(ContentType.CATEGORY).size());
+		assertEquals(1, searchBean.findContentsByType(ContentType.INFORMATION).size());
+		assertEquals(0, searchBean.findContentsByType(ContentType.NOTICE).size());
 		assertEquals(0, searchBean.findContentsByTitle(category1Name).size());
 		assertEquals(0, searchBean.findContentsByTitle(material2Name).size());
 		helper.logout();

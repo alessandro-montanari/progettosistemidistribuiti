@@ -11,6 +11,7 @@ import it.unibo.myalma.testejb.TestBean;
 
 import javax.annotation.Resource;
 import javax.annotation.security.RolesAllowed;
+import javax.ejb.Remote;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.jms.Connection;
@@ -34,6 +35,7 @@ import javax.ejb.Local;
 @Stateless
 @Name("professorManager")
 @Local(IProfessorManager.class)
+@Remote(it.unibo.myalma.business.remote.IProfessorManagerRemote.class)
 @RolesAllowed({"professor", "admin"})
 public class ProfessorManagerBean implements IProfessorManager 
 {

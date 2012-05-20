@@ -1,26 +1,26 @@
 package it.unibo.myalma.business;
 
-import it.unibo.myalma.model.ContentType;
-//import it.unibo.myalma.model.NotificationPolicy;
-import it.unibo.myalma.model.Role;
 import it.unibo.myalma.model.Subscription;
 import it.unibo.myalma.model.Teaching;
 import it.unibo.myalma.model.Subscriber;
-import it.unibo.myalma.model.TypeOfChange;
 import it.unibo.myalma.model.User;
 
 import javax.annotation.Resource;
 import javax.annotation.security.RolesAllowed;
+import javax.ejb.Remote;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.ejb.Local;
 
 /**
  * Session Bean implementation class StudentManagerBean
  */
 @Stateless
-public class StudentManagerBean implements StudentManagerBeanRemote 
+@Local(IStudentManager.class)
+@Remote(it.unibo.myalma.business.remote.IStudentManagerRemote.class)
+public class StudentManagerBean implements IStudentManager 
 {
 	@PersistenceContext
 	private EntityManager entityManager;

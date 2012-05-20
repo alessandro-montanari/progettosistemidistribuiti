@@ -10,7 +10,7 @@ import org.jboss.seam.annotations.Name;
 @Name("userHelper")
 @Stateless
 @Local(IUserHelper.class)
-public class UserHelper implements IUserHelper
+public class UserHelperBean implements IUserHelper
 {
 	@Resource
 	SessionContext context;
