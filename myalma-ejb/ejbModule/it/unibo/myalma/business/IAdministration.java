@@ -4,10 +4,8 @@ import it.unibo.myalma.model.Role;
 import it.unibo.myalma.model.Teaching;
 import it.unibo.myalma.model.User;
 
-import javax.ejb.Local;
 
-@Local
-public interface AdministrationBeanRemote 
+public interface IAdministration 
 {
 	// Da rivedere------
 	User addUser(User aUser);

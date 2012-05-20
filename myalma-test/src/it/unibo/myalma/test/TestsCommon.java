@@ -2,10 +2,10 @@ package it.unibo.myalma.test;
 
 import java.util.List;
 
-import it.unibo.myalma.business.AdministrationBeanRemote;
+import it.unibo.myalma.business.IAdministration;
 import it.unibo.myalma.business.IProfessorManager;
-import it.unibo.myalma.business.SearchBeanRemote;
-import it.unibo.myalma.business.StudentManagerBeanRemote;
+import it.unibo.myalma.business.search.ISearch;
+import it.unibo.myalma.business.IStudentManager;
 import it.unibo.myalma.model.Category;
 import it.unibo.myalma.model.Content;
 import it.unibo.myalma.model.ContentType;
@@ -23,9 +23,9 @@ public abstract class TestsCommon
 {
 	protected static TestHelper helper = null;
 	protected static IProfessorManager profManager = null;
-	protected static AdministrationBeanRemote adminBean = null;
-	protected static SearchBeanRemote searchBean = null;
-	protected static StudentManagerBeanRemote studentManager = null;
+	protected static IAdministration adminBean = null;
+	protected static ISearch searchBean = null;
+	protected static IStudentManager studentManager = null;
 
 	protected static Teaching teaching1 = null;
 	protected static Teaching teaching2 = null;
@@ -62,19 +62,19 @@ public abstract class TestsCommon
 	{
 		helper = new TestHelper();
 		profManager = (IProfessorManager)helper.lookup("myalma-ear/ProfessorManagerBean/remote");
-		adminBean = (AdministrationBeanRemote)helper.lookup("myalma-ear/AdministrationBean/remote");
-		searchBean = (SearchBeanRemote)helper.lookup("myalma-ear/SearchBean/remote");
-		studentManager = (StudentManagerBeanRemote)helper.lookup("myalma-ear/StudentManagerBean/remote");
+		adminBean = (IAdministration)helper.lookup("myalma-ear/AdministrationBean/remote");
+		searchBean = (ISearch)helper.lookup("myalma-ear/SearchBean/remote");
+		studentManager = (IStudentManager)helper.lookup("myalma-ear/StudentManagerBean/remote");
 	}
 
 	protected static void fillDB()
 	{
 		helper.login("", "");	// Cos“ viene utilizzato il LoginModule di test per l'inserimento degli utenti
 		initStudents();
-//		initProfessors();
+		initProfessors();
 		helper.logout();
-//		initTeachings();
-//		initContents();
+		initTeachings();
+		initContents();
 		initSubscriptions();
 
 	}
@@ -197,22 +197,22 @@ public abstract class TestsCommon
 	
 	private static void initStudents()
 	{
-//		Role student = new Role("student");
-//		Role admin = new Role("admin");
-//		admin = adminBean.addRole(admin);
-//		student = adminBean.addRole(student);
+		Role student = new Role("student");
+		Role admin = new Role("admin");
+		admin = adminBean.addRole(admin);
+		student = adminBean.addRole(student);
 		
-		Role student = null;
-		Role admin = null;
-		List<Role> roles = searchBean.getAllRoles();
-		for(Role r : roles)
-		{
-			if(r.getRoleName().equalsIgnoreCase("student"))
-				student = r;
-			
-			if(r.getRoleName().equalsIgnoreCase("admin"))
-				admin = r;
-		}
+//		Role student = null;
+//		Role admin = null;
+//		List<Role> roles = searchBean.getAllRoles();
+//		for(Role r : roles)
+//		{
+//			if(r.getRoleName().equalsIgnoreCase("student"))
+//				student = r;
+//			
+//			if(r.getRoleName().equalsIgnoreCase("admin"))
+//				admin = r;
+//		}
 		
 		Subscriber me = new Subscriber("alessandro.montanar5@studio.unibo.it", "ale", "Alessandro", "Montanari", new Role[]{admin, student});
 		Subscriber lorena = new Subscriber("lorena.qendro@studio.unibo.it", "lorena", "Lorena", "Qendro", new Role[]{student});
@@ -237,9 +237,9 @@ public abstract class TestsCommon
 
 		deleteStudents();
 		deleteNotifications();
-//		deleteTeachings();
-//		deleteProfessors();
-//		deleteRoles();
+		deleteTeachings();
+		deleteProfessors();
+		deleteRoles();
 
 		helper.logout();
 	}
@@ -314,8 +314,8 @@ public abstract class TestsCommon
 	public static void main(String[] args) 
 	{
 		TestsCommon.init();
+		TestsCommon.cleanDB();
 		TestsCommon.fillDB();
-//		TestsCommon.cleanDB();
 	}
 
 

@@ -5,7 +5,7 @@ import static javax.security.auth.login.AppConfigurationEntry.LoginModuleControl
 import java.util.HashMap;
 import java.util.Hashtable;
 
-import it.unibo.myalma.business.SearchBeanRemote;
+import it.unibo.myalma.business.search.ISearch;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -21,7 +21,7 @@ import org.jboss.security.client.SecurityClientFactory;
 public class TestHelper 
 {
 	
-	SearchBeanRemote search = null;
+	ISearch search = null;
 	static Context ctx = null;
 	SecurityClient ssclient = null;
 	

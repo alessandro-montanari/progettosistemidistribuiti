@@ -10,6 +10,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.annotation.security.RolesAllowed;
+import javax.ejb.Local;
+import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -18,7 +20,9 @@ import javax.persistence.PersistenceContext;
  * Session Bean implementation class AdministrationBean
  */
 @Stateless
-public class AdministrationBean implements AdministrationBeanRemote 
+@Local(IAdministration.class)
+@Remote(it.unibo.myalma.business.remote.IAdministrationBeanRemote.class)
+public class AdministrationBean implements IAdministration 
 {
 	@PersistenceContext(unitName="myalma-jpa")
 	EntityManager entityManager;

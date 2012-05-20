@@ -13,7 +13,7 @@
 
 			<!-- For testing uncomment the module below  			-->
 			<login-module code="org.jboss.security.auth.spi.IdentityLoginModule" flag="sufficient">
-				<module-option name="principal">enrico.denti@unibo.it</module-option>
+				<module-option name="principal">silvano.martello@uunibo.it</module-option>
 				<module-option name="roles">student,professor,admin</module-option>
 			</login-module>
 
