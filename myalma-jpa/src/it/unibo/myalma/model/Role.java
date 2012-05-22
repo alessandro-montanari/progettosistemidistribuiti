@@ -17,7 +17,6 @@ public class Role implements Serializable {
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private int id;
 	
-	@Basic(optional = false)
 	@Column(unique = true, nullable = false)
 	private String roleName;
 	

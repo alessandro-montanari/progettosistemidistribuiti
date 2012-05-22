@@ -21,6 +21,7 @@ public class Teaching implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column(unique = true, nullable = false)
 	private int id;
 	
 	@Column(nullable = false)
@@ -36,6 +37,7 @@ public class Teaching implements Serializable {
 	@Column(nullable = false, unique = true)
 	private String name;
 	
+	// Una cosa è l'insegnamento e una cosa è l'abero dei contenuti, qui rappresentato dalla sua radice
 	@OneToOne(optional = false, cascade = { MERGE, REFRESH, REMOVE, PERSIST })
 	private ContentsRoot contentsRoot;
 	
@@ -57,21 +59,23 @@ public class Teaching implements Serializable {
 		return this.cfu;
 	}
 
-	public void setCfu(int cfu) {
+	protected void setCfu(int cfu) {
 		this.cfu = cfu;
 	}   
+	
 	public int getYearOfCourse() {
 		return this.yearOfCourse;
 	}
 
-	public void setYearOfCourse(int yearOfCourse) {
+	protected void setYearOfCourse(int yearOfCourse) {
 		this.yearOfCourse = yearOfCourse;
 	}   
+	
 	public String getSsd() {
 		return this.ssd;
 	}
 
-	public void setSsd(String ssd) {
+	protected void setSsd(String ssd) {
 		this.ssd = ssd;
 	}   
 	
@@ -79,21 +83,18 @@ public class Teaching implements Serializable {
 		return this.name;
 	}
 
-	public void setName(String name) {
+	protected void setName(String name) {
 		this.name = name;
 	}   
 	
 	public int getId() {
 		return this.id;
 	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
 	
 	public ContentsRoot getContentsRoot() {
 		return contentsRoot;
 	}
+	
 	public void setContentsRoot(ContentsRoot contentsRoot) {
 		this.contentsRoot = contentsRoot;
 	}
@@ -115,5 +116,4 @@ public class Teaching implements Serializable {
 	{
 		return this.name.hashCode();
 	}
-   
 }

@@ -10,34 +10,52 @@ import java.util.List;
 
 import javax.persistence.*;
 
-import org.jboss.seam.annotations.Name;
-
 import static javax.persistence.AccessType.FIELD;
 import static javax.persistence.CascadeType.MERGE;
 import static javax.persistence.CascadeType.REFRESH;
 import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.LAZY;
-import static javax.persistence.FetchType.EAGER;
+
 /**
  * Entity implementation class for Entity: Content
  *
  * Note: 
  * - questa classe non è @MappedResource perché altrienti non sarebbe possibile fare delle query su di essa e collegarla ad altre
- * 	entity tramite relazioni, quindi si è deciso di renderla abstract (anche perché si era obbligati dato che il campo ContentType)
- * 	può essere definito solo dalle sottoclassi), in questo modo la classe può essere annotata @Entity.
+ * 	entity tramite relazioni (non c'è una tabella per una @MappedSuperclass), quindi si è deciso di renderla abstract, 
+ * 	in questo modo la classe può essere annotata @Entity.
+ * 
  * - si è deciso per un InheritanceType.SINGLE_TABLE per due motivi:
  * 	1) si pensa che la maggiorparte delle query eseguite saranno di tipo polimorfico e interesseranno tutta la gerarchia (ossia si
  * 	vuole fare una query su Content per avere tutti i contenuti dell'albero o di una prte di esso), quindi il vantaggio di avere una
  * 	sola tabella è evidente (si risparmiano diversi JOIN rispetto alle altre strategie);
  * 	2) lo svantaggio dato dalla scarsa efficienza nell'utilizzo dell spazio di questa strategia (molti campi nulli) è limitato dal
- * 	fatto che le informazioni di ogni sotto classe sono abbastanza limitate (path, body, ecc.) 
+ * 	fatto che le informazioni di ogni sotto classe sono abbastanza limitate (path, body, ecc.);
+ * 	Alla fine è quasi scontato che si utilizzi questo mapping per un albero in cui si vuole navigare utilizzando solo la classe più
+ * 	in alto nella gerarchia.
+ * 
+ * - Si è utilizzato @Access(FIELD) per poter avere accesso nel mondo a oggetti in sola letura (solo getXXX())
+ * 
+ * - Come discriminatore non posso utilizzare il campo contentType (sarebbe logico) perché poter essere un discriminatore 
+ * 	dovrebbe avere come impostazioni insert="false" e update="false" altrimenti errore a deploy time. Non posso però mettere
+ * 	l'impostazione insert="false" perché altrimenti non riesco ad inserire nessun contenuto nel DB (a run time) dato che quel
+ * 	campo non può essere "generato" dal DB stesso (come avviene per modificationDate) ma lo devo inserire io.
+ * 
+ * - Scelta du Lazy Inizialization: è stato deciso che il cliente del layer EJB sarà il web tier, quindi è possibile sfruttare 
+ * 	i contesti di persistenza estesi e quindi la possibilità di avere Lazy Inizialization (la grande potenza/vantaggio di un sistema
+ * 	come JPA). In seguito a questa scelta si è deciso che ogni nodo dell'albero viene restituito co le sole sue proprietà, ossia 
+ * 	senza precaricare ne i suoi nodi figli ne il suo parent (Lazy Inizialization "massimo"), evitando così che per una richiesta
+ * 	di un nodo venga caricato l'intero albero. All'interno del web tier utilizzando un contesto di persistenza esteso, non si avrà
+ * 	nessun tipo di problema e anzi si semplificherà la programmazione (non si devono gestire manualmente le LazyInizializationExceptions).
+ * 	Al momento non sono stati previsti clienti remoti diretti all'EJB tier ma anche se questi dovessero essere aggiunti in futuro
+ * 	le classi del modello rimarrebbero con Lazy Inizialization e poi sarà necessaria una diversa implementazione del SearchBean
+ * 	che dovrà almeno popolare "una parte dell'albero nell'intorno" del nodo richiesto e una certa disciplina nella programmazione
+ * 	dei client evitando/gestendo le LazyInizializationExceptions.
  */
 @Entity
 @Table(name="contents")
-@Access(FIELD)
+@Access(FIELD)																		
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
-//@Name("content")
 public abstract class Content implements Serializable {
 
 	@Id
@@ -47,18 +65,24 @@ public abstract class Content implements Serializable {
 	@Column(nullable = false)
 	private String title;
 	
+	// Campo mappato come java.sql.Timestamp
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(updatable = false, nullable = false)
 	private Date creationDate = new Date();
 	
+	// Uso un frammento SQL tipico di MYSQL (quindi app non cross-DB vendor) per ottenere l'aggiornamento
+	// automatico della data di modifica. Si potrebbe fare in altri modi per rendere l'app cross-DB vendor.
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP", insertable = false, updatable = false, nullable = false)
+	@Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP", 
+			insertable = false, updatable = false, nullable = false)
 	private Date modificationDate;
 	
-	@ManyToOne(optional = false, cascade = { MERGE, REFRESH })
+	// Per modificare le proprietà di un docente occorre utilizzare il 
+	// metodo ProfessorManagerBean.updatePersonalInfo(...) quidi cascade solo a REFRESH
+	@ManyToOne(optional = false, cascade = REFRESH)
 	private User creator;
 	
-	@ManyToOne(optional = false, cascade = { MERGE, REFRESH })
+	@ManyToOne(optional = false, cascade = REFRESH)
 	private User modifier;
 	
 	private String description;
@@ -69,6 +93,7 @@ public abstract class Content implements Serializable {
 	@OneToOne(cascade = { MERGE, REFRESH }, fetch = LAZY)
 	private ContentsRoot root;
 	
+	// Enumeration salvato sul DB come stringa
 	@Column(nullable = false)
 	@Enumerated(STRING)
 	private ContentType contentType;
@@ -93,9 +118,7 @@ public abstract class Content implements Serializable {
 	
 	public Content(ContentType type, User creator)
 	{
-		this.contentType = type;
-		this.creator = creator;
-		this.modifier = creator;
+		this(type, "", "", creator);
 	}
 
 	public int getId() {
@@ -169,7 +192,7 @@ public abstract class Content implements Serializable {
 		return getTitle() + " - " + getModifier() + " - " + getModificationDate();
 	}
 	
-	
+	// Metodi di "modifica" dell'albero saranno implementati dalla classe Category
 	public Content appendContent(Content aContent)
 	{
 		throw new UnsupportedOperationException("Impossible to append a content to a non-category content");
@@ -194,7 +217,6 @@ public abstract class Content implements Serializable {
 	{
 		return false;
 	}
-
 	
 	public ContentType getContentType() {
 		return contentType;
@@ -203,29 +225,4 @@ public abstract class Content implements Serializable {
 	protected void setContentType(ContentType contentType) {
 		this.contentType = contentType;
 	}
-	
-	// TODO Occhio potrebero esserci problemi
-//	@Override
-//	public boolean equals(Object obj) 
-//	{
-//		if(this == obj)
-//			return true;
-//		if( !(obj instanceof Content))
-//			return false;
-//		
-//		// E quando si arriva alla radice che ha parentContent = null; ??
-//		Content content = (Content)obj;
-//		if( !(this.title.equalsIgnoreCase(content.getTitle())) )
-//			return false;
-//		if( !(this.parentContent.equals(content.getParentContent())))
-//			return false;
-//		
-//		return true;
-//	}
-//	
-//	@Override
-//	public int hashCode() {
-//		// TODO Auto-generated method stub
-//		return super.hashCode();
-//	}
 }
