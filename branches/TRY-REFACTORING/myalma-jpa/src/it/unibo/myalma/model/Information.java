@@ -7,10 +7,6 @@ import java.lang.String;
 import javax.persistence.*;
 import static javax.persistence.AccessType.FIELD;
 
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-
 /**
  * Entity implementation class for Entity: Information
  *
@@ -18,8 +14,6 @@ import org.jboss.seam.annotations.Scope;
 @Entity
 @Access(FIELD)
 @DiscriminatorValue("information")
-//@Name("content")
-//@Scope(ScopeType.CONVERSATION)
 public class Information extends Content implements Serializable {
 
 	// Mappato in CLOB per dati di grandi dimensioni (caratteri)
@@ -54,5 +48,4 @@ public class Information extends Content implements Serializable {
 	public void setBody(String body) {
 		this.body = body;
 	}
-   
 }

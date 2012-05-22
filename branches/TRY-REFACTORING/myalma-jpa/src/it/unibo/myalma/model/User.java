@@ -8,7 +8,6 @@ import java.util.Set;
 import javax.persistence.*;
 import static javax.persistence.AccessType.FIELD;
 import org.jboss.crypto.CryptoUtil;
-import static javax.persistence.CascadeType.MERGE;
 import static javax.persistence.CascadeType.REFRESH;
 import static javax.persistence.FetchType.EAGER;
 
@@ -20,10 +19,6 @@ import static javax.persistence.FetchType.EAGER;
 @Table(name="users")
 @Access(FIELD)
 public class User implements Serializable {
-
-	//	@Id
-	//	@GeneratedValue(strategy=GenerationType.AUTO)
-	//	private int id;
 
 	@Id
 	@Column(nullable = false, unique = true)
@@ -38,7 +33,7 @@ public class User implements Serializable {
 	@Column(nullable = false)
 	private String surname;
 
-	@ManyToMany(cascade = { MERGE, REFRESH }, fetch = EAGER)
+	@ManyToMany(cascade = REFRESH, fetch = EAGER)
 	private Set<Role> roles = new HashSet<Role>();
 
 	private static final long serialVersionUID = 1L;
@@ -78,6 +73,7 @@ public class User implements Serializable {
 	public void setSurname(String surname) {
 		this.surname = surname;
 	}   
+	
 	public String getMail() {
 		return this.mail;
 	}

@@ -8,11 +8,15 @@ import java.util.List;
 import javax.persistence.*;
 import static javax.persistence.AccessType.FIELD;
 import static javax.persistence.CascadeType.ALL;
-import static javax.persistence.FetchType.EAGER;
 import static javax.persistence.FetchType.LAZY;
 
 /**
- * Entity implementation class for Entity: Category
+ * Note:
+ * 	- vedi Content.java per note su Lazy Inizialization
+ * 
+ * 	- abilito anche l'orphanRemoval così sono sicuro che quando un contenuto viene rimosso, è anche rimosso completamente dal DB,
+ * 	non rimangono contenuti volanti. E' un po' inefficiente qundo un contenuto deve essere spostato perché viene rimosso e poi
+ * 	reinserito, quando invece sarebbe bastato modificare un valore nella riga corrispondere a quel contenuto.
  *
  */
 @Entity
@@ -20,11 +24,6 @@ import static javax.persistence.FetchType.LAZY;
 @DiscriminatorValue("category")
 public class Category extends Content implements Serializable {
 
-	// se orphanRemoval fosse true non appena un Content viene eliminato da contents il relativo Entity viene anche rimosso dal DB, quindi non sarebbe possibile
-	// appendere quel contenuto ad un'altra categoria (infatti errore di entity eliminato). In questo modo però potrebbero rimanere dei contenuti fluttuanti nel DB
-	// quindi occorre fare molta attenzione alle operazioni che si compione nei session bean e/o prevedere dei bot che periodicamente ripuliscono il DB da questi contenuti
-	// ---
-	// fetch deve essere eager altrimenti si aveva un errore durante la rimozione di un contenuto
 	@OneToMany(orphanRemoval = true, cascade = ALL, fetch = LAZY, mappedBy = "parentContent")
 	private List<Content> contents = new ArrayList<Content>();
 	
@@ -76,21 +75,13 @@ public class Category extends Content implements Serializable {
         return aContent;
 	}
 	
-//	@Override
-//	public Content replaceContent(Content newContent, Content oldContent)
-//	{
-//		this.removeContent(oldContent);
-//        this.appendContent(newContent);
-//
-//        return oldContent;
-//	}
-	
 	@Override
 	public Content removeContent(Content theContent)
 	{
 		if (!this.isContainer())
 			throw new UnsupportedOperationException("Impossible to remove a content from a non-category content");
 
+		// Libero il contenuto da questo albero
         theContent.setParentContent(null);
         theContent.setRoot(null);
 
@@ -113,5 +104,4 @@ public class Category extends Content implements Serializable {
 	{
 		return contents;
 	}
-   
 }

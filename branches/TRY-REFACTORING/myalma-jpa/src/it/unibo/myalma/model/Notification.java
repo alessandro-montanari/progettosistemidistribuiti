@@ -1,26 +1,16 @@
 package it.unibo.myalma.model;
 
-import it.unibo.myalma.model.Content;
-
 import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.*;
 
 import static javax.persistence.EnumType.STRING;
-import static javax.persistence.CascadeType.MERGE;
-import static javax.persistence.CascadeType.REFRESH;
 
 /**
  * Entity implementation class for Entity: Notification
  *
  */
-
-/*
- * Con questa tabella sarebbe anche possibile costruire la storia di ogni contenuto
- * Ma è troppo pesante per il DB ?
- */
-
 @Entity
 @Table(name = "notifications")
 @Access(AccessType.FIELD)
@@ -28,16 +18,16 @@ public class Notification implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column(unique = true, nullable = false)
 	private int id;
 	
+	@Column(nullable = false)
 	private String message;
-	
-//	@ManyToOne(cascade = {MERGE, REFRESH })
-//	private Content content;
 	
 	int contentId;
 
 	@Enumerated(STRING)
+	@Column(nullable = false)
 	private TypeOfChange changeType;
 	
 	@Temporal(TemporalType.TIMESTAMP)
@@ -50,14 +40,18 @@ public class Notification implements Serializable {
 		super();
 	}   
 	
+	// Costruisce una notifica relativa ad un contenuto che NON è più presente nel DB, in seguito ad una rimozione di un
+	// contenuto. Il campo contentId è valorizzato a -1 perché ovviamente il contenuto non esiste più.
 	public Notification(String message, TypeOfChange changeType) {
 		this(message,-1,changeType);
 	}
 	
+	// Costruisce una notifica relativa ad un contenuto PRESENTE nel DB, in seguito ad esempio ad un'aggiunta o ad una 
+	// modifica di un contenuto già esistente. Viene valorizzato oppurtunamente anche il campo contentId così che sia poi
+	// possibile accedere al contenuto avendo in mano la notifica relativa
 	public Notification(String message, int contentId, TypeOfChange changeType) {
 		super();
 		this.message = message;
-//		this.content = content;
 		this.changeType = changeType;
 		this.contentId = contentId;
 	}
@@ -65,10 +59,6 @@ public class Notification implements Serializable {
 	public int getId() {
 		return this.id;
 	}
-
-//	public Content getContent() {
-//		return this.content;
-//	}
 	
 	public int getContentId() {
 		return contentId;
