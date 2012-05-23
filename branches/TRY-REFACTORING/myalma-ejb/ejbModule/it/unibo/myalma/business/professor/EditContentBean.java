@@ -125,13 +125,13 @@ public class EditContentBean implements IEditContent
 		if(contentDB == null)
 		{
 			// Il contenuto non c'è nel DB quindi è nuovo e deve essere aggiunto
-			contentId = profManager.appendContent(parentContent.getId(), content);
+			contentId = profManager.appendContent(parentContent.getId(), content).getId();
 		}
 		else if(contentDB.getParentContent().getId() != parentContent.getId())
 		{
 			// Il contenuto è già presente nel DB ed è stato spostato 
 			profManager.removeContent(contentDB.getParentContent().getId(), contentDB.getId());
-			contentId = profManager.appendContent(parentContent.getId(), content);
+			contentId = profManager.appendContent(parentContent.getId(), content).getId();
 		}
 		else
 		{
