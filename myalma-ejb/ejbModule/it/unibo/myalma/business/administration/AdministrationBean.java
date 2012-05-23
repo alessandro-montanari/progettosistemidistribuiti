@@ -1,12 +1,10 @@
 package it.unibo.myalma.business.administration;
 
 import it.unibo.myalma.model.ContentsRoot;
-import it.unibo.myalma.model.Notification;
 import it.unibo.myalma.model.Role;
 import it.unibo.myalma.model.Teaching;
 import it.unibo.myalma.model.User;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import javax.annotation.security.RolesAllowed;
@@ -22,31 +20,20 @@ import javax.persistence.PersistenceContext;
 @Stateless
 @Local(IAdministration.class)
 @Remote(it.unibo.myalma.business.remote.IAdministrationBeanRemote.class)
+@RolesAllowed("admin")
 public class AdministrationBean implements IAdministration 
 {
 	@PersistenceContext(unitName="myalma-jpa")
 	EntityManager entityManager;
 
-	/**
-	 * Default constructor. 
-	 */
-	public AdministrationBean() 
-	{
-		//TODO Costruttore bean
-	}
-
 	@Override
-	@RolesAllowed("admin")
 	public User addUser(User aUser) 
 	{
 		entityManager.persist(aUser);
 		return aUser;
 	}
 
-
-
 	@Override
-	@RolesAllowed("admin")
 	public Role addRole(Role role) 
 	{
 		entityManager.persist(role);
@@ -54,50 +41,29 @@ public class AdministrationBean implements IAdministration
 	}
 
 	@Override
-	@RolesAllowed("admin")
-	public void removerRole(Role role) 
+	public void removeRole(Role role) 
 	{
 		entityManager.remove(entityManager.find(Role.class, role.getId()));
-
 	}
 
 	@Override
-	@RolesAllowed("admin")
 	public void removeUser(User user) 
 	{
 		entityManager.remove(entityManager.find(User.class, user.getMail()));
-
 	}
 
 	@Override
-	@RolesAllowed("admin")
 	public void removeTeaching(Teaching teaching) 
 	{
-		entityManager.remove(teaching);
+		entityManager.remove(entityManager.find(Teaching.class, teaching.getId()));
 	}
 
 	@Override
-	@RolesAllowed("admin")
-	public void removeTeachingById(int teachingId) 
-	{
-		Teaching teaching = entityManager.find(Teaching.class, teachingId);
-		entityManager.remove(teaching);
-		return;
-	}
-
-	@Override
-	@RolesAllowed("admin")
-	public void removeNotificationById(int notificationId) 
-	{
-		Notification not = entityManager.find(Notification.class, notificationId);
-		entityManager.remove(not);
-	}
-
-	@Override
-	@RolesAllowed("admin")
 	public Teaching addTeaching(Teaching teaching) 
 	{
-		// Qui assumiamo che il cliente abbia costruito un oggetto teaching completo e controlliamo
+		// Qui assumiamo che il cliente abbia costruito un oggetto teaching completo e lo controlliamo
+		if(teaching.getContentsRoot() == null)
+			throw new IllegalArgumentException("It is not possible to add a teaching without a ContentsRoot");
 		if(teaching.getContentsRoot().getEditor() == null)
 			throw new IllegalArgumentException("It is not possible to add a teaching without editor");
 		
@@ -106,37 +72,27 @@ public class AdministrationBean implements IAdministration
 	}
 	
 	@Override
-	public Teaching addTeaching(Teaching teaching, String editorId) 
+	public Teaching addTeaching(Teaching teaching, User editor) 
 	{
-		return addTeaching(teaching, editorId, null);
+		return addTeaching(teaching, editor, null);
 	}
 
 	@Override
-	@RolesAllowed("admin")
-	public Teaching addTeaching(Teaching teaching, String editorID, String[] assistantIds) 
+	public Teaching addTeaching(Teaching teaching, User editor, Set<User> assistants) 
 	{
-		// Non servono controlli sui campi di teaching dato che sono già controllati dal DB
-
-		User editor = entityManager.find(User.class, editorID);
 		ContentsRoot root = new ContentsRoot(teaching.getName()+" Contents Root", editor);
 		root.setEditor(editor);
 
-		if(assistantIds != null)
+		if(assistants != null)
 		{
-			Set<User> assistants = new HashSet<User>();
-			for (String id : assistantIds) 
-			{
-				User assistant = entityManager.find(User.class, id);
-				if(assistant != null)
-					assistants.add(assistant);
-			}
-			
+			// Attenzione: dato che il cascade sugli autori non c'è in ContentsRoot, gli autori devono essere già salvati sul DB
 			root.setAuthors(assistants);
 		}
 
 		teaching.setContentsRoot(root);
+		// Sfrutto il cascade sul ContestRoot in Teaching, quindi basta fare il PERSIST su Teaching per ottenere il PERSIST anche 
+		// sul ContentsRoot associato
 		entityManager.persist(teaching);
 		return teaching;
 	}
-
 }
