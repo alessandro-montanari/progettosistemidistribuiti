@@ -54,13 +54,6 @@ public class ProfessorManagerBean implements IProfessorManager
 	@Resource(mappedName="/jms/topics/contentEvents") 
 	private Topic eventsTopic;
 
-	/**
-	 * Default constructor. 
-	 */
-	public ProfessorManagerBean() {
-		// TODO Costruttore bean
-	}
-
 	private void sendMessage(String message)
 	{
 		Connection connection = null;
@@ -111,23 +104,6 @@ public class ProfessorManagerBean implements IProfessorManager
 			return true;
 
 		return false;
-	}
-
-	@Override
-	public void addAssistant(int teachingId, String assistantMail) 
-	{
-		User prof = entityManager.find(User.class, context.getCallerPrincipal().getName());
-		Teaching t = entityManager.find(Teaching.class, teachingId);
-
-		if(!(t.getContentsRoot().getEditor().equals(prof)))
-			throw new PermissionException("The user " + prof.getMail() + " is not editor of " + t.getName());
-
-		User asisstant = entityManager.find(User.class, assistantMail);
-
-		if(asisstant == null)
-			throw new IllegalArgumentException("The user " + assistantMail + " is not present in the system");
-
-		t.getContentsRoot().getAuthors().add(asisstant);
 	}
 
 	@Override
@@ -289,7 +265,7 @@ public class ProfessorManagerBean implements IProfessorManager
 	}
 
 	@Override
-	public void updatePersonalInfo(String whatToModify, String newValue) 
+	public User updatePersonalInfo(String whatToModify, String newValue) 
 	{
 		if(newValue == null || newValue.equals(""))
 			throw new IllegalArgumentException("New value can not be empty");
@@ -302,10 +278,7 @@ public class ProfessorManagerBean implements IProfessorManager
 			Class<? extends User> profClass = prof.getClass();
 			String methodName = "set" + whatToModify.substring(0, 1).toUpperCase() + whatToModify.substring(1);
 			Method method;
-
 			method = profClass.getMethod(methodName, String.class);
-
-
 			method.invoke(prof, newValue);
 
 		} catch (Exception e) {
@@ -313,23 +286,52 @@ public class ProfessorManagerBean implements IProfessorManager
 			throw new IllegalArgumentException("The property " + whatToModify + " does not exists");
 		}
 
-		return;
+		return prof;
 	}
-
+	
+	
+	/**
+	 * I due metodi successivi usano Teaching e User solo per la loro chiave primaria per andare a prendere nel DB l'oggetto managed
+	 * corrispondente, quindi invece di passare l'intero oggetto si potrebbe passare solo la chiave primaria (era così in una vecchia
+	 * versione), però è stato deciso di passare l'oggetto per avere un codice più leggibile quando vengono invocati tali metodi.
+	 * Inoltre dato che il web tier e "locale" all'EJB tier non c'è problema di overhead di rete, nel caso in cui questo bean debba
+	 * essere utilizzato da remoto si potrebbe pensare a modificarne l'interfaccia passando solo le chiavi primarie.
+	 */
 	@Override
-	public void removeAssistant(int teachingId, String assistantMail) 
+	public void addAssistant(Teaching teaching, User assistant) 
 	{
 		User prof = entityManager.find(User.class, context.getCallerPrincipal().getName());
-		Teaching t = entityManager.find(Teaching.class, teachingId);
+		Teaching t = entityManager.find(Teaching.class, teaching.getId());
 
+		if(t == null)
+			throw new IllegalArgumentException("The teaching provided is not valid");
 		if(!(t.getContentsRoot().getEditor().equals(prof)))
 			throw new PermissionException("The user " + prof.getMail() + " is not editor of " + t.getName());
 
-		User asisstant = entityManager.find(User.class, assistantMail);
+		User asisstantDB = entityManager.find(User.class, assistant.getMail());
 
-		if(asisstant == null)
-			throw new IllegalArgumentException("The user " + assistantMail + " is not present in the system");
+		if(asisstantDB == null)
+			throw new IllegalArgumentException("The user " + assistant.getMail() + " is not present in the system");
 
-		t.getContentsRoot().getAuthors().remove(asisstant);
+		t.getContentsRoot().getAuthors().add(asisstantDB);
+	}
+
+	@Override
+	public void removeAssistant(Teaching teaching, User assistant) 
+	{
+		User prof = entityManager.find(User.class, context.getCallerPrincipal().getName());
+		Teaching t = entityManager.find(Teaching.class, teaching.getId());
+
+		if(t == null)
+			throw new IllegalArgumentException("The teaching provided is not valid");
+		if(!(t.getContentsRoot().getEditor().equals(prof)))
+			throw new PermissionException("The user " + prof.getMail() + " is not editor of " + t.getName());
+
+		User asisstantDB = entityManager.find(User.class, assistant.getMail());
+
+		if(asisstantDB == null)
+			throw new IllegalArgumentException("The user " + assistant.getMail() + " is not present in the system");
+
+		t.getContentsRoot().getAuthors().remove(asisstantDB);
 	}
 }

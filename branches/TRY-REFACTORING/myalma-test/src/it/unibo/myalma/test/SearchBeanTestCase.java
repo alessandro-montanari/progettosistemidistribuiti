@@ -105,14 +105,14 @@ public class SearchBeanTestCase
 	@Test
 	public void testFindAllAssistantsByTeachingInt() 
 	{
-		assertEquals(1,searchBean.findAssistantsByTeaching(137).size());
+		assertEquals(2,searchBean.findAssistantsByTeaching(137).size());
 		assertEquals("paolo.bellavista@uunibo.it", searchBean.findAssistantsByTeaching(137).get(0).getMail());
 	}
 
 	@Test
 	public void testFindAllAssistantsByTeachingString() 
 	{
-		assertEquals(1,searchBean.findAssistantsByTeaching("Ricerca Operativa").size());
+		assertEquals(2,searchBean.findAssistantsByTeaching("Ricerca Operativa").size());
 		assertEquals("paolo.bellavista@uunibo.it", searchBean.findAssistantsByTeaching("Ricerca Operativa").get(0).getMail());
 	}
 

@@ -138,7 +138,7 @@ CREATE TABLE `contents_users` (
 
 LOCK TABLES `contents_users` WRITE;
 /*!40000 ALTER TABLE `contents_users` DISABLE KEYS */;
-INSERT INTO `contents_users` VALUES (3329,'paolo.bellavista@uunibo.it'),(3330,'giuseppe.bellavia@uunibo.it');
+INSERT INTO `contents_users` VALUES (3329,'paolo.bellavista@uunibo.it'),(3330,'giuseppe.bellavia@uunibo.it'), (3329,'enrico.denti@uunibo.it');
 /*!40000 ALTER TABLE `contents_users` ENABLE KEYS */;
 UNLOCK TABLES;
 
