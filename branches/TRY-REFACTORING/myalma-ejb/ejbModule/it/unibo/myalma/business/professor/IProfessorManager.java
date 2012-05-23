@@ -12,9 +12,9 @@ public interface IProfessorManager
 	void addAssistant(Teaching teachingId, User assistant);
 	void removeAssistant(Teaching teachingId, User assistant);
 
-	Content appendContent(int parentId, Content content);
-	Content removeContent(int parentId, int contentId);
-	void removeAllContents(int parentId);
+	Content appendContent(Content parent, Content content);
+	Content removeContent(Content parent, Content content);
+	void removeAllContents(Content parent);
 
 	void updateContent(int contentId, String whatToModify, String newValue);
 	

@@ -125,13 +125,13 @@ public class EditContentBean implements IEditContent
 		if(contentDB == null)
 		{
 			// Il contenuto non c'è nel DB quindi è nuovo e deve essere aggiunto
-			contentId = profManager.appendContent(parentContent.getId(), content).getId();
+			contentId = profManager.appendContent(parentContent, content).getId();
 		}
 		else if(contentDB.getParentContent().getId() != parentContent.getId())
 		{
 			// Il contenuto è già presente nel DB ed è stato spostato 
-			profManager.removeContent(contentDB.getParentContent().getId(), contentDB.getId());
-			contentId = profManager.appendContent(parentContent.getId(), content).getId();
+			profManager.removeContent(contentDB.getParentContent(), contentDB);
+			contentId = profManager.appendContent(parentContent, content).getId();
 		}
 		else
 		{
@@ -204,7 +204,7 @@ public class EditContentBean implements IEditContent
 		if(parentContent == null)
 			throw new IllegalStateException("Impossible to delete a content from a null category");
 		
-		profManager.removeContent(parentContent.getId(), content.getId());
+		profManager.removeContent(parentContent, content);
 		
 		events.raiseTransactionSuccessEvent("contentDeleted",content.getId());
 	}

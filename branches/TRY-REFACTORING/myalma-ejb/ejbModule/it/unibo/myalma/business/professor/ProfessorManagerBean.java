@@ -10,8 +10,10 @@ import it.unibo.myalma.model.User;
 
 import javax.annotation.Resource;
 import javax.annotation.security.RolesAllowed;
+import javax.ejb.EJBException;
 import javax.ejb.Remote;
 import javax.ejb.SessionContext;
+import javax.ejb.SessionSynchronization;
 import javax.ejb.Stateless;
 import javax.jms.Connection;
 import javax.jms.MessageProducer;
@@ -21,11 +23,14 @@ import javax.jms.Topic;
 import javax.jms.TopicConnectionFactory;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.transaction.Synchronization;
 
 import org.jboss.logging.Logger;
 import org.jboss.seam.annotations.Name;
 
 import java.lang.reflect.Method;
+import java.rmi.RemoteException;
+
 import javax.ejb.Local;
 
 import it.unibo.myalma.business.exceptions.*;
@@ -53,6 +58,10 @@ public class ProfessorManagerBean implements IProfessorManager
 
 	@Resource(mappedName="/jms/topics/contentEvents") 
 	private Topic eventsTopic;
+	
+	public ProfessorManagerBean()
+	{
+	}
 
 	private void sendMessage(String message)
 	{
@@ -107,25 +116,26 @@ public class ProfessorManagerBean implements IProfessorManager
 	}
 
 	@Override
-	public Content appendContent(int parentId, Content content) 
+	public Content appendContent(Content parent, Content content) 
 	{
 		User prof = entityManager.find(User.class, context.getCallerPrincipal().getName());
-		Content parent = entityManager.find(Content.class, parentId);
+		Content parentDB = entityManager.find(Content.class, parent.getId());
 
-		if(!checkTeachingPermission(parent, prof))
+		if(parentDB == null)
+			throw new IllegalArgumentException("The parent content provided is not valid");
+		if(!checkTeachingPermission(parentDB, prof))
 			throw new PermissionException("The user " + prof.getMail() + " has no permission for the operation");
 
 		if(content.getCreator() == null || !(content.getCreator().equals(prof)))
 			content.setCreator(prof);
 
 		content.setModifier(prof);
-		
-//		Content contentDB = entityManager.find(Content.class, content.getId());
+
 		if(content.getId() == -1)
 		{	
 			// Nuovo contenuto quindi persist
-			entityManager.persist(content);		// Faccio il persist (non sarebbe necessario dato i cascade e l'istruzione successiva) perché
-												// così viene valorizzato l'Id di content e posso restituirlo al termine del metodo e utilizzarlo
+			entityManager.persist(content);		// Faccio il persist (non sarebbe necessario dato i cascade) perché così viene
+												// valorizzato l'Id di content e posso e utilizzarlo
 												// nella creazione del messaggio JMS
 		}
 		else // Contenuto spostato quindi merge prima di appenderlo, altrimenti errore al flush(): persist on a detach entity!
@@ -133,7 +143,7 @@ public class ProfessorManagerBean implements IProfessorManager
 			content = entityManager.merge(content);
 		}
 		
-		content = parent.appendContent(content);
+		content = parentDB.appendContent(content);
 
 		entityManager.flush();		// Così sono sicuro che le modifiche saranno riportate sul DB prima che il messaggio sia
 		// effettivamente inviato (al termine della transazione) (http://www.coderanch.com/t/321201/EJB-JEE/java/Stateless-session-bean-CMT-sending)
@@ -147,39 +157,44 @@ public class ProfessorManagerBean implements IProfessorManager
 	}
 
 	@Override
-	public Content removeContent(int parentId, int contentId) 
+	public Content removeContent(Content parent, Content content) 
 	{
 		User prof = entityManager.find(User.class, context.getCallerPrincipal().getName());
-		Content parent = entityManager.find(Content.class, parentId);
+		Content parentDB = entityManager.find(Content.class, parent.getId());
 
-		if(!checkTeachingPermission(parent, prof))
+		if(parentDB == null)
+			throw new IllegalArgumentException("The parent content provided is not valid");
+		if(!checkTeachingPermission(parentDB, prof))
 			throw new PermissionException("The user " + prof.getMail() + " has no permission for the operation");
 
-		Content content = entityManager.find(Content.class, contentId);
+		Content contentDB = entityManager.find(Content.class, content.getId());
+		
+		if(contentDB == null)
+			throw new IllegalArgumentException("The content " + content.getTitle() + " is not present in the system");
 
-		parent.setModifier(prof);
+		parentDB.setModifier(prof);
 
 		// Non è un problema inviare il messaggio qui (prima della rimozione) perché comunque il messaggio viene effettivamente inviato
 		// solo al commit della transazione, altrimenti non viene inviato
-		sendMessage(createMessage(content, TypeOfChange.REMOVE));
+		sendMessage(createMessage(contentDB, TypeOfChange.REMOVE));
 
-		content = parent.removeContent(content);
+		contentDB = parentDB.removeContent(contentDB);
 
 
 		entityManager.flush(); 	// Come sopra mi assicuro di riportare le modifiche prima dell'invio del messaggio
 
 		
-		return content;
+		return contentDB;
 	}
 
 	@Override
-	public void removeAllContents(int parentId) 
+	public void removeAllContents(Content parent) 
 	{
-		Content parent = entityManager.find(Content.class, parentId);
+		Content parentDB = entityManager.find(Content.class, parent.getId());
 
-		for (Content cont : parent.getChildContents()) 
+		for (Content cont : parentDB.getChildContents().toArray(new Content[0])) 
 		{
-			removeContent(parentId, cont.getId());
+			removeContent(parentDB, cont);
 		}	
 	}
 

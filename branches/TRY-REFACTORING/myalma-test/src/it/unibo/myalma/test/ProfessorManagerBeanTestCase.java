@@ -39,9 +39,12 @@ public class ProfessorManagerBeanTestCase {//extends TestsCommon {
 	
 	
 	protected static final String teaching1Name = "Ricerca Operativa";
+	protected static final String teaching2Name = "Scienza delle merendine";
 	protected static final String assistant1Name = "Paolo";
 	protected static final String assistant2Name = "Giuseppe";
 	protected static final String assistant3Name = "Enrico";
+	protected static final String category1Name = "Categoria1 "+teaching1Name;
+	protected static final String material1Name = "Materiale3";
 	
 	@BeforeClass
 	public static void setUp() throws Exception 
@@ -141,12 +144,12 @@ public class ProfessorManagerBeanTestCase {//extends TestsCommon {
 		Content parent = searchBean.findContentById(3331);
 		Content child = searchBean.findContentById(3334);
 		int previousContents = searchBean.findContentsByTitle(child.getTitle()).size();
-		child = profManager.removeContent(parent.getId(), child.getId());
+		child = profManager.removeContent(parent, child);
 		
 		assertEquals(previousContents-1, searchBean.findContentsByTitle(child.getTitle()).size());
 		
 		ContentsRoot newParent = (ContentsRoot)searchBean.findContentById(3329);
-		profManager.appendContent(newParent.getId(), child);
+		profManager.appendContent(newParent, child);
 		
 		assertEquals(previousContents, searchBean.findContentsByTitle(child.getTitle()).size());
 		helper.logout();
@@ -164,7 +167,7 @@ public class ProfessorManagerBeanTestCase {//extends TestsCommon {
 		helper.login("silvano.martello@uunibo.it", "silvano");
 		Teaching teaching1 = searchBean.findTeachingByName(teaching1Name);
 		Category content = new Category("Categoria Nuova","",null);
-		Content nuovaCat = profManager.appendContent(teaching1.getContentsRoot().getId(), content);
+		Content nuovaCat = profManager.appendContent(teaching1.getContentsRoot(), content);
 		assertEquals(previousContents+1, searchBean.getAllContents().size());
 		assertEquals(previousCategories+1, searchBean.findContentsByType(ContentType.CATEGORY).size());
 		assertEquals(1, searchBean.findContentsByTitle("Categoria Nuova").size());
@@ -173,7 +176,7 @@ public class ProfessorManagerBeanTestCase {//extends TestsCommon {
 		// Test: aggiunta da un assistente
 		helper.login("paolo.bellavista@uunibo.it", "paolo");
 		Information notice = new Information(ContentType.NOTICE,"Notizia Nuova","Notizia","",null);
-		profManager.appendContent(nuovaCat.getId(), notice);
+		profManager.appendContent(nuovaCat, notice);
 		assertEquals(previousNotices+1, searchBean.findContentsByType(ContentType.NOTICE).size());
 		assertEquals(1, searchBean.findContentsByTitle("Notizia Nuova").size());
 		helper.logout();
@@ -183,7 +186,7 @@ public class ProfessorManagerBeanTestCase {//extends TestsCommon {
 		Content notice2 = new Information(ContentType.NOTICE,"Notizia2","Notizia","",null);
 		try
 		{
-			profManager.appendContent(nuovaCat.getId(), notice2);
+			profManager.appendContent(nuovaCat, notice2);
 			fail();
 		}
 		catch (EJBException e) 
@@ -195,39 +198,39 @@ public class ProfessorManagerBeanTestCase {//extends TestsCommon {
 		helper.logout();
 	}
 
-//	@Test
-//	public void testRemoveContent() 
-//	{
-//		// Test del titolare
-//		helper.login("silvano.martello@unibo.it", "silvano");
-//
-//		Content cat1 = searchBean.findContentsByTitle(category1Name).get(0);
-//		Content mat1 = searchBean.findContentsByTitle(material1Name).get(0);
-//		profManager.removeContent(cat1.getId(), mat1.getId());
-//		assertEquals(3, searchBean.findContentsByType(ContentType.MATERIAL).size());
-//		assertEquals(0, searchBean.findContentsByTitle(material1Name).size());
-//		helper.logout();
-//	}
-//
-//	@Test
-//	public void testRemoveAllContents() 
-//	{
-//		// Test del titolare
-//		helper.login("silvano.martello@unibo.it", "silvano");
-//		Teaching teaching = searchBean.findTeachingByName(teaching1Name);
-//
-//		// Rimuovo tutto sotto il contentsRoot
-//		profManager.removeAllContents(teaching.getContentsRoot().getId());
-//		// Rimangono solo i contentsRoot e i contenuti del secondo teaching
-//		assertEquals(2+4, searchBean.getAllContents().size());
-//		assertEquals(1, searchBean.findContentsByType(ContentType.CATEGORY).size());
-//		assertEquals(1, searchBean.findContentsByType(ContentType.INFORMATION).size());
-//		assertEquals(0, searchBean.findContentsByType(ContentType.NOTICE).size());
-//		assertEquals(0, searchBean.findContentsByTitle(category1Name).size());
-//		assertEquals(0, searchBean.findContentsByTitle(material2Name).size());
-//		helper.logout();
-//	}
-//
+	@Test
+	public void testRemoveContent() 
+	{
+		// Test del titolare
+		helper.login("silvano.martello@uunibo.it", "silvano");
+
+		int previousMaterials = searchBean.findContentsByType(ContentType.MATERIAL).size();
+		Content cat = searchBean.findContentsByTitle(category1Name).get(0);
+		Content mat = searchBean.findContentsByTitle(material1Name).get(0);
+		profManager.removeContent(cat, mat);
+		assertEquals(previousMaterials-1, searchBean.findContentsByType(ContentType.MATERIAL).size());
+		assertEquals(0, searchBean.findContentsByTitle(material1Name).size());
+		
+		helper.logout();
+	}
+
+	@Test
+	public void testRemoveAllContents() 
+	{
+		// Test del titolare
+		helper.login("silvano.martello@uunibo.it", "silvano");
+		
+		int previousContents = searchBean.getAllContents().size();
+		Teaching teaching = searchBean.findTeachingByName(teaching2Name);
+
+		// Rimuovo tutto sotto il contentsRoot
+		profManager.removeAllContents(teaching.getContentsRoot());
+		// Rimangono solo i contentsRoot e i contenuti del secondo teaching
+		assertEquals(previousContents-6, searchBean.getAllContents().size());
+		
+		helper.logout();
+	}
+
 //	@Test
 //	public void testUpdateContent() 
 //	{
