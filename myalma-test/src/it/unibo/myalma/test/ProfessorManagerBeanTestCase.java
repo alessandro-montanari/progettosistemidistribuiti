@@ -13,6 +13,7 @@ import it.unibo.myalma.model.ContentType;
 import it.unibo.myalma.model.ContentsRoot;
 import it.unibo.myalma.model.Information;
 import it.unibo.myalma.model.Teaching;
+import it.unibo.myalma.model.User;
 import it.unibo.myalma.test.helpers.*;
 
 import org.junit.AfterClass;
@@ -38,102 +39,99 @@ public class ProfessorManagerBeanTestCase {//extends TestsCommon {
 	
 	
 	protected static final String teaching1Name = "Ricerca Operativa";
+	protected static final String assistant1Name = "Paolo";
+	protected static final String assistant2Name = "Giuseppe";
+	protected static final String assistant3Name = "Enrico";
 	
 	@BeforeClass
 	public static void setUp() throws Exception 
 	{
-//		init();
-//		cleanDB();
-//		fillDB();
-		
 		searchBean = (ISearch)helper.lookup("myalma-ear/SearchBean/remote");
 		profManager = (IProfessorManager)helper.lookup("myalma-ear/ProfessorManagerBean/remote");
 		automator.importData("./sql-scripts/myalma-dump.sql");
 	}
 
-	@AfterClass
-	public static void tearDown()
+	@Test
+	public void testAddAssistant() 
 	{
-//		cleanDB();
+		helper.login("silvano.martello@uunibo.it", "silvano");
+		User assistant = searchBean.findProfessorsByName(assistant2Name).get(0);
+		Teaching teaching1 = searchBean.findTeachingByName(teaching1Name);
+		
+		int previousAssistants = searchBean.findAssistantsByTeaching(teaching1.getId()).size();
+		int previousTeachingsForAssistant = searchBean.findTeachingsByAssistantName(assistant.getName()).size();
+
+		// Controllo l'aggiunta DAL titolare
+		profManager.addAssistant(teaching1, assistant);
+		assertEquals(previousAssistants+1, searchBean.findAssistantsByTeaching(teaching1.getId()).size());
+		assertEquals(previousTeachingsForAssistant+1, searchBean.findTeachingsByAssistantName(assistant.getName()).size());
+
+		// Controllo l'aggiunta DI un utente che non esiste
+		User notPersistentuser = new User("da", "sds", "adds", "dsd");
+		try
+		{
+			profManager.addAssistant(teaching1, notPersistentuser);
+			fail();
+		}
+		catch (Exception e) 
+		{}
+		helper.logout();
+
+		// Controllo l'aggiunta DA un utente che non è titolare dell'insegnamento
+		helper.login("paolo.bellavista@uunibo.it", "paolo");
+		try
+		{
+			profManager.addAssistant(teaching1, assistant);
+			fail();
+		}
+		catch (EJBException e) 
+		{ 
+			// Controllo che sia lanciata la giusta eccezione
+			assertEquals(PermissionException.class, e.getCause().getClass());
+		}
+		helper.logout();
 	}
 
-//	@Test
-//	public void testAddAssistant() 
-//	{
-//		helper.login("silvano.martello@unibo.it", "silvano");
-//		// Controllo l'aggiunta dall'inizializzazione
-//		Teaching teaching1 = searchBean.findTeachingByName(teaching1Name);
-//		assertEquals(1, searchBean.findAssistantsByTeaching(teaching1.getId()).size());
-//
-//		// Controllo l'aggiunta DAL titolare
-//		User u = searchBean.findProfessorsByName(assistant2Name).get(0);
-//		profManager.addAssistant(teaching1.getId(), u.getMail());
-//		assertEquals(2, searchBean.findAssistantsByTeaching(teaching1.getId()).size());
-//		assertEquals(2, searchBean.findTeachingsByAssistantName(u.getName()).size());
-//
-//		// Controllo l'aggiunta DI un utente che non esiste
-//		User notPersistentuser = new User("da", "sds", "adds", "dsd");
-//		try
-//		{
-//			profManager.addAssistant(teaching1.getId(), notPersistentuser.getMail());
-//			fail();
-//		}
-//		catch (Exception e) 
-//		{}
-//		helper.logout();
-//
-//		// Controllo l'aggiunta DA un utente che non è titolare dell'insegnamento
-//		helper.login("paolo.bellavista@unibo.it", "paolo");
-//		try
-//		{
-//			profManager.addAssistant(teaching1.getId(), u.getMail());
-//			fail();
-//		}
-//		catch (EJBException e) 
-//		{ 
-//			// Controllo che sia lanciata la giusta eccezione
-//			assertEquals(PermissionException.class, e.getCause().getClass());
-//		}
-//		helper.logout();
-//	}
-//
-//	@Test
-//	public void testRemoveAssistant()
-//	{
-//		helper.login("silvano.martello@unibo.it", "silvano");
-//		
-//		Teaching teaching1 = searchBean.findTeachingByName(teaching1Name);
-//
-//		User u = searchBean.findProfessorsByName(assistant1Name).get(0);
-//		profManager.removeAssistant(teaching1.getId(), u.getMail());
-//		assertEquals(0, searchBean.findTeachingsByAssistantName(u.getName()).size());
-//		profManager.addAssistant(teaching1.getId(), u.getMail());
-//		helper.logout();
-//	}
-//
-//	@Test
-//	public void testUpdatePersonalInfo() 
-//	{
-//		helper.login("alessandro.montanar5@studio.unibo.it", "ale");
-//		User u = searchBean.findProfessorsByName("Alessandro").get(0);
-//		assertEquals("Alessandro", u.getName());
-//		profManager.updatePersonalInfo("name", "Montanari");
-//		u = searchBean.findProfessorsByName("Montanari").get(0);
-//		assertEquals("Montanari", u.getName());
-//		profManager.updatePersonalInfo("name", "Alessandro");
-//
-//		// Test su campo inesistente
-//		try
-//		{
-//			profManager.updatePersonalInfo("names", "Montanari");
-//		}
-//		catch (EJBException e) 
-//		{ 
-//			// Controllo che sia lanciata la giusta eccezione
-//			assertEquals(IllegalArgumentException.class, e.getCause().getClass());
-//		}
-//		helper.logout();
-//	}
+	@Test
+	public void testRemoveAssistant()
+	{
+		helper.login("silvano.martello@uunibo.it", "silvano");
+		
+		Teaching teaching1 = searchBean.findTeachingByName(teaching1Name);
+		User assistant = searchBean.findProfessorsByName(assistant3Name).get(0);
+		
+		int previousTeachingsForAssistant = searchBean.findTeachingsByAssistantName(assistant.getName()).size();
+		
+		profManager.removeAssistant(teaching1, assistant);
+		
+		assertEquals(previousTeachingsForAssistant-1, searchBean.findTeachingsByAssistantName(assistant.getName()).size());
+		
+		helper.logout();
+	}
+
+	@Test
+	public void testUpdatePersonalInfo() 
+	{
+		helper.login("alessandro.montanar5@studio.unibo.it", "ale");
+		User u = searchBean.findProfessorsByName("Alessandro").get(0);
+		assertEquals("Alessandro", u.getName());
+		profManager.updatePersonalInfo("name", "Montanari");
+		u = searchBean.findProfessorsByName("Montanari").get(0);
+		assertEquals("Montanari", u.getName());
+		profManager.updatePersonalInfo("name", "Alessandro");
+
+		// Test su campo inesistente
+		try
+		{
+			profManager.updatePersonalInfo("names", "Montanari");
+		}
+		catch (EJBException e) 
+		{ 
+			// Controllo che sia lanciata la giusta eccezione
+			assertEquals(IllegalArgumentException.class, e.getCause().getClass());
+		}
+		helper.logout();
+	}
 	
 	@Test
 	public void testMoveContent() 

@@ -6,7 +6,8 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({ AdministrationBeanTestCase.class,
-		ProfessorManagerBeanTestCase.class, SearchBeanTestCase.class })
+				ProfessorManagerBeanTestCase.class, 
+				SearchBeanTestCase.class })
 public class AllTests {
 
 }
