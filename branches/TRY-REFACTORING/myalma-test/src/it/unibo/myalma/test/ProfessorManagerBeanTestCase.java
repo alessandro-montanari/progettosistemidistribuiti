@@ -4,19 +4,14 @@ import static org.junit.Assert.*;
 
 import javax.ejb.EJBException;
 
-import it.unibo.myalma.business.administration.IAdministration;
 import it.unibo.myalma.business.professor.IProfessorManager;
 import it.unibo.myalma.business.exceptions.PermissionException;
 import it.unibo.myalma.business.search.ISearch;
 import it.unibo.myalma.model.Category;
 import it.unibo.myalma.model.Content;
 import it.unibo.myalma.model.ContentType;
-import it.unibo.myalma.model.ContentsRoot;
 import it.unibo.myalma.model.Information;
-import it.unibo.myalma.model.Material;
-import it.unibo.myalma.model.Role;
 import it.unibo.myalma.model.Teaching;
-import it.unibo.myalma.model.User;
 import it.unibo.myalma.test.helpers.*;
 
 import org.junit.AfterClass;
@@ -30,6 +25,9 @@ import org.junit.Test;
  * 	Arquillian è pò complesso da utilizzare se non si usa Maven e in caso di logi di utenti, quindi per questi motivi non è stato
  * 	utilizzato qui.
  */
+
+//Decommentare il modulo di login per il testing in myalma-ear/META-INF/myalma-jboss-beans.xml
+
 public class ProfessorManagerBeanTestCase {//extends TestsCommon {
 
 	static TestHelper helper = new TestHelper();
@@ -39,9 +37,6 @@ public class ProfessorManagerBeanTestCase {//extends TestsCommon {
 	
 	
 	protected static final String teaching1Name = "Ricerca Operativa";
-	
-	
-	
 	
 	@BeforeClass
 	public static void setUp() throws Exception 

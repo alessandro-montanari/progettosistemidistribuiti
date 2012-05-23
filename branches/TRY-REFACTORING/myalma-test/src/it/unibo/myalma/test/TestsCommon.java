@@ -109,8 +109,6 @@ public abstract class TestsCommon
 		teaching2 = adminBean.addTeaching(teaching2, editor2.getMail(), null);
 		teaching2 = new Teaching(6,1,"MAT","Denti vs Trenitalia",null);
 		teaching2 = adminBean.addTeaching(teaching2, editor2.getMail(), null);
-
-
 		helper.logout();
 	}
 
