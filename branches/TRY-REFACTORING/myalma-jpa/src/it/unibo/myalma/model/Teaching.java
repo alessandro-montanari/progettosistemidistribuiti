@@ -54,6 +54,9 @@ public class Teaching implements Serializable {
 		this.name = name;
 		this.contentsRoot = contentsRoot;
 	}
+	public Teaching(int cfu, int yearOfCourse, String ssd, String name) {
+		this(cfu, yearOfCourse, ssd, name, null);
+	}
 	
 	public int getCfu() {
 		return this.cfu;
