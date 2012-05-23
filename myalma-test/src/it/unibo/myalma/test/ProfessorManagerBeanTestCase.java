@@ -10,6 +10,7 @@ import it.unibo.myalma.business.search.ISearch;
 import it.unibo.myalma.model.Category;
 import it.unibo.myalma.model.Content;
 import it.unibo.myalma.model.ContentType;
+import it.unibo.myalma.model.ContentsRoot;
 import it.unibo.myalma.model.Information;
 import it.unibo.myalma.model.Teaching;
 import it.unibo.myalma.test.helpers.*;
@@ -137,36 +138,45 @@ public class ProfessorManagerBeanTestCase {//extends TestsCommon {
 	@Test
 	public void testMoveContent() 
 	{
-//		helper.login("silvano.martello@uunibo.it", "silvano");
-//		Content parent = searchBean.findContentById(3331);
-//		Category child = (Category)searchBean.findContentById(3334);
-//		profManager.removeContent(parent.getId(), child.getId());
-//		ContentsRoot newParent = (ContentsRoot)searchBean.findContentById(3329);
-//		profManager.appendContent(newParent.getId(), child);
-//		helper.logout();
+		helper.login("silvano.martello@uunibo.it", "silvano");
+		
+		Content parent = searchBean.findContentById(3331);
+		Content child = searchBean.findContentById(3334);
+		int previousContents = searchBean.findContentsByTitle(child.getTitle()).size();
+		child = profManager.removeContent(parent.getId(), child.getId());
+		
+		assertEquals(previousContents-1, searchBean.findContentsByTitle(child.getTitle()).size());
+		
+		ContentsRoot newParent = (ContentsRoot)searchBean.findContentById(3329);
+		profManager.appendContent(newParent.getId(), child);
+		
+		assertEquals(previousContents, searchBean.findContentsByTitle(child.getTitle()).size());
+		helper.logout();
 	}
 
 	@Test
 	public void testAppendContent() 
 	{
 		// Controllo l'aggiunta dall'inizializzazione
-		assertEquals(35, searchBean.getAllContents().size());
-
+		int previousContents = searchBean.getAllContents().size();
+		int previousCategories = searchBean.findContentsByType(ContentType.CATEGORY).size();
+		int previousNotices = searchBean.findContentsByType(ContentType.NOTICE).size();
+		
 		// Test del titolare
 		helper.login("silvano.martello@uunibo.it", "silvano");
 		Teaching teaching1 = searchBean.findTeachingByName(teaching1Name);
 		Category content = new Category("Categoria Nuova","",null);
-		int nuovaCatId = profManager.appendContent(teaching1.getContentsRoot().getId(), content);
-		assertEquals(36, searchBean.getAllContents().size());
-		assertEquals(14+1, searchBean.findContentsByType(ContentType.CATEGORY).size());
+		Content nuovaCat = profManager.appendContent(teaching1.getContentsRoot().getId(), content);
+		assertEquals(previousContents+1, searchBean.getAllContents().size());
+		assertEquals(previousCategories+1, searchBean.findContentsByType(ContentType.CATEGORY).size());
 		assertEquals(1, searchBean.findContentsByTitle("Categoria Nuova").size());
 		helper.logout();
 
 		// Test: aggiunta da un assistente
 		helper.login("paolo.bellavista@uunibo.it", "paolo");
 		Information notice = new Information(ContentType.NOTICE,"Notizia Nuova","Notizia","",null);
-		profManager.appendContent(nuovaCatId, notice);
-		assertEquals(3+1, searchBean.findContentsByType(ContentType.NOTICE).size());
+		profManager.appendContent(nuovaCat.getId(), notice);
+		assertEquals(previousNotices+1, searchBean.findContentsByType(ContentType.NOTICE).size());
 		assertEquals(1, searchBean.findContentsByTitle("Notizia Nuova").size());
 		helper.logout();
 
@@ -175,7 +185,7 @@ public class ProfessorManagerBeanTestCase {//extends TestsCommon {
 		Content notice2 = new Information(ContentType.NOTICE,"Notizia2","Notizia","",null);
 		try
 		{
-			profManager.appendContent(nuovaCatId, notice2);
+			profManager.appendContent(nuovaCat.getId(), notice2);
 			fail();
 		}
 		catch (EJBException e) 
@@ -183,7 +193,7 @@ public class ProfessorManagerBeanTestCase {//extends TestsCommon {
 			// Controllo che sia lanciata la giusta eccezione
 			assertEquals(PermissionException.class, e.getCause().getClass());
 		}
-		assertEquals(3+1, searchBean.findContentsByType(ContentType.NOTICE).size());
+		assertEquals(previousNotices+1, searchBean.findContentsByType(ContentType.NOTICE).size());
 		helper.logout();
 	}
 

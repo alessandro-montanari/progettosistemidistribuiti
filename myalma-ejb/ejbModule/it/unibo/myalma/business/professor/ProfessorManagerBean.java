@@ -131,7 +131,7 @@ public class ProfessorManagerBean implements IProfessorManager
 	}
 
 	@Override
-	public int appendContent(int parentId, Content content) 
+	public Content appendContent(int parentId, Content content) 
 	{
 		User prof = entityManager.find(User.class, context.getCallerPrincipal().getName());
 		Content parent = entityManager.find(Content.class, parentId);
@@ -152,11 +152,12 @@ public class ProfessorManagerBean implements IProfessorManager
 												// cos“ viene valorizzato l'Id di content e posso restituirlo al termine del metodo e utilizzarlo
 												// nella creazione del messaggio JMS
 		}
+		else // Contenuto spostato quindi merge prima di appenderlo, altrimenti errore al flush(): persist on a detach entity!
+		{
+			content = entityManager.merge(content);
+		}
 		
-		// else: Contenuto probabilmente spostato quindi niente da fare
-		
-		parent.appendContent(content);		
-		
+		content = parent.appendContent(content);
 
 		entityManager.flush();		// Cos“ sono sicuro che le modifiche saranno riportate sul DB prima che il messaggio sia
 		// effettivamente inviato (al termine della transazione) (http://www.coderanch.com/t/321201/EJB-JEE/java/Stateless-session-bean-CMT-sending)
@@ -166,11 +167,11 @@ public class ProfessorManagerBean implements IProfessorManager
 
 		sendMessage(createMessage(content, TypeOfChange.INSERT));
 
-		return content.getId();
+		return content;
 	}
 
 	@Override
-	public void removeContent(int parentId, int contentId) 
+	public Content removeContent(int parentId, int contentId) 
 	{
 		User prof = entityManager.find(User.class, context.getCallerPrincipal().getName());
 		Content parent = entityManager.find(Content.class, parentId);
@@ -186,9 +187,13 @@ public class ProfessorManagerBean implements IProfessorManager
 		// solo al commit della transazione, altrimenti non viene inviato
 		sendMessage(createMessage(content, TypeOfChange.REMOVE));
 
-		parent.removeContent(content);
+		content = parent.removeContent(content);
+
 
 		entityManager.flush(); 	// Come sopra mi assicuro di riportare le modifiche prima dell'invio del messaggio
+
+		
+		return content;
 	}
 
 	@Override

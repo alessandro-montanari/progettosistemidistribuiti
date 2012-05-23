@@ -11,8 +11,8 @@ public interface IProfessorManager
 	void addAssistant(int teachingId, String assistantMail);
 	void removeAssistant(int teachingId, String assistantMail);
 
-	int appendContent(int parentId, Content content);
-	void removeContent(int parentId, int contentId);
+	Content appendContent(int parentId, Content content);
+	Content removeContent(int parentId, int contentId);
 	void removeAllContents(int parentId);
 
 	// In questo modo faccio un giro (rete) per ogni dato da modificare che è meglio dato che raramente si modificano tutti i dati in una volta
