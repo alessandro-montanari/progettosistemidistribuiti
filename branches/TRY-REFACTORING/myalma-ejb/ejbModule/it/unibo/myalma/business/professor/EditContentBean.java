@@ -130,7 +130,9 @@ public class EditContentBean implements IEditContent
 		else if(contentDB.getParentContent().getId() != parentContent.getId())
 		{
 			// Il contenuto è già presente nel DB ed è stato spostato 
-			profManager.removeContent(contentDB.getParentContent(), contentDB);
+			
+			// Il contenuto viene rimosso dal suo parent originale e inserito in quello nuovo
+			profManager.removeContent(contentDB);
 			contentId = profManager.appendContent(parentContent, content).getId();
 		}
 		else
@@ -204,7 +206,7 @@ public class EditContentBean implements IEditContent
 		if(parentContent == null)
 			throw new IllegalStateException("Impossible to delete a content from a null category");
 		
-		profManager.removeContent(parentContent, content);
+		profManager.removeContent(content);
 		
 		events.raiseTransactionSuccessEvent("contentDeleted",content.getId());
 	}
