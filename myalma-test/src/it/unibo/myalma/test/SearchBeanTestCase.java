@@ -10,12 +10,6 @@ import it.unibo.myalma.business.search.ISearch;
 import it.unibo.myalma.model.ContentType;
 import it.unibo.myalma.test.helpers.*;
 
-/**
- * 
- * @author Alessandro Montanari
- *
- */
-
 // Decommentare il modulo di login per il testing in myalma-ear/META-INF/myalma-jboss-beans.xml
 
 // Prima classe testata

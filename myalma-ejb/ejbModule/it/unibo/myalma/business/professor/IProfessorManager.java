@@ -13,13 +13,19 @@ public interface IProfessorManager
 	void removeAssistant(Teaching teachingId, User assistant);
 
 	Content appendContent(Content parent, Content content);
-	Content removeContent(Content parent, Content content);
-	void removeAllContents(Content parent);
-
-	void updateContent(int contentId, String whatToModify, String newValue);
 	
-	// Metodo di comodo: aggiorna solo le proprietà del contenuto ma ignora eventuali modifiche rigurdanti il parent e il root (per questi utilizzare
-	// i metodi append e remove del bean)
+	// La chiave primaria del contenuto passato viene utilizzata per identificarlo univocamente nel DB
+	Content removeContent(Content content);
+	
+	// Dato che il titolo dei contenuti non è univoco nel DB deve essere passato anche il parent da cui rimuoverlo
+	Content removeContent(Content parent, String contentTitle);
+	
+	void removeAllChildContents(Content parent);
+
+	Content updateContent(int contentId, String whatToModify, String newValue);
+	
+	// Metodo di comodo: aggiorna solo le proprietà del contenuto ma ignora eventuali modifiche rigurdanti il parent e il root 
+	// (per questi utilizzare si metodi append e remove del bean)
 	// Utile quando si modificano diverse proprietà in un colpo solo
-	void updateContent(Content content);
+	Content updateContent(Content content);
 }

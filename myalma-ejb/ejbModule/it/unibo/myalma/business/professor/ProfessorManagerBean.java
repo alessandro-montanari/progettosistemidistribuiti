@@ -10,10 +10,8 @@ import it.unibo.myalma.model.User;
 
 import javax.annotation.Resource;
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.EJBException;
 import javax.ejb.Remote;
 import javax.ejb.SessionContext;
-import javax.ejb.SessionSynchronization;
 import javax.ejb.Stateless;
 import javax.jms.Connection;
 import javax.jms.MessageProducer;
@@ -23,13 +21,11 @@ import javax.jms.Topic;
 import javax.jms.TopicConnectionFactory;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.transaction.Synchronization;
 
 import org.jboss.logging.Logger;
 import org.jboss.seam.annotations.Name;
 
 import java.lang.reflect.Method;
-import java.rmi.RemoteException;
 
 import javax.ejb.Local;
 
@@ -157,52 +153,70 @@ public class ProfessorManagerBean implements IProfessorManager
 	}
 
 	@Override
-	public Content removeContent(Content parent, Content content) 
+	public Content removeContent(Content content) 
 	{
 		User prof = entityManager.find(User.class, context.getCallerPrincipal().getName());
-		Content parentDB = entityManager.find(Content.class, parent.getId());
+		Content contentDB = entityManager.find(Content.class, content.getId());
 
-		if(parentDB == null)
-			throw new IllegalArgumentException("The parent content provided is not valid");
-		if(!checkTeachingPermission(parentDB, prof))
+		if(contentDB == null)
+			throw new IllegalArgumentException("The content provided is not valid");
+		
+		// Devo fare così (invece di parent = contentDB.getParentContent()) perché alrimenti in checkTeachingPermission quando faccio
+		// il cast a ContentsRoot mi da eccezione (impossibile fare il cast)
+		Content parent = entityManager.find(Content.class, contentDB.getParentContent().getId());
+		
+		if(!checkTeachingPermission(parent, prof))
 			throw new PermissionException("The user " + prof.getMail() + " has no permission for the operation");
 
-		Content contentDB = entityManager.find(Content.class, content.getId());
-		
-		if(contentDB == null)
-			throw new IllegalArgumentException("The content " + content.getTitle() + " is not present in the system");
-
-		parentDB.setModifier(prof);
+		parent.setModifier(prof);
 
 		// Non è un problema inviare il messaggio qui (prima della rimozione) perché comunque il messaggio viene effettivamente inviato
 		// solo al commit della transazione, altrimenti non viene inviato
 		sendMessage(createMessage(contentDB, TypeOfChange.REMOVE));
 
-		contentDB = parentDB.removeContent(contentDB);
-
+		contentDB = parent.removeContent(contentDB);
 
 		entityManager.flush(); 	// Come sopra mi assicuro di riportare le modifiche prima dell'invio del messaggio
-
 		
 		return contentDB;
 	}
-
+	
 	@Override
-	public void removeAllContents(Content parent) 
+	public Content removeContent(Content parent, String contentTitle) 
 	{
 		Content parentDB = entityManager.find(Content.class, parent.getId());
+		
+		if(parentDB == null)
+			throw new IllegalArgumentException("The parent provided is not valid");
+		
+		for(Content content : parentDB.getChildContents())
+		{
+			if(content.getTitle().equals(contentTitle))
+			return removeContent(content);
+		}
+		
+		throw new IllegalArgumentException("Impossible to find the content with name " + contentTitle);
+	}
+
+	@Override
+	public void removeAllChildContents(Content parent) 
+	{
+		Content parentDB = entityManager.find(Content.class, parent.getId());
+		
+		if(parentDB == null)
+			throw new IllegalArgumentException("The parent provided is not valid");
 
 		for (Content cont : parentDB.getChildContents().toArray(new Content[0])) 
 		{
-			removeContent(parentDB, cont);
+			removeContent(cont);
 		}	
 	}
 
-	// Metodo di comodo: aggiorna solo le proprietà del contenuto ma ignora eventuali modifiche rigurdanti il parent e il root (per questi utilizzare
-	// i metodi append e remove del bean)
+	// Metodo di comodo: aggiorna solo le proprietà del contenuto ma ignora eventuali modifiche rigurdanti il parent e il root 
+	// (per questi utilizzare i metodi append e remove del bean)
 	// Utile quando si modificano diverse proprietà in un colpo solo
 	@Override
-	public void updateContent(Content content) 
+	public Content updateContent(Content content) 
 	{
 		User prof = null;
 		Content contentDB = null;
@@ -212,7 +226,6 @@ public class ProfessorManagerBean implements IProfessorManager
 
 		if(contentDB == null)
 			throw new IllegalArgumentException("The content is not present in the DB, add it first");
-
 		if(!checkTeachingPermission(contentDB, prof))
 			throw new PermissionException("The user " + prof.getMail() + " has no permission for the operation");
 
@@ -238,11 +251,11 @@ public class ProfessorManagerBean implements IProfessorManager
 
 		sendMessage(createMessage(content, TypeOfChange.CHANGE));
 
-		return;
+		return contentDB;
 	}
 
 	@Override
-	public void updateContent(int contentId, String whatToModify, String newValue)
+	public Content updateContent(int contentId, String whatToModify, String newValue)
 	{
 		if(newValue == null || newValue.equals(""))
 			throw new IllegalArgumentException("New value can not be empty");
@@ -276,7 +289,7 @@ public class ProfessorManagerBean implements IProfessorManager
 
 		sendMessage(createMessage(content, TypeOfChange.CHANGE));
 
-		return;
+		return content;
 	}
 
 	@Override
@@ -346,7 +359,9 @@ public class ProfessorManagerBean implements IProfessorManager
 
 		if(asisstantDB == null)
 			throw new IllegalArgumentException("The user " + assistant.getMail() + " is not present in the system");
-
+		if(!(t.getContentsRoot().getAuthors().contains(asisstantDB)))
+			throw new IllegalArgumentException("The user " + assistant.getMail() + " is not an assistant for " + t.getName());
+	
 		t.getContentsRoot().getAuthors().remove(asisstantDB);
 	}
 }
