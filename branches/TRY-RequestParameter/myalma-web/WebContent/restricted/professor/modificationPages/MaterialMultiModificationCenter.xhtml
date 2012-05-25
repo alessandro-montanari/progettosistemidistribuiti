@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<ui:composition template="">
+	<!-- 
+			<rich:layoutPanel rendered="#{param['multi']}" position="center"
+				style="padding-top:10px">
+
+				<table cellpadding="5px">
+					<tr>
+						<td><b>Nuovi file da aggiungere:</b> <br /> <h:form>
+
+								<rich:panel id="info" style="font-size:12px">
+									<f:facet name="header">
+										<h:outputText value="Uploaded Files Info" />
+									</f:facet>
+									<h:outputText value="Nessun file caricato"
+										rendered="#{fileUploadBean.size==0}" />
+									<rich:dataGrid columns="1" value="#{fileUploadBean.files}"
+										var="file" rowKeyVar="row">
+										<rich:panel bodyClass="rich-laguna-panel-no-header">
+											<h:panelGrid style="font-size:12px" columns="2">
+												<h:outputText style="font-weight:bold" value="Nome File:" />
+												<h:outputText value="#{file.fileName}" />
+												<h:outputText style="font-weight:bold"
+													value="Dimensione (bytes):" />
+												<h:outputText value="#{file.fileSize}" />
+												<h:outputText style="font-weight:bold" value="Titolo:" />
+												<h:inputText value="" />
+												<h:outputText style="font-weight:bold" value="Descrizione:" />
+												<h:inputTextarea value="" />
+												<a4j:commandButton value="Elimina" />
+											</h:panelGrid>
+										</rich:panel>
+									</rich:dataGrid>
+									<a4j:commandButton action="#{fileUploadBean.clearUploadData}"
+										reRender="info, upload" value="Pulisci tutto"
+										rendered="#{fileUploadBean.size>0}" />
+								</rich:panel>
+								<rich:fileUpload autoclear="true" doneLabel="Fatto!"
+									addControlLabel="Aggiungi..."
+									clearAllControlLabel="Pulisci tutto"
+									cancelEntryControlLabel="Elimina" clearControlLabel="Elimina"
+									id="upload" noDuplicate="true" maxFilesQuantity="10"
+									fileUploadListener="#{fileUploadBean.processUpload}">
+									<a4j:support event="onuploadcomplete" reRender="info" />
+								</rich:fileUpload>
+
+
+
+
+
+
+							</h:form></td>
+
+					</tr>
+
+				</table>
+
+
+			</rich:layoutPanel>
+			 -->
+	</ui:composition>
+</html>
