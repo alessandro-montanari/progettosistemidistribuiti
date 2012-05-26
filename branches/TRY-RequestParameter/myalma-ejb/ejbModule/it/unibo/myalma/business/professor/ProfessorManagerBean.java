@@ -54,10 +54,6 @@ public class ProfessorManagerBean implements IProfessorManager
 
 	@Resource(mappedName="/jms/topics/contentEvents") 
 	private Topic eventsTopic;
-	
-	public ProfessorManagerBean()
-	{
-	}
 
 	private void sendMessage(String message)
 	{
@@ -142,10 +138,15 @@ public class ProfessorManagerBean implements IProfessorManager
 		content = parentDB.appendContent(content);
 
 		entityManager.flush();		// Così sono sicuro che le modifiche saranno riportate sul DB prima che il messaggio sia
-		// effettivamente inviato (al termine della transazione) (http://www.coderanch.com/t/321201/EJB-JEE/java/Stateless-session-bean-CMT-sending)
+		// effettivamente inviato (al termine della transazione).
 		// In pratica sia le modifiche al DB che l'invio del messaggio sono effettuate al commit della transazine
 		// corrente ma dato che non so in che ordine vengono eseguite (se prima messaggio di modifiche potrebbe essere
-		// un problema) preferisco forzare le modifiche sul DB (TODO ATTENZIONE POTREBBE NON ESSERE VERO)
+		// un problema) preferisco forzare le modifiche sul DB.
+		// Sembra che non sia possibile intercettare la chiusura della transazione corrente in SLSB e in effetti ha senso dato
+		// che ogni transazione è chiusa alla conclusione del metodo, in uno SFSB è diverso e si puà implementare l'interfaccia
+		// SessionSynchronization
+		// References: 	- http://www.coderanch.com/t/321201/EJB-JEE/java/Stateless-session-bean-CMT-sending
+		//				- http://error0.wordpress.com/2010/11/16/howto-send-jms-notification-after-a-commit-of-container-managed-ejb-transactions/
 
 		sendMessage(createMessage(content, TypeOfChange.INSERT));
 
@@ -174,11 +175,11 @@ public class ProfessorManagerBean implements IProfessorManager
 		// solo al commit della transazione, altrimenti non viene inviato
 		sendMessage(createMessage(contentDB, TypeOfChange.REMOVE));
 
-		contentDB = parent.removeContent(contentDB);
+		content = parent.removeContent(contentDB);
 
 		entityManager.flush(); 	// Come sopra mi assicuro di riportare le modifiche prima dell'invio del messaggio
 		
-		return contentDB;
+		return content;
 	}
 	
 	@Override
@@ -318,7 +319,7 @@ public class ProfessorManagerBean implements IProfessorManager
 	}
 	
 	
-	/**
+	/*
 	 * I due metodi successivi usano Teaching e User solo per la loro chiave primaria per andare a prendere nel DB l'oggetto managed
 	 * corrispondente, quindi invece di passare l'intero oggetto si potrebbe passare solo la chiave primaria (era così in una vecchia
 	 * versione), però è stato deciso di passare l'oggetto per avere un codice più leggibile quando vengono invocati tali metodi.

@@ -14,7 +14,7 @@
 	</page>
 	
 	<page view-id="/restricted/professor/modificationPages/MaterialModificationCenter.xhtml">
-		<param name="contentId" value="#{materialManager.contentId}"/>
+		<!--  <param name="contentId" value="#{materialManager.contentId}"/> -->
 		
 		<!--  Vedere di utilizzare una factory bean -->
 		<navigation from-action="#{materialManager.save}">
@@ -32,17 +32,21 @@
 		</navigation>
 	</page>
 	
+	
 	<page view-id="/restricted/professor/modificationPages/InformationModificationCenter.xhtml">
-		<param name="contentId" value="#{contentManager.contentId}"/>
+		<!--  <param name="contentId" value="#{contentManager.contentId}"/> -->
+		<action execute="#{contentManager.edit}"/>
 	</page>
 	
+	<!-- 
 	<page view-id="/restricted/professor/modificationPages/CategoryModificationCenter.xhtml">
 		<param name="contentId" value="#{contentManager.contentId}"/>
 	</page>
+	 -->
 
 	<!-- Questa regola cattura gli eventi che provengono dalle pagine di modifica, così non ripeto le regole (ci deve essere asterisco) -->
 	<page view-id="/restricted/professor/modificationPages/*">
-		<navigation from-action="cancel">
+		<navigation from-action="#{contentManager.cancel}">
 			<end-conversation />
 			<redirect view-id="/restricted/professor/TeachingExplore.xhtml">
 				<message>Modifiche annullate</message>
@@ -68,8 +72,9 @@
 
 
 	<page view-id="/restricted/professor/TeachingExplore.xhtml"> 
-		<!-- Con questo parametro conviene fare come con i materiali, inserirlo solo dopo ogni click su modifica o aggiungi -->
+		<!-- Con questo parametro conviene fare come con i materiali, inserirlo solo dopo ogni click su modifica o aggiungi 
 		<param name="contentId"/>
+		-->
 		
 		<navigation from-action="cancel">
 			<rule>
@@ -81,28 +86,28 @@
 		<!-- Questa regola cattura gli eventi di MODIFICA di contenuti (vedi from-action) -->
 		<navigation evaluate="#{param['contentType']}" from-action="modifyContent">
 			<rule if-outcome="INFORMATION">
-				<begin-conversation nested="true"/>
+				<begin-conversation nested="true" flush-mode="manual"/>
 				<redirect view-id="/restricted/professor/modificationPages/InformationModificationCenter.xhtml" >
 					<param name="new" value="false"/>
 					<param name="contentId" value="#{param['contentId']}" />
 				</redirect>
 			</rule>
 			<rule if-outcome="NOTICE">
-				<begin-conversation nested="true" />
+				<begin-conversation nested="true" flush-mode="manual"/>
 				<redirect view-id="/restricted/professor/modificationPages/InformationModificationCenter.xhtml" >
 					<param name="new" value="false"/>
 					<param name="contentId" value="#{param['contentId']}" />
 				</redirect>
 			</rule>
 			<rule if-outcome="CATEGORY">
-				<begin-conversation nested="true" />
+				<begin-conversation nested="true" flush-mode="manual"/>
 				<redirect view-id="/restricted/professor/modificationPages/CategoryModificationCenter.xhtml" >
 					<param name="new" value="false"/>
 					<param name="contentId" value="#{param['contentId']}" />
 				</redirect>
 			</rule>
 			<rule if-outcome="MATERIAL">
-				<begin-conversation nested="true" />
+				<begin-conversation nested="true" flush-mode="manual"/>
 				<redirect view-id="/restricted/professor/modificationPages/MaterialModificationCenter.xhtml">
 					<param name="new" value="false"/>
 					<param name="multi" value="false"/>
@@ -114,25 +119,25 @@
 		<!-- Questa regola cattura gli eventi di aggiunta di NUOVI contenuti -->
 		<navigation evaluate="#{param['contentType']}">
 			<rule if-outcome="INFORMATION">
-				<begin-conversation nested="true" />
+				<begin-conversation nested="true" flush-mode="manual"/>
 				<redirect view-id="/restricted/professor/modificationPages/InformationModificationCenter.xhtml">
 					<param name="new" value="true"/>
 				</redirect>
 			</rule>
 			<rule if-outcome="NOTICE">
-				<begin-conversation nested="true" />
+				<begin-conversation nested="true" flush-mode="manual"/>
 				<redirect view-id="/restricted/professor/modificationPages/InformationModificationCenter.xhtml">
 					<param name="new" value="true"/>
 				</redirect>
 			</rule>
 			<rule if-outcome="CATEGORY">
-				<begin-conversation nested="true" />
+				<begin-conversation nested="true" flush-mode="manual"/>
 				<redirect view-id="/restricted/professor/modificationPages/CategoryModificationCenter.xhtml">
 					<param name="new" value="true"/>
 				</redirect>
 			</rule>
 			<rule if-outcome="MATERIAL">
-				<begin-conversation nested="true" />
+				<begin-conversation nested="true" flush-mode="manual"/>
 				<redirect view-id="/restricted/professor/modificationPages/MaterialModificationCenter.xhtml">
 					<param name="new" value="true"/>
 					<param name="multi" value="true"/>

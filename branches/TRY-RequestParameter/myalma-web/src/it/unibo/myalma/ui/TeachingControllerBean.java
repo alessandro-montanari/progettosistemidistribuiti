@@ -13,7 +13,6 @@ import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Observer;
 import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Out;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.core.Events;
 import org.richfaces.component.UITree;
@@ -29,11 +28,7 @@ import org.richfaces.component.state.TreeState;
 @Scope(ScopeType.CONVERSATION)
 public class TeachingControllerBean 
 {
-
-	// Entity manager esteso alla conversazione corrente e gestito da Seam
-	// Faccio l'Out così lo posso usare in EditContentBean
 	@In
-	@Out(scope=ScopeType.CONVERSATION,value="ExtendedPersistenceContext")
 	private EntityManager entityManager;
 	
 	@In
@@ -50,26 +45,26 @@ public class TeachingControllerBean
 	@Observer("contentDeleted")
 	public void contentDeletedListener(int contentId)
 	{	
-		// Questo codice lancia un'eccezione che non sembra fare danni
-		
-		Content contentDB = entityManager.find(Content.class, contentId);
-		
-		// Se il contenuto eliminato è una categoria proprio sotto il ContentsRoot metto root a null
-		// così rigenero i nodi sotto a ContentsRoot
-		if(contentDB.getParentContent().getContentType().equals(ContentType.CONTENTS_ROOT))
-			this.root = null;
-		
-		// **************** Possibile punto debole per performance (pesante accesso al DB) ****************
-		entityManager.refresh(contentDB);
+//		// Questo codice lancia un'eccezione che non sembra fare danni
+//		
+//		Content contentDB = entityManager.find(Content.class, contentId);
+//		
+//		// Se il contenuto eliminato è una categoria proprio sotto il ContentsRoot metto root a null
+//		// così rigenero i nodi sotto a ContentsRoot
+//		if(contentDB.getParentContent().getContentType().equals(ContentType.CONTENTS_ROOT))
+//			this.root = null;
+//		
+//		//TODO **************** Possibile punto debole per performance (pesante accesso al DB) ****************
+//		entityManager.refresh(contentDB);
 	}
 	
 	@Observer("contentSaved")
 	public void contentSavedListener(int contentId)
 	{
-		Content contentDB = entityManager.find(Content.class, contentId);
-		
-		// **************** Possibile punto debole per performance (pesante accesso al DB) ****************
-		entityManager.refresh(contentDB);
+//		Content contentDB = entityManager.find(Content.class, contentId);
+//		
+//		//TODO **************** Possibile punto debole per performance (pesante accesso al DB) ****************
+//		entityManager.refresh(contentDB);
 	}
 
 	public int getTeachingId()

@@ -21,14 +21,16 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Observer;
 import org.jboss.seam.annotations.Out;
 import org.jboss.seam.annotations.Scope;
+import org.jboss.seam.annotations.web.RequestParameter;
+import org.jboss.seam.core.Conversation;
 import org.jboss.seam.core.Events;
 
 import it.unibo.myalma.business.professor.IProfessorManager;
  
-/**
- * Session Bean implementation class ContentManagerBean
+/*
+ * Note:
+ * - viene invocato il flush() dell'entityManager ogni volta che si conclude un metodo -> PROBLEMA
  */
-
 @Stateful
 @Name("contentManager")
 @Scope(ScopeType.CONVERSATION)
@@ -38,7 +40,7 @@ public class EditContentBean implements IEditContent
 {
 	@In(value="currentContent", required=false, scope=ScopeType.CONVERSATION)
 	@Out(value="currentContent", required=false, scope=ScopeType.CONVERSATION)
-	private Content content;
+	private Content content;		
 	
 	@In(value="currentParentContent", required=false, scope=ScopeType.CONVERSATION)
 	@Out(value="currentParentContent", required=false, scope=ScopeType.CONVERSATION)
@@ -46,13 +48,18 @@ public class EditContentBean implements IEditContent
 	
 	@In
 	private Events events;
+	
+	@In
+	private Conversation conversation;
+	
+	@RequestParameter
+	int contentId;
 
 	private User user = null;
 
 	// Qui utilizzo lo stesso contesto utilizzato in TeachingController così che tutto ciò che carica lui
 	// io da qui non lo devo ricaricare (e viceversa) (ad esempio ogni volta che seleziono un diverso nodo padre)
-	@In(scope=ScopeType.CONVERSATION, value="ExtendedPersistenceContext", create=false)
-	@Out(scope=ScopeType.CONVERSATION, value="ExtendedPersistenceContext")
+	@In
 	private EntityManager entityManager;
 
 	@EJB
@@ -107,8 +114,6 @@ public class EditContentBean implements IEditContent
 			e.printStackTrace();
 			throw new IllegalArgumentException("The property " + whatToModify + " does not exists");
 		}
-
-		return;
 	}
 
 	@Override
@@ -132,7 +137,7 @@ public class EditContentBean implements IEditContent
 			// Il contenuto è già presente nel DB ed è stato spostato 
 			
 			// Il contenuto viene rimosso dal suo parent originale e inserito in quello nuovo
-			profManager.removeContent(contentDB);
+			content = profManager.removeContent(content);
 			contentId = profManager.appendContent(parentContent, content).getId();
 		}
 		else
@@ -142,7 +147,9 @@ public class EditContentBean implements IEditContent
 			contentId = content.getId();
 		}
 		
-		events.raiseTransactionSuccessEvent("contentSaved",contentId);
+		entityManager.flush();
+		
+//		events.raiseTransactionSuccessEvent("contentSaved",contentId);
 	}
 
 	@Override
@@ -166,7 +173,6 @@ public class EditContentBean implements IEditContent
 		return parentContent;
 	}
 
-	
 	public void setContentId(int contentId) 
 	{	
 		// Setto solo contenuti non nulli
@@ -174,9 +180,14 @@ public class EditContentBean implements IEditContent
 		if(contentDB != null)
 		{	
 			this.content = contentDB;
+//			entityManager.detach(this.content);
+			
 			// Inizializzo il parent che mi servirà nella UI
-			parentContent = content.getParentContent();
-			parentContent.getTitle();
+			if(parentContent == null)
+			{
+				parentContent = content.getParentContent();
+				parentContent.getTitle();	
+			}
 		}
 	}
 
@@ -194,9 +205,15 @@ public class EditContentBean implements IEditContent
 		return content;
 	}
 
-	@Override @Remove @Destroy
+	@Override 
 	public void cancel() 
-	{ }
+	{ 
+		entityManager.refresh(content);
+	}
+	
+	@Remove @Destroy
+	public void destroy()
+	{}
 
 	@Override
 	public void delete() 
@@ -206,8 +223,21 @@ public class EditContentBean implements IEditContent
 		if(parentContent == null)
 			throw new IllegalStateException("Impossible to delete a content from a null category");
 		
-		profManager.removeContent(content);
+		content = profManager.removeContent(content);
+//		entityManager.remove(content);
+		entityManager.flush();
 		
-		events.raiseTransactionSuccessEvent("contentDeleted",content.getId());
+//		entityManager.refresh(content);
+		
+		
+		
+//		events.raiseTransactionSuccessEvent("contentDeleted",content.getId());
+	}
+
+	@Override
+	public void edit() 
+	{
+		int id = contentId;
+		
 	}
 }
