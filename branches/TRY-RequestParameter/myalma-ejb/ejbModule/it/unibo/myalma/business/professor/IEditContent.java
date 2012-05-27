@@ -8,7 +8,8 @@ public interface IEditContent
 	void init();
 	
 	// Binding methods -----------------------------------------
-	void setContentId(int contentId);
+	// Dopo aver settato l'id del contenuto si deve chiamare edit()
+	void setContentId(int id);
 	int getContentId();
 	Content getContent();
 	
@@ -18,16 +19,11 @@ public interface IEditContent
 	
 	// Business methods -----------------------------------------
 	void newContent(ContentType type);
-	void updateContent(String whatToModify, String newValue); 	// Questo metodo si usa con client remoti dato che ricevono una copia del content
-																// i client locali (Seam) invece utilizzano lo stesso riferimento a content mantenuto
-																// dal bean
 	void save();	
 	void cancel();
 	void delete();
-	
+	void edit();
+	void saveInSession();
 	
 	void destroy();
-	
-	
-	void edit();
 }

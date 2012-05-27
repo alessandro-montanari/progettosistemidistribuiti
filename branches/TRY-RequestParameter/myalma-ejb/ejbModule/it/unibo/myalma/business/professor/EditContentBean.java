@@ -1,7 +1,5 @@
 package it.unibo.myalma.business.professor;
 
-import java.lang.reflect.Method;
-
 import it.unibo.myalma.model.*;
 
 import javax.annotation.Resource;
@@ -40,7 +38,7 @@ public class EditContentBean implements IEditContent
 {
 	@In(value="currentContent", required=false, scope=ScopeType.CONVERSATION)
 	@Out(value="currentContent", required=false, scope=ScopeType.CONVERSATION)
-	private Content content;		
+	private Content content = null;		
 	
 	@In(value="currentParentContent", required=false, scope=ScopeType.CONVERSATION)
 	@Out(value="currentParentContent", required=false, scope=ScopeType.CONVERSATION)
@@ -53,7 +51,7 @@ public class EditContentBean implements IEditContent
 	private Conversation conversation;
 	
 	@RequestParameter
-	int contentId;
+	Integer contentId;
 
 	private User user = null;
 
@@ -95,28 +93,6 @@ public class EditContentBean implements IEditContent
 	}
 
 	@Override
-	public void updateContent(String whatToModify, String newValue) 
-	{
-		if(newValue == null || newValue.equals(""))
-			throw new IllegalArgumentException("New value can not be empty");
-
-		try 
-		{
-			Class<? extends Content> contentClass = content.getClass();
-			String methodName = "set" + whatToModify.substring(0, 1).toUpperCase() + whatToModify.substring(1);
-			Method method;
-
-			method = contentClass.getMethod(methodName, String.class);
-
-			method.invoke(content, newValue);
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new IllegalArgumentException("The property " + whatToModify + " does not exists");
-		}
-	}
-
-	@Override
 	public void save() 
 	{
 		if(content == null)
@@ -124,21 +100,28 @@ public class EditContentBean implements IEditContent
 		if(parentContent == null)
 			throw new IllegalStateException("Impossible to append a content to a null category");
 		
-		Content contentDB = entityManager.find(Content.class, content.getId());
+//		Content contentDB = entityManager.find(Content.class, content.getId());
 		int contentId = -1;
 		
-		if(contentDB == null)
+		if(!(entityManager.contains(content)))
 		{
 			// Il contenuto non c' nel DB quindi  nuovo e deve essere aggiunto
 			contentId = profManager.appendContent(parentContent, content).getId();
 		}
-		else if(contentDB.getParentContent().getId() != parentContent.getId())
+		else if(content.getParentContent().getId() != parentContent.getId())
 		{
 			// Il contenuto  giˆ presente nel DB ed  stato spostato 
-			
-			// Il contenuto viene rimosso dal suo parent originale e inserito in quello nuovo
 			content = profManager.removeContent(content);
-			contentId = profManager.appendContent(parentContent, content).getId();
+//			content = clone(content);
+			
+			Content clonato = null;
+			try {
+				clonato = (Content) content.clone();
+			} catch (CloneNotSupportedException e) {
+				e.printStackTrace();
+			}
+			
+			contentId = profManager.appendContent(parentContent, clonato).getId();
 		}
 		else
 		{
@@ -151,6 +134,23 @@ public class EditContentBean implements IEditContent
 		
 //		events.raiseTransactionSuccessEvent("contentSaved",contentId);
 	}
+
+//	private Content clone(Content content) 
+//	{
+//		
+//		Content copy = null;
+//		
+//		if(content instanceof Category)
+//			copy = new Category(content.getTitle(), content.getDescription(), content.getCreator());
+//		else if(content instanceof Information)
+//			copy = new Information(content.getContentType(), content.getTitle(), ((Information) content).getBody(), content.getDescription(), content.getCreator());
+//		else if(content instanceof Material)
+//			copy = new Material(content.getTitle(),((Material) content).getPath(), content.getDescription(), content.getCreator());
+//		
+//		copy.setModifier(content.getModifier());
+//		
+//		return copy;
+//	}
 
 	@Override
 	@Observer(create=false, value="parentContentSelectionChanged")
@@ -173,30 +173,17 @@ public class EditContentBean implements IEditContent
 		return parentContent;
 	}
 
-	public void setContentId(int contentId) 
+	public void setContentId(int id) 
 	{	
-		// Setto solo contenuti non nulli
-		Content contentDB = entityManager.find(Content.class, contentId);
-		if(contentDB != null)
-		{	
-			this.content = contentDB;
-//			entityManager.detach(this.content);
-			
-			// Inizializzo il parent che mi servirˆ nella UI
-			if(parentContent == null)
-			{
-				parentContent = content.getParentContent();
-				parentContent.getTitle();	
-			}
-		}
+		// Il content da modificare pu˜ essere settato solo una volta
+		if(content == null && id >0)
+			contentId = id;
 	}
 
 	@Override
 	public int getContentId() 
 	{
-		if(content == null)
-			return -1;
-		return this.content.getId();
+		return contentId;
 	}
 
 	@Override
@@ -208,7 +195,11 @@ public class EditContentBean implements IEditContent
 	@Override 
 	public void cancel() 
 	{ 
-		entityManager.refresh(content);
+		// Controllo se il content  managed (caso di contenuto giˆ esistente) e lo ripristino
+		if(entityManager.contains(content))
+			entityManager.refresh(content);
+		
+		// se il contenuto  stato creato nuovo non faccio niente (non esiste nell'persistence context)
 	}
 	
 	@Remove @Destroy
@@ -224,12 +215,7 @@ public class EditContentBean implements IEditContent
 			throw new IllegalStateException("Impossible to delete a content from a null category");
 		
 		content = profManager.removeContent(content);
-//		entityManager.remove(content);
 		entityManager.flush();
-		
-//		entityManager.refresh(content);
-		
-		
 		
 //		events.raiseTransactionSuccessEvent("contentDeleted",content.getId());
 	}
@@ -237,7 +223,16 @@ public class EditContentBean implements IEditContent
 	@Override
 	public void edit() 
 	{
-		int id = contentId;
+		if(contentId != null && contentId > 0)
+			content = entityManager.find(Content.class, contentId);
 		
+		if(content == null)
+			throw new IllegalArgumentException("Impossible to find the content with id = " + contentId);
+		else
+			parentContent = content.getParentContent();
 	}
+
+	@Override
+	public void saveInSession() 
+	{}
 }

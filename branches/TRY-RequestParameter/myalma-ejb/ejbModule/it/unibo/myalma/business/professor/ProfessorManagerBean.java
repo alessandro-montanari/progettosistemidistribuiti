@@ -23,6 +23,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.jboss.logging.Logger;
+import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 
 import java.lang.reflect.Method;
@@ -43,7 +44,7 @@ public class ProfessorManagerBean implements IProfessorManager
 {
 	private static final Logger log = Logger.getLogger(ProfessorManagerBean.class.getName());
 
-	@PersistenceContext
+	@In
 	private EntityManager entityManager;
 
 	@Resource
@@ -130,41 +131,68 @@ public class ProfessorManagerBean implements IProfessorManager
 												// valorizzato l'Id di content e posso e utilizzarlo
 												// nella creazione del messaggio JMS
 		}
-		else // Contenuto spostato quindi merge prima di appenderlo, altrimenti errore al flush(): persist on a detach entity!
+		else // Contenuto spostato quindi merge prima di appenderlo, altrimenti errore: persist on a detach entity!
 		{
 			content = entityManager.merge(content);
 		}
 		
 		content = parentDB.appendContent(content);
 
-		entityManager.flush();		// Così sono sicuro che le modifiche saranno riportate sul DB prima che il messaggio sia
-		// effettivamente inviato (al termine della transazione).
-		// In pratica sia le modifiche al DB che l'invio del messaggio sono effettuate al commit della transazine
-		// corrente ma dato che non so in che ordine vengono eseguite (se prima messaggio di modifiche potrebbe essere
-		// un problema) preferisco forzare le modifiche sul DB.
-		// Sembra che non sia possibile intercettare la chiusura della transazione corrente in SLSB e in effetti ha senso dato
-		// che ogni transazione è chiusa alla conclusione del metodo, in uno SFSB è diverso e si puà implementare l'interfaccia
-		// SessionSynchronization
-		// References: 	- http://www.coderanch.com/t/321201/EJB-JEE/java/Stateless-session-bean-CMT-sending
-		//				- http://error0.wordpress.com/2010/11/16/howto-send-jms-notification-after-a-commit-of-container-managed-ejb-transactions/
+		/*
+		 * Da javadoc - Enum FlushModeType:
+		 * When queries are executed within a transaction, if FlushModeType.AUTO is set on the Query or TypedQuery object, or if the
+		 * flush mode setting for the persistence context is AUTO (the default) and a flush mode setting has not been specified for 
+		 * the Query or TypedQuery object, the persistence provider is responsible for ensuring that all updates to the state of all 
+		 * entities in the persistence context which could potentially affect the result of the query are visible to the processing of 
+		 * the query. The persistence provider implementation may achieve this by flushing those entities to the database or by some 
+		 * other means.
+		 * If FlushModeType.COMMIT is set, the effect of updates made to entities in the persistence context upon queries is unspecified.
+		 * 
+		 * QUESTO SIGNIFICA CHE QUANDO SI FA entityManager.flush() LE MODIFICHE FATTE AGLI ENTITY NON VENGONO RIPORTATE DIRETTAMENTE SUL
+		 * DB O MEGLIO, DIPENDE DAL PERSISTENCE PROVIDER, IN PARTICOLARE HIBERNATE NON LO FA. COMUNQUE LE MODIFICHE DIVENTANO VISIBILI PER GLI
+		 * UTILIZZATORI DELLO STESSO ENTITYMANAGER SUBITO DOPO IL FLUSH, QUESTO IMPLICA CHE SE C'è UN ERRORE NELLE MODIFICHE APPORTATE AGLI
+		 * ENTITY (CAMPO NULL, CHIAVE ESTERNA NON VALIDA, ...) L'ESECUZIONE DEL METODO flush() PROVOCHERà UN'ECCEZZIONE E QUINDI IL ROLLBACK, 
+		 * SE INVECE NON SI CHIAMA flush() QUESTO CONTROLLO, CON CONSEGUENTE LANCIO DI ECCEZIONE E ROLLBACK, AVVIENE QUANDO LA TRANSAZIONE
+		 * TERMINA, QUINDI DOPO LA TERMINAZIONE DEL METODO STESSO.
+		 * 
+		 * DATO CHE ANCHE I MESSAGGI JMS SONO INVIATI AL TERMINE DELLA TRANSAZIONE SORGE UN POSSIBILE PROBLEMA: SE VIENE INVIATO IL MESSAGGIO
+		 * PRIMA DI VALIDARE E SALVARE LE MODIFICHE AGLI ENTITY RISCHIEREI CHE CI SIA UN MESSAGGIO NON VALIDO, QUINDI PREFERISCO VALIDARE LE 
+		 * MODIFICHE CON flush(), COSì QUANDO LA TRANSAZIONE TERMINA SO CHE TUTTO ANDRà A BUON FINE E IL MESSAGGIO SARà VALIDO.
+		 * 
+		 * Sembra che non sia possibile intercettare la chiusura della transazione corrente in SLSB e in effetti ha senso dato
+		 * che ogni transazione è chiusa alla conclusione del metodo, in uno SFSB è diverso e si puà implementare l'interfaccia
+		 * SessionSynchronization
+		 * 
+		 * References: 	- http://www.coderanch.com/t/321201/EJB-JEE/java/Stateless-session-bean-CMT-sending
+		 * 				- http://error0.wordpress.com/2010/11/16/howto-send-jms-notification-after-a-commit-of-container-managed-ejb-transactions/
+		 */
+		
+//		entityManager.flush();		
 
 		sendMessage(createMessage(content, TypeOfChange.INSERT));
 
 		return content;
 	}
 
+	
+	/* Supportare lo spostamento (rimozione + aggiunta) di un contenuto
+	 * Del content che mi viene passato (che potrebbe essere stato modificato) ne faccio il merge, così lo posso eliminare (altrimenti errore di
+	 * detached entity), e poi lo restituisco indietro. In questo modo il contento ha i campi modificati ma ha parent e root a null e lo posso
+	 * qundi inserire da un'altra parte (previa clonazione).
+	 */
 	@Override
 	public Content removeContent(Content content) 
 	{
 		User prof = entityManager.find(User.class, context.getCallerPrincipal().getName());
-		Content contentDB = entityManager.find(Content.class, content.getId());
+		
+		Content contentNEW = entityManager.merge(content);
 
-		if(contentDB == null)
+		if(contentNEW == null)
 			throw new IllegalArgumentException("The content provided is not valid");
 		
 		// Devo fare così (invece di parent = contentDB.getParentContent()) perché alrimenti in checkTeachingPermission quando faccio
 		// il cast a ContentsRoot mi da eccezione (impossibile fare il cast)
-		Content parent = entityManager.find(Content.class, contentDB.getParentContent().getId());
+		Content parent = entityManager.find(Content.class, contentNEW.getParentContent().getId());
 		
 		if(!checkTeachingPermission(parent, prof))
 			throw new PermissionException("The user " + prof.getMail() + " has no permission for the operation");
@@ -173,13 +201,14 @@ public class ProfessorManagerBean implements IProfessorManager
 
 		// Non è un problema inviare il messaggio qui (prima della rimozione) perché comunque il messaggio viene effettivamente inviato
 		// solo al commit della transazione, altrimenti non viene inviato
-		sendMessage(createMessage(contentDB, TypeOfChange.REMOVE));
+		Content contentOLD = entityManager.find(Content.class, content.getId());
+		sendMessage(createMessage(contentOLD, TypeOfChange.REMOVE));
 
-		content = parent.removeContent(contentDB);
+		contentNEW = parent.removeContent(contentNEW);
 
-		entityManager.flush(); 	// Come sopra mi assicuro di riportare le modifiche prima dell'invio del messaggio
+//		entityManager.flush(); 	// Come sopra mi assicuro di riportare le modifiche prima dell'invio del messaggio
 		
-		return content;
+		return contentNEW;
 	}
 	
 	@Override
@@ -248,7 +277,7 @@ public class ProfessorManagerBean implements IProfessorManager
 		
 		contentDB.setModifier(prof);
 
-		entityManager.flush();
+//		entityManager.flush();
 
 		sendMessage(createMessage(content, TypeOfChange.CHANGE));
 
@@ -286,7 +315,7 @@ public class ProfessorManagerBean implements IProfessorManager
 
 		content.setModifier(prof);
 
-		entityManager.flush();
+//		entityManager.flush();
 
 		sendMessage(createMessage(content, TypeOfChange.CHANGE));
 
