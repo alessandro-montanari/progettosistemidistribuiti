@@ -11,7 +11,6 @@ import javax.persistence.EntityManager;
 
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Observer;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.core.Events;
@@ -41,31 +40,6 @@ public class TeachingControllerBean
 
 	private final String dummyKey = "dummy";
 	private final TreeNodeImpl<Content> dummyElement = new TreeNodeImpl<Content>();
-	
-	@Observer("contentDeleted")
-	public void contentDeletedListener(int contentId)
-	{	
-//		// Questo codice lancia un'eccezione che non sembra fare danni
-//		
-//		Content contentDB = entityManager.find(Content.class, contentId);
-//		
-//		// Se il contenuto eliminato è una categoria proprio sotto il ContentsRoot metto root a null
-//		// così rigenero i nodi sotto a ContentsRoot
-//		if(contentDB.getParentContent().getContentType().equals(ContentType.CONTENTS_ROOT))
-//			this.root = null;
-//		
-//		//TODO **************** Possibile punto debole per performance (pesante accesso al DB) ****************
-//		entityManager.refresh(contentDB);
-	}
-	
-	@Observer("contentSaved")
-	public void contentSavedListener(int contentId)
-	{
-//		Content contentDB = entityManager.find(Content.class, contentId);
-//		
-//		//TODO **************** Possibile punto debole per performance (pesante accesso al DB) ****************
-//		entityManager.refresh(contentDB);
-	}
 
 	public int getTeachingId()
 	{

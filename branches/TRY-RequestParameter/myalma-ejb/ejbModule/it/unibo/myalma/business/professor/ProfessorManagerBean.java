@@ -20,7 +20,6 @@ import javax.jms.TextMessage;
 import javax.jms.Topic;
 import javax.jms.TopicConnectionFactory;
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 import org.jboss.logging.Logger;
 import org.jboss.seam.annotations.In;
@@ -82,15 +81,14 @@ public class ProfessorManagerBean implements IProfessorManager
 		}
 	}
 
-	private String createMessage(Content content, TypeOfChange change)
+	private String createMessage(Content content, TypeOfChange change, User modifier)
 	{
 		String msg = "";
-		if(change.equals(TypeOfChange.REMOVE))		// Messaggio opportunamente formattato in caso di rimozione
 			msg =  content.getTitle() + 
-			"|" + content.getDescription() + 
-			"|" + content.getParentContent().getId();
-		else
-			msg = content.getId()+"";
+			"|" + (content.getDescription().equals("") ? "<no descrizione>" : content.getDescription()) + 
+			"|" + content.getParentContent().getTitle() +
+			"|" + modifier.getMail() +
+			"|" + content.getRoot().getTitle();
 
 		return change.toString()+"_"+msg;
 	}
@@ -169,7 +167,7 @@ public class ProfessorManagerBean implements IProfessorManager
 		
 //		entityManager.flush();		
 
-		sendMessage(createMessage(content, TypeOfChange.INSERT));
+		sendMessage(createMessage(content, TypeOfChange.INSERT, prof));
 
 		return content;
 	}
@@ -202,7 +200,7 @@ public class ProfessorManagerBean implements IProfessorManager
 		// Non è un problema inviare il messaggio qui (prima della rimozione) perché comunque il messaggio viene effettivamente inviato
 		// solo al commit della transazione, altrimenti non viene inviato
 		Content contentOLD = entityManager.find(Content.class, content.getId());
-		sendMessage(createMessage(contentOLD, TypeOfChange.REMOVE));
+		sendMessage(createMessage(contentOLD, TypeOfChange.REMOVE, prof));
 
 		contentNEW = parent.removeContent(contentNEW);
 
@@ -279,7 +277,7 @@ public class ProfessorManagerBean implements IProfessorManager
 
 //		entityManager.flush();
 
-		sendMessage(createMessage(content, TypeOfChange.CHANGE));
+		sendMessage(createMessage(content, TypeOfChange.CHANGE, prof));
 
 		return contentDB;
 	}
@@ -317,7 +315,7 @@ public class ProfessorManagerBean implements IProfessorManager
 
 //		entityManager.flush();
 
-		sendMessage(createMessage(content, TypeOfChange.CHANGE));
+		sendMessage(createMessage(content, TypeOfChange.CHANGE, prof));
 
 		return content;
 	}

@@ -152,7 +152,6 @@ DROP TABLE IF EXISTS `notifications`;
 CREATE TABLE `notifications` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `changeType` varchar(255) DEFAULT NULL,
-  `contentId` int(11) NOT NULL,
   `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `message` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)

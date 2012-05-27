@@ -104,4 +104,16 @@ public class Category extends Content implements Serializable {
 	{
 		return contents;
 	}
+	
+	@Override
+	public Object clone() throws CloneNotSupportedException 
+	{
+		Category cat = (Category)super.clone();
+		List<Content> contentsList = new ArrayList<Content>();
+		cat.contents = contentsList;
+		for(Content content : this.getChildContents())
+			cat.appendContent((Content)content.clone());
+		
+		return cat;
+	}
 }

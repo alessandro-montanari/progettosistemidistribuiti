@@ -56,7 +56,7 @@ import static javax.persistence.FetchType.LAZY;
 @Access(FIELD)																		
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
-public abstract class Content implements Serializable {
+public abstract class Content implements Serializable, Cloneable {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
@@ -124,6 +124,10 @@ public abstract class Content implements Serializable {
 	public int getId() {
 		return id; 
 	}
+	
+//	private void setId(int id) {
+//		this.id = id; 
+//	}
 
 	public Content getParentContent() {
 		return parentContent;
@@ -224,5 +228,16 @@ public abstract class Content implements Serializable {
 	
 	protected void setContentType(ContentType contentType) {
 		this.contentType = contentType;
+	}
+	
+	@Override
+	public Object clone() throws CloneNotSupportedException
+	{
+		Content content = (Content)super.clone();
+		// Per non avere entity con stesso id in giro :)
+		content.id = -1;
+		content.root = null;
+		content.parentContent = null;
+		return content;
 	}
 }

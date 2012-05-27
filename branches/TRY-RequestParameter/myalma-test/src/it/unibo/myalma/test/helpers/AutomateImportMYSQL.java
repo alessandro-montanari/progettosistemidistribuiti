@@ -7,7 +7,7 @@ public class AutomateImportMYSQL
 	public static void main(String[] args) 
 	{
 		AutomateImportMYSQL automator = new AutomateImportMYSQL();
-		automator.importData("./sql-scripts/myalma-dump2.sql");
+		automator.importData("./sql-scripts/myalma-dump.sql");
 	}
 	
 	public void importData(String filePath)

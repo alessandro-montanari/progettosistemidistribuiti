@@ -9,22 +9,14 @@
    TARGET="#xrestricted#xprofessor#xTeachingExplore.xhtml" model-entity="SeamPagesDiagramItemOutput"/>
  </item>
  <item
-  ID="#restricted#professor#modificationPages#MaterialModificationCenter.xhtml"
-  NAME="#xrestricted#xprofessor#xmodificationPages#xMaterialModificationCenter.xhtml"
-  PATH="/restricted/professor/modificationPages/MaterialModificationCenter.xhtml"
-  SHAPE="568,1401,0,0" TYPE="page" model-entity="SeamPagesDiagramItem">
-  <output ID="/restricted/professor/TeachingExplore.xhtml" NAME="output"
-   PATH="/restricted/professor/TeachingExplore.xhtml"
-   TARGET="#xrestricted#xprofessor#xTeachingExplore.xhtml" model-entity="SeamPagesDiagramItemOutput"/>
-  <output ID="/restricted/professor/TeachingExplore.xhtml"
-   NAME="output1" PATH="/restricted/professor/TeachingExplore.xhtml"
-   TARGET="#xrestricted#xprofessor#xTeachingExplore.xhtml" model-entity="SeamPagesDiagramItemOutput"/>
- </item>
- <item
   ID="#restricted#professor#modificationPages#InformationModificationCenter.xhtml"
   NAME="#xrestricted#xprofessor#xmodificationPages#xInformationModificationCenter.xhtml"
   PATH="/restricted/professor/modificationPages/InformationModificationCenter.xhtml"
-  SHAPE="120,1401,0,0" TYPE="page" model-entity="SeamPagesDiagramItem"/>
+  SHAPE="568,1401,0,0" TYPE="page" model-entity="SeamPagesDiagramItem">
+  <output ID="/restricted/professor/modificationPages/*" NAME="output"
+   PATH="/restricted/professor/modificationPages/*"
+   TARGET="#xrestricted#xprofessor#xmodificationPages#x*" model-entity="SeamPagesDiagramItemOutput"/>
+ </item>
  <item
   ID="#restricted#professor#modificationPages#CategoryModificationCenter.xhtml"
   NAME="#xrestricted#xprofessor#xmodificationPages#xCategoryModificationCenter.xhtml"
@@ -163,4 +155,19 @@
   SHAPE="344,849,0,0" TYPE="page" model-entity="SeamPagesDiagramItem"/>
  <item NAME="#xerror.xhtml" PATH="/error.xhtml" SHAPE="472,121,0,0"
   TYPE="page" model-entity="SeamPagesDiagramItem"/>
+ <item
+  ID="#restricted#professor#modificationPages#MaterialModificationCenter.xhtml"
+  NAME="#xrestricted#xprofessor#xmodificationPages#xMaterialModificationCenter.xhtml"
+  PATH="/restricted/professor/modificationPages/MaterialModificationCenter.xhtml"
+  SHAPE="920,953,0,0" TYPE="page" model-entity="SeamPagesDiagramItem">
+  <output ID="/restricted/professor/TeachingExplore.xhtml" NAME="output"
+   PATH="/restricted/professor/TeachingExplore.xhtml"
+   TARGET="#xrestricted#xprofessor#xTeachingExplore.xhtml" model-entity="SeamPagesDiagramItemOutput"/>
+  <output ID="/restricted/professor/TeachingExplore.xhtml"
+   NAME="output1" PATH="/restricted/professor/TeachingExplore.xhtml"
+   TARGET="#xrestricted#xprofessor#xTeachingExplore.xhtml" model-entity="SeamPagesDiagramItemOutput"/>
+  <output ID="/restricted/professor/TeachingExplore.xhtml"
+   NAME="output2" PATH="/restricted/professor/TeachingExplore.xhtml"
+   TARGET="#xrestricted#xprofessor#xTeachingExplore.xhtml" model-entity="SeamPagesDiagramItemOutput"/>
+ </item>
 </diagram>

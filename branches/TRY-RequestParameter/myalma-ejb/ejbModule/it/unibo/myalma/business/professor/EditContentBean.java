@@ -20,8 +20,6 @@ import org.jboss.seam.annotations.Observer;
 import org.jboss.seam.annotations.Out;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.annotations.web.RequestParameter;
-import org.jboss.seam.core.Conversation;
-import org.jboss.seam.core.Events;
 
 import it.unibo.myalma.business.professor.IProfessorManager;
  
@@ -43,12 +41,6 @@ public class EditContentBean implements IEditContent
 	@In(value="currentParentContent", required=false, scope=ScopeType.CONVERSATION)
 	@Out(value="currentParentContent", required=false, scope=ScopeType.CONVERSATION)
 	private Content parentContent = null;
-	
-	@In
-	private Events events;
-	
-	@In
-	private Conversation conversation;
 	
 	@RequestParameter
 	Integer contentId;
@@ -101,19 +93,16 @@ public class EditContentBean implements IEditContent
 			throw new IllegalStateException("Impossible to append a content to a null category");
 		
 //		Content contentDB = entityManager.find(Content.class, content.getId());
-		int contentId = -1;
 		
 		if(!(entityManager.contains(content)))
 		{
 			// Il contenuto non c'è nel DB quindi è nuovo e deve essere aggiunto
-			contentId = profManager.appendContent(parentContent, content).getId();
+			profManager.appendContent(parentContent, content).getId();
 		}
 		else if(content.getParentContent().getId() != parentContent.getId())
 		{
 			// Il contenuto è già presente nel DB ed è stato spostato 
 			content = profManager.removeContent(content);
-//			content = clone(content);
-			
 			Content clonato = null;
 			try {
 				clonato = (Content) content.clone();
@@ -121,36 +110,16 @@ public class EditContentBean implements IEditContent
 				e.printStackTrace();
 			}
 			
-			contentId = profManager.appendContent(parentContent, clonato).getId();
+			profManager.appendContent(parentContent, clonato).getId();
 		}
 		else
 		{
 			// Il contenuto è già presente nel DB e NON è stato spostato, quindi solo aggiornamento proprietà
 			profManager.updateContent(content);
-			contentId = content.getId();
 		}
 		
 		entityManager.flush();
-		
-//		events.raiseTransactionSuccessEvent("contentSaved",contentId);
 	}
-
-//	private Content clone(Content content) 
-//	{
-//		
-//		Content copy = null;
-//		
-//		if(content instanceof Category)
-//			copy = new Category(content.getTitle(), content.getDescription(), content.getCreator());
-//		else if(content instanceof Information)
-//			copy = new Information(content.getContentType(), content.getTitle(), ((Information) content).getBody(), content.getDescription(), content.getCreator());
-//		else if(content instanceof Material)
-//			copy = new Material(content.getTitle(),((Material) content).getPath(), content.getDescription(), content.getCreator());
-//		
-//		copy.setModifier(content.getModifier());
-//		
-//		return copy;
-//	}
 
 	@Override
 	@Observer(create=false, value="parentContentSelectionChanged")

@@ -24,12 +24,11 @@
 				padding-bottom:10px">
 
 					<h:commandButton value="Salva" action="#{materialManager.save}" />
-					<h:commandButton value="Salva in sessione">
+					<h:commandButton value="Salva in sessione" action="#{materialManager.saveInSession}">
 						<f:param name="new" value="true" />
 					</h:commandButton>
-					<h:commandButton value="Elimina" action="#{materialManager.delete}"
-						disabled="#{param['new']}" />
-					<h:commandButton value="Annulla" action="cancel" />
+					<h:commandButton value="Elimina" action="#{materialManager.delete}" disabled="#{param['new']}" />
+					<h:commandButton value="Annulla" action="#{materialManager.cancel}" />
 				</rich:layoutPanel>
 
 				<rich:layoutPanel  id="contentInfos" position="center" style="padding-top:10px">

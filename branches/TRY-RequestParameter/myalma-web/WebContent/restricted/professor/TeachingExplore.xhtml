@@ -20,21 +20,13 @@
 				border-bottom-style: solid; 
 				border-bottom-color: silver; 
 				padding-bottom:10px">
-				<s:button value="Nuova Informazione" action="#{contentManager.newContent('INFORMATION')}" >
-					<f:param name="contentType" value="INFORMATION"/>
-				</s:button>
+				<s:button value="Nuova Informazione" action="#{contentManager.newContent('INFORMATION')}" />
 				
-				<s:button value="Nuova Notizia" action="#{contentManager.newContent('NOTICE')}" >
-					<f:param name="contentType" value="NOTICE"/>
-				</s:button>
+				<s:button value="Nuova Notizia" action="#{contentManager.newContent('NOTICE')}" />
 				
-				<s:button value="Nuovo Materiale" action="#{materialManager.newContent('MATERIAL')}" >
-					<f:param name="contentType" value="MATERIAL"/>
-				</s:button>
+				<s:button value="Nuovo Materiale" action="#{materialManager.newContent('MATERIAL')}" />
 				
-				<s:button value="Nuova Categoria" action="#{contentManager.newContent('CATEGORY')}" >
-					<f:param name="contentType" value="CATEGORY"/>
-				</s:button>
+				<s:button value="Nuova Categoria" action="#{contentManager.newContent('CATEGORY')}" />
 				
 				<s:button value="Indietro" action="cancel" />
 				
@@ -83,8 +75,6 @@
 						<f:param name="contentId" value="#{content.id}"/>
 						<f:param name="contentType" value="#{content.contentType}"/>
 					</s:button>
-					
-					<s:button value="Modifica2" action="#{contentManager.contentId2(content.id)}"/>
 					
 				</rich:column>
 			</rich:dataTable>
