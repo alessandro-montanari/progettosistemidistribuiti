@@ -106,7 +106,7 @@ public class TeachingControllerBean
 		setSelectedContent(selectedTreeModelNode.getData());
 	}
 
-	// Metodo registrato come listener del espansione di un nodo
+	// Metodo registrato come listener di espansione di un nodo
 	public void nodeToggled(NodeExpandedEvent event) 
 	{
 		TreeNode<Content> selectedTreeModelNode = extractNode(event);
@@ -129,7 +129,7 @@ public class TeachingControllerBean
 				{
 					if(content.getContentType().equals(ContentType.CATEGORY))
 					{
-						TreeNodeImpl newNode = new TreeNodeImpl();  
+						TreeNodeImpl<Content> newNode = new TreeNodeImpl<Content>();  
 						newNode.setData(content);  
 						newNode.setParent(selectedTreeModelNode);  
 						newNode.addChild(dummyKey, dummyElement);
@@ -147,6 +147,8 @@ public class TeachingControllerBean
 
 	public void setSelectedContent(Content selectedContent) 
 	{	
+		// Notifico che la selezione del parent è cambiata, queto evento viene catturato da EditContentBean solo se si sta modificando
+		// un contenuto (nota il create=false in @Observer su setParentContentId())
 		events.raiseTransactionSuccessEvent("parentContentSelectionChanged",selectedContent.getId());
 		
 		this.selectedContent = selectedContent;

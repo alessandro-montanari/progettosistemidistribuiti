@@ -120,7 +120,7 @@ public class ContentNotifierBean implements MessageListener
 		String modificatore = "";
 		String contentsRootTitle = "";
 
-		StringTokenizer tokenizer = new StringTokenizer(stringMessage,"|_");
+		StringTokenizer tokenizer = new StringTokenizer(stringMessage,"|");
 
 		typeOfChange = tokenizer.nextToken();
 		titolo = tokenizer.nextToken();

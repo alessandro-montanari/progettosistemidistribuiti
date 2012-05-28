@@ -23,10 +23,6 @@ import org.jboss.seam.annotations.web.RequestParameter;
 
 import it.unibo.myalma.business.professor.IProfessorManager;
  
-/*
- * Note:
- * - viene invocato il flush() dell'entityManager ogni volta che si conclude un metodo -> PROBLEMA
- */
 @Stateful
 @Name("contentManager")
 @Scope(ScopeType.CONVERSATION)
@@ -92,8 +88,6 @@ public class EditContentBean implements IEditContent
 		if(parentContent == null)
 			throw new IllegalStateException("Impossible to append a content to a null category");
 		
-//		Content contentDB = entityManager.find(Content.class, content.getId());
-		
 		if(!(entityManager.contains(content)))
 		{
 			// Il contenuto non c'è nel DB quindi è nuovo e deve essere aggiunto
@@ -101,7 +95,10 @@ public class EditContentBean implements IEditContent
 		}
 		else if(content.getParentContent().getId() != parentContent.getId())
 		{
-			// Il contenuto è già presente nel DB ed è stato spostato 
+			// Il contenuto è già presente nel DB ed è stato spostato
+			
+			// Siccome il contenuto potrebbere essere stato modificato, prima dello spostamento salvo le modifiche
+			content = profManager.updateContent(content);
 			content = profManager.removeContent(content);
 			Content clonato = null;
 			try {
@@ -185,8 +182,6 @@ public class EditContentBean implements IEditContent
 		
 		content = profManager.removeContent(content);
 		entityManager.flush();
-		
-//		events.raiseTransactionSuccessEvent("contentDeleted",content.getId());
 	}
 
 	@Override
@@ -201,6 +196,10 @@ public class EditContentBean implements IEditContent
 			parentContent = content.getParentContent();
 	}
 
+	/* Non viene fatto niente esplicitamente ma quando viene invocato questo metodo, Seam fa l'injection dei due componenti (currentContent e
+	 * currentParentContent) copiando al loro interno i valori inseriti dall'utente nell'interfaccia e poi ne fa l'outjection reinserendoli nella
+	 * conversazione (quindi salvataggio).
+	 */
 	@Override
 	public void saveInSession() 
 	{}
