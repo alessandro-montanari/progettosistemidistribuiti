@@ -5,11 +5,11 @@ import it.unibo.myalma.model.ContentType;
 
 public interface IEditContent 
 {	
-	//@Create
 	void init();
 	
 	// Binding methods -----------------------------------------
-	void setContentId(int contentId);
+	// Dopo aver settato l'id del contenuto si deve chiamare edit()
+	void setContentId(int id);
 	int getContentId();
 	Content getContent();
 	
@@ -17,13 +17,13 @@ public interface IEditContent
 	int getParentContentId();									
 	Content getParentContent();
 	
-	
 	// Business methods -----------------------------------------
 	void newContent(ContentType type);
-	void updateContent(String whatToModify, String newValue); 	// Questo metodo si usa con client remoti dato che ricevono una copia del content
-																// i client locali (Seam) invece utilizzano lo stesso riferimento a content mantenuto
-																// dal bean, quindi modificano lo stesso entity (che dovrˆ essere detached)
 	void save();	
 	void cancel();
 	void delete();
+	void edit();
+	void saveInSession();
+	
+	void destroy();
 }

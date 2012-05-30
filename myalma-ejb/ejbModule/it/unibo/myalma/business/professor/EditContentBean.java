@@ -1,7 +1,5 @@
 package it.unibo.myalma.business.professor;
 
-import java.lang.reflect.Method;
-
 import it.unibo.myalma.model.*;
 
 import javax.annotation.Resource;
@@ -21,14 +19,10 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Observer;
 import org.jboss.seam.annotations.Out;
 import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.core.Events;
+import org.jboss.seam.annotations.web.RequestParameter;
 
 import it.unibo.myalma.business.professor.IProfessorManager;
  
-/**
- * Session Bean implementation class ContentManagerBean
- */
-
 @Stateful
 @Name("contentManager")
 @Scope(ScopeType.CONVERSATION)
@@ -38,21 +32,20 @@ public class EditContentBean implements IEditContent
 {
 	@In(value="currentContent", required=false, scope=ScopeType.CONVERSATION)
 	@Out(value="currentContent", required=false, scope=ScopeType.CONVERSATION)
-	private Content content;
+	private Content content = null;		
 	
 	@In(value="currentParentContent", required=false, scope=ScopeType.CONVERSATION)
 	@Out(value="currentParentContent", required=false, scope=ScopeType.CONVERSATION)
 	private Content parentContent = null;
 	
-	@In
-	private Events events;
+	@RequestParameter
+	Integer contentId;
 
 	private User user = null;
 
 	// Qui utilizzo lo stesso contesto utilizzato in TeachingController cos“ che tutto ci˜ che carica lui
 	// io da qui non lo devo ricaricare (e viceversa) (ad esempio ogni volta che seleziono un diverso nodo padre)
-	@In(scope=ScopeType.CONVERSATION, value="ExtendedPersistenceContext", create=false)
-	@Out(scope=ScopeType.CONVERSATION, value="ExtendedPersistenceContext")
+	@In
 	private EntityManager entityManager;
 
 	@EJB
@@ -88,30 +81,6 @@ public class EditContentBean implements IEditContent
 	}
 
 	@Override
-	public void updateContent(String whatToModify, String newValue) 
-	{
-		if(newValue == null || newValue.equals(""))
-			throw new IllegalArgumentException("New value can not be empty");
-
-		try 
-		{
-			Class<? extends Content> contentClass = content.getClass();
-			String methodName = "set" + whatToModify.substring(0, 1).toUpperCase() + whatToModify.substring(1);
-			Method method;
-
-			method = contentClass.getMethod(methodName, String.class);
-
-			method.invoke(content, newValue);
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new IllegalArgumentException("The property " + whatToModify + " does not exists");
-		}
-
-		return;
-	}
-
-	@Override
 	public void save() 
 	{
 		if(content == null)
@@ -119,30 +88,34 @@ public class EditContentBean implements IEditContent
 		if(parentContent == null)
 			throw new IllegalStateException("Impossible to append a content to a null category");
 		
-		Content contentDB = entityManager.find(Content.class, content.getId());
-		int contentId = -1;
-		
-		if(contentDB == null)
+		if(!(entityManager.contains(content)))
 		{
 			// Il contenuto non c' nel DB quindi  nuovo e deve essere aggiunto
-			contentId = profManager.appendContent(parentContent, content).getId();
+			profManager.appendContent(parentContent, content).getId();
 		}
-		else if(contentDB.getParentContent().getId() != parentContent.getId())
+		else if(content.getParentContent().getId() != parentContent.getId())
 		{
-			// Il contenuto  giˆ presente nel DB ed  stato spostato 
+			// Il contenuto  giˆ presente nel DB ed  stato spostato
 			
-			// Il contenuto viene rimosso dal suo parent originale e inserito in quello nuovo
-			profManager.removeContent(contentDB);
-			contentId = profManager.appendContent(parentContent, content).getId();
+			// Siccome il contenuto potrebbere essere stato modificato, prima dello spostamento salvo le modifiche
+			content = profManager.updateContent(content);
+			content = profManager.removeContent(content);
+			Content clonato = null;
+			try {
+				clonato = (Content) content.clone();
+			} catch (CloneNotSupportedException e) {
+				e.printStackTrace();
+			}
+			
+			profManager.appendContent(parentContent, clonato).getId();
 		}
 		else
 		{
 			// Il contenuto  giˆ presente nel DB e NON  stato spostato, quindi solo aggiornamento proprietˆ
 			profManager.updateContent(content);
-			contentId = content.getId();
 		}
 		
-		events.raiseTransactionSuccessEvent("contentSaved",contentId);
+		entityManager.flush();
 	}
 
 	@Override
@@ -166,26 +139,17 @@ public class EditContentBean implements IEditContent
 		return parentContent;
 	}
 
-	
-	public void setContentId(int contentId) 
+	public void setContentId(int id) 
 	{	
-		// Setto solo contenuti non nulli
-		Content contentDB = entityManager.find(Content.class, contentId);
-		if(contentDB != null)
-		{	
-			this.content = contentDB;
-			// Inizializzo il parent che mi servirˆ nella UI
-			parentContent = content.getParentContent();
-			parentContent.getTitle();
-		}
+		// Il content da modificare pu˜ essere settato solo una volta
+		if(content == null && id >0)
+			contentId = id;
 	}
 
 	@Override
 	public int getContentId() 
 	{
-		if(content == null)
-			return -1;
-		return this.content.getId();
+		return contentId;
 	}
 
 	@Override
@@ -194,9 +158,19 @@ public class EditContentBean implements IEditContent
 		return content;
 	}
 
-	@Override @Remove @Destroy
+	@Override 
 	public void cancel() 
-	{ }
+	{ 
+		// Controllo se il content  managed (caso di contenuto giˆ esistente) e lo ripristino
+		if(entityManager.contains(content))
+			entityManager.refresh(content);
+		
+		// se il contenuto  stato creato nuovo non faccio niente (non esiste nell'persistence context)
+	}
+	
+	@Remove @Destroy
+	public void destroy()
+	{}
 
 	@Override
 	public void delete() 
@@ -206,8 +180,27 @@ public class EditContentBean implements IEditContent
 		if(parentContent == null)
 			throw new IllegalStateException("Impossible to delete a content from a null category");
 		
-		profManager.removeContent(content);
-		
-		events.raiseTransactionSuccessEvent("contentDeleted",content.getId());
+		content = profManager.removeContent(content);
+		entityManager.flush();
 	}
+
+	@Override
+	public void edit() 
+	{
+		if(contentId != null && contentId > 0)
+			content = entityManager.find(Content.class, contentId);
+		
+		if(content == null)
+			throw new IllegalArgumentException("Impossible to find the content with id = " + contentId);
+		else
+			parentContent = content.getParentContent();
+	}
+
+	/* Non viene fatto niente esplicitamente ma quando viene invocato questo metodo, Seam fa l'injection dei due componenti (currentContent e
+	 * currentParentContent) copiando al loro interno i valori inseriti dall'utente nell'interfaccia e poi ne fa l'outjection reinserendoli nella
+	 * conversazione (quindi salvataggio).
+	 */
+	@Override
+	public void saveInSession() 
+	{}
 }
