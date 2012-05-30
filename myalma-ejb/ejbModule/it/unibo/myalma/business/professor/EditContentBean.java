@@ -41,7 +41,7 @@ public class EditContentBean implements IEditContent
 	private Content parentContent = null;
 	
 	@RequestParameter
-	Integer contentId;
+	private Integer contentId;
 
 	private User user = null;
 
