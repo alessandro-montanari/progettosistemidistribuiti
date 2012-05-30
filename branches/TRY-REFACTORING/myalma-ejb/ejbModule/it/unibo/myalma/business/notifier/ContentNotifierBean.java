@@ -16,7 +16,6 @@ import javax.jms.MessageListener;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import it.unibo.myalma.model.Content;
 import it.unibo.myalma.model.Notification;
 import it.unibo.myalma.model.Subscription;
 import it.unibo.myalma.model.Teaching;
@@ -68,7 +67,7 @@ public class ContentNotifierBean implements MessageListener
 	private EntityManager entityManager;
 
 	private INotifier mailNotifier;
-	
+
 	@EJB
 	private ISearch searchBean;
 
@@ -112,72 +111,51 @@ public class ContentNotifierBean implements MessageListener
 
 		log.info(stringMessage);
 
-		String typeOfChange = stringMessage.substring(0, stringMessage.indexOf("_"));
 		String msg = "";
 
-		if(typeOfChange.equalsIgnoreCase("REMOVE"))
-		{
-			String titolo = "<no titolo>";
-			String descrizione = "<no descrizione>";
-			int parentId = -1;
-				
-			StringTokenizer tokenizer = new StringTokenizer(stringMessage,"|_");
+		String typeOfChange = "";
+		String titolo = "";
+		String descrizione = "";
+		String parent = "";
+		String modificatore = "";
+		String contentsRootTitle = "";
 
-			// Salto il typeOfChange
-			tokenizer.nextToken();
-			
-			if(tokenizer.countTokens() == 3)
-			{
-				titolo = tokenizer.nextToken();
-				descrizione = tokenizer.nextToken();
-				parentId = Integer.parseInt(tokenizer.nextToken());
-			}
-			else
-			{
-				// Manca la descrizione
-				titolo = tokenizer.nextToken();
-				parentId = Integer.parseInt(tokenizer.nextToken());
-			}
-			
-			Content parent = entityManager.find(Content.class, parentId);
+		StringTokenizer tokenizer = new StringTokenizer(stringMessage,"|");
 
-			msg = 	"Contenuto: " + titolo + "\n" +
-					"Descrizione: " + descrizione + "\n" +
-					"è stato RIMOSSO \n" +
-					"dalla categoria " + parent.getTitle();
+		typeOfChange = tokenizer.nextToken();
+		titolo = tokenizer.nextToken();
+		descrizione = tokenizer.nextToken();
+		parent = tokenizer.nextToken();
+		modificatore = tokenizer.nextToken();
+		contentsRootTitle = tokenizer.nextToken();
 
-			List<Subscription> subscriptions = getSubscriptions(parent);
-			sendNotifications(subscriptions, msg, null, typeOfChange);
-		}
-		else
-		{
-			int contentId = Integer.parseInt(stringMessage.substring(stringMessage.indexOf("_")+1));
+		Teaching teaching = searchBean.findTeachingByContentsRoot(contentsRootTitle);
 
-			Content content = entityManager.find(Content.class, contentId);
+		msg = 	"Corso: " + teaching.getName() + "\n" +
+				"Contenuto: " + titolo + "\n" +
+				"Descrizione: " + descrizione + "\n" +
+				"Categoria Padre: " + parent + "\n" +
+				"Professore: " + modificatore + "\n" +
+				"Evento: " + translateEvent(typeOfChange);
 
-			msg = 	"Contenuto: " + content.getTitle() + "\n" +
-					"è stato ";
-
-			if(typeOfChange.equalsIgnoreCase("CHANGE"))
-			{
-				msg += "MODIFICATO \n";
-			}
-			else if(typeOfChange.equalsIgnoreCase("INSERT"))
-			{
-				msg += "INSERITO \n";
-			}
-
-			List<Subscription> subscriptions = getSubscriptions(content);
-			sendNotifications(subscriptions, msg, content, typeOfChange);
-		}
-
+		List<Subscription> subscriptions = searchBean.findSubscriptionsToTeaching(teaching.getId());
+		sendNotifications(subscriptions, msg, typeOfChange);
 	}
 
-	private void sendNotifications(List<Subscription> subscriptions, String msg, Content content, String typeOfChange) 
+	private String translateEvent(String typeOfChange) 
+	{
+		if(TypeOfChange.valueOf(typeOfChange) == TypeOfChange.CHANGE)
+			return "MODIFICATO";
+		else if(TypeOfChange.valueOf(typeOfChange) == TypeOfChange.INSERT)
+			return "INSERITO";
+		else
+			return "RIMOSSO";
+	}
+
+	private void sendNotifications(List<Subscription> subscriptions, String msg, String typeOfChange) 
 	{
 		// La notifica deve essere condivisa
-		Notification notification = content == null ? new Notification(msg, TypeOfChange.valueOf(typeOfChange)) 
-													: new Notification(msg, content.getId(), TypeOfChange.valueOf(typeOfChange));
+		Notification notification = new Notification(msg, TypeOfChange.valueOf(typeOfChange));
 		entityManager.persist(notification);
 
 		for(Subscription sub : subscriptions)
@@ -192,14 +170,6 @@ public class ContentNotifierBean implements MessageListener
 //			TODO Decommenta per inviare le mail
 //			mailNotifier.notify(dest, msg);
 		}
-	}
-
-	private List<Subscription> getSubscriptions(Content content) 
-	{
-		int rootId = content.getRoot() == null ? content.getId() : content.getRoot().getId();
-		Teaching teaching = searchBean.findTeachingByContentsRoot(rootId);
-
-		return searchBean.findSubscriptionsToTeaching(teaching.getId());
 	}
 
 }

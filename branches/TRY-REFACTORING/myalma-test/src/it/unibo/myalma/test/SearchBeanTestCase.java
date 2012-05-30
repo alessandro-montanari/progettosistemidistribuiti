@@ -87,7 +87,7 @@ public class SearchBeanTestCase
 	@Test
 	public void testGetAllContents() 
 	{
-		assertEquals(35, searchBean.getAllContents().size());
+		assertEquals(236, searchBean.getAllContents().size());
 	}
 
 	@Test
@@ -181,7 +181,7 @@ public class SearchBeanTestCase
 	public void testFindContensByType() 
 	{
 		assertEquals(8, searchBean.findContentsByType(ContentType.CONTENTS_ROOT).size());
-		assertEquals(14, searchBean.findContentsByType(ContentType.CATEGORY).size());
+		assertEquals(115, searchBean.findContentsByType(ContentType.CATEGORY).size());
 	}
 
 	@Test

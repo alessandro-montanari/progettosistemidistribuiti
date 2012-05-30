@@ -11,9 +11,7 @@ import javax.persistence.EntityManager;
 
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Observer;
 import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Out;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.core.Events;
 import org.richfaces.component.UITree;
@@ -29,11 +27,7 @@ import org.richfaces.component.state.TreeState;
 @Scope(ScopeType.CONVERSATION)
 public class TeachingControllerBean 
 {
-
-	// Entity manager esteso alla conversazione corrente e gestito da Seam
-	// Faccio l'Out così lo posso usare in EditContentBean
 	@In
-	@Out(scope=ScopeType.CONVERSATION,value="ExtendedPersistenceContext")
 	private EntityManager entityManager;
 	
 	@In
@@ -46,31 +40,6 @@ public class TeachingControllerBean
 
 	private final String dummyKey = "dummy";
 	private final TreeNodeImpl<Content> dummyElement = new TreeNodeImpl<Content>();
-	
-	@Observer("contentDeleted")
-	public void contentDeletedListener(int contentId)
-	{	
-		// Questo codice lancia un'eccezione che non sembra fare danni
-		
-		Content contentDB = entityManager.find(Content.class, contentId);
-		
-		// Se il contenuto eliminato è una categoria proprio sotto il ContentsRoot metto root a null
-		// così rigenero i nodi sotto a ContentsRoot
-		if(contentDB.getParentContent().getContentType().equals(ContentType.CONTENTS_ROOT))
-			this.root = null;
-		
-		// **************** Possibile punto debole per performance (pesante accesso al DB) ****************
-		entityManager.refresh(contentDB);
-	}
-	
-	@Observer("contentSaved")
-	public void contentSavedListener(int contentId)
-	{
-		Content contentDB = entityManager.find(Content.class, contentId);
-		
-		// **************** Possibile punto debole per performance (pesante accesso al DB) ****************
-		entityManager.refresh(contentDB);
-	}
 
 	public int getTeachingId()
 	{
@@ -137,7 +106,7 @@ public class TeachingControllerBean
 		setSelectedContent(selectedTreeModelNode.getData());
 	}
 
-	// Metodo registrato come listener del espansione di un nodo
+	// Metodo registrato come listener di espansione di un nodo
 	public void nodeToggled(NodeExpandedEvent event) 
 	{
 		TreeNode<Content> selectedTreeModelNode = extractNode(event);
@@ -160,7 +129,7 @@ public class TeachingControllerBean
 				{
 					if(content.getContentType().equals(ContentType.CATEGORY))
 					{
-						TreeNodeImpl newNode = new TreeNodeImpl();  
+						TreeNodeImpl<Content> newNode = new TreeNodeImpl<Content>();  
 						newNode.setData(content);  
 						newNode.setParent(selectedTreeModelNode);  
 						newNode.addChild(dummyKey, dummyElement);
@@ -178,6 +147,8 @@ public class TeachingControllerBean
 
 	public void setSelectedContent(Content selectedContent) 
 	{	
+		// Notifico che la selezione del parent è cambiata, queto evento viene catturato da EditContentBean solo se si sta modificando
+		// un contenuto (nota il create=false in @Observer su setParentContentId())
 		events.raiseTransactionSuccessEvent("parentContentSelectionChanged",selectedContent.getId());
 		
 		this.selectedContent = selectedContent;

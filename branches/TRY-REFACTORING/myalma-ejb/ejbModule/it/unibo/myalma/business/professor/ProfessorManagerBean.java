@@ -20,9 +20,9 @@ import javax.jms.TextMessage;
 import javax.jms.Topic;
 import javax.jms.TopicConnectionFactory;
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 import org.jboss.logging.Logger;
+import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 
 import java.lang.reflect.Method;
@@ -31,8 +31,13 @@ import javax.ejb.Local;
 
 import it.unibo.myalma.business.exceptions.*;
 
-/**
- * Session Bean implementation class ProfessorManagerBean
+/*
+ * Note:
+ * - Contesto di persistenza gestito da Seam (@In private EntityManager ...): viene utilizzato perché in questo modo non ne deve essere aperto
+ * 	uno nuovo (teachingControllerBean -> EditoContentBean -> ProfessorManagerBean) e quindi le modifiche fatte su questo contesto sono direttamente
+ * 	visibili anche agli altri bean e quindi di conseguenza anche sull'UI senza dover fare alcun refresh() (vedi vecchie revisioni).
+ * 	E' possibile utilizzare anche un contesto di persistenza gestito dal container J2EE (sostituire @In con @PersistenceContext) senza nessun 
+ * 	problema (provare i test ProfessorManagerBeanTestCase dopo la modifica).
  */
 @Stateless
 @Name("professorManager")
@@ -43,7 +48,7 @@ public class ProfessorManagerBean implements IProfessorManager
 {
 	private static final Logger log = Logger.getLogger(ProfessorManagerBean.class.getName());
 
-	@PersistenceContext
+	@In
 	private EntityManager entityManager;
 
 	@Resource
@@ -54,10 +59,6 @@ public class ProfessorManagerBean implements IProfessorManager
 
 	@Resource(mappedName="/jms/topics/contentEvents") 
 	private Topic eventsTopic;
-	
-	public ProfessorManagerBean()
-	{
-	}
 
 	private void sendMessage(String message)
 	{
@@ -85,17 +86,17 @@ public class ProfessorManagerBean implements IProfessorManager
 		}
 	}
 
-	private String createMessage(Content content, TypeOfChange change)
+	private String createMessage(Content content, TypeOfChange change, User modifier)
 	{
 		String msg = "";
-		if(change.equals(TypeOfChange.REMOVE))		// Messaggio opportunamente formattato in caso di rimozione
-			msg =  content.getTitle() + 
-			"|" + content.getDescription() + 
-			"|" + content.getParentContent().getId();
-		else
-			msg = content.getId()+"";
+		msg =  change.toString() +
+				"|" + content.getTitle() + 
+				"|" + (content.getDescription().equals("") ? "<no descrizione>" : content.getDescription()) + 
+				"|" + content.getParentContent().getTitle() +
+				"|" + modifier.getMail() +
+				"|" + content.getRoot().getTitle();
 
-		return change.toString()+"_"+msg;
+		return msg;
 	}
 
 	private boolean checkTeachingPermission(Content content, User prof)
@@ -131,23 +132,17 @@ public class ProfessorManagerBean implements IProfessorManager
 		{	
 			// Nuovo contenuto quindi persist
 			entityManager.persist(content);		// Faccio il persist (non sarebbe necessario dato i cascade) perché così viene
-												// valorizzato l'Id di content e posso e utilizzarlo
-												// nella creazione del messaggio JMS
+			// valorizzato l'Id di content e posso e utilizzarlo
+			// nella creazione del messaggio JMS
 		}
-		else // Contenuto spostato quindi merge prima di appenderlo, altrimenti errore al flush(): persist on a detach entity!
+		else // Contenuto spostato quindi merge prima di appenderlo, altrimenti errore: persist on a detach entity!
 		{
 			content = entityManager.merge(content);
 		}
-		
-		content = parentDB.appendContent(content);
 
-		entityManager.flush();		// Così sono sicuro che le modifiche saranno riportate sul DB prima che il messaggio sia
-		// effettivamente inviato (al termine della transazione) (http://www.coderanch.com/t/321201/EJB-JEE/java/Stateless-session-bean-CMT-sending)
-		// In pratica sia le modifiche al DB che l'invio del messaggio sono effettuate al commit della transazine
-		// corrente ma dato che non so in che ordine vengono eseguite (se prima messaggio di modifiche potrebbe essere
-		// un problema) preferisco forzare le modifiche sul DB (TODO ATTENZIONE POTREBBE NON ESSERE VERO)
+		content = parentDB.appendContent(content);	
 
-		sendMessage(createMessage(content, TypeOfChange.INSERT));
+		sendMessage(createMessage(content, TypeOfChange.INSERT, prof));
 
 		return content;
 	}
@@ -156,45 +151,45 @@ public class ProfessorManagerBean implements IProfessorManager
 	public Content removeContent(Content content) 
 	{
 		User prof = entityManager.find(User.class, context.getCallerPrincipal().getName());
+
 		Content contentDB = entityManager.find(Content.class, content.getId());
 
 		if(contentDB == null)
 			throw new IllegalArgumentException("The content provided is not valid");
-		
+
 		// Devo fare così (invece di parent = contentDB.getParentContent()) perché alrimenti in checkTeachingPermission quando faccio
 		// il cast a ContentsRoot mi da eccezione (impossibile fare il cast)
 		Content parent = entityManager.find(Content.class, contentDB.getParentContent().getId());
-		
+
 		if(!checkTeachingPermission(parent, prof))
 			throw new PermissionException("The user " + prof.getMail() + " has no permission for the operation");
 
 		parent.setModifier(prof);
 
 		// Non è un problema inviare il messaggio qui (prima della rimozione) perché comunque il messaggio viene effettivamente inviato
-		// solo al commit della transazione, altrimenti non viene inviato
-		sendMessage(createMessage(contentDB, TypeOfChange.REMOVE));
+		// solo al commit della transazione, altrimenti non viene inviato.
+		// Se non lo invio qua ottengo un NullPointerException in createMessage
+		sendMessage(createMessage(contentDB, TypeOfChange.REMOVE, prof));
 
 		contentDB = parent.removeContent(contentDB);
 
-		entityManager.flush(); 	// Come sopra mi assicuro di riportare le modifiche prima dell'invio del messaggio
-		
 		return contentDB;
 	}
-	
+
 	@Override
 	public Content removeContent(Content parent, String contentTitle) 
 	{
 		Content parentDB = entityManager.find(Content.class, parent.getId());
-		
+
 		if(parentDB == null)
 			throw new IllegalArgumentException("The parent provided is not valid");
-		
+
 		for(Content content : parentDB.getChildContents())
 		{
 			if(content.getTitle().equals(contentTitle))
-			return removeContent(content);
+				return removeContent(content);
 		}
-		
+
 		throw new IllegalArgumentException("Impossible to find the content with name " + contentTitle);
 	}
 
@@ -202,7 +197,7 @@ public class ProfessorManagerBean implements IProfessorManager
 	public void removeAllChildContents(Content parent) 
 	{
 		Content parentDB = entityManager.find(Content.class, parent.getId());
-		
+
 		if(parentDB == null)
 			throw new IllegalArgumentException("The parent provided is not valid");
 
@@ -244,12 +239,10 @@ public class ProfessorManagerBean implements IProfessorManager
 			Material material = (Material)content;
 			materialDB.setPath(material.getPath());
 		}
-		
+
 		contentDB.setModifier(prof);
 
-		entityManager.flush();
-
-		sendMessage(createMessage(content, TypeOfChange.CHANGE));
+		sendMessage(createMessage(contentDB, TypeOfChange.CHANGE, prof));
 
 		return contentDB;
 	}
@@ -285,9 +278,7 @@ public class ProfessorManagerBean implements IProfessorManager
 
 		content.setModifier(prof);
 
-		entityManager.flush();
-
-		sendMessage(createMessage(content, TypeOfChange.CHANGE));
+		sendMessage(createMessage(content, TypeOfChange.CHANGE, prof));
 
 		return content;
 	}
@@ -316,9 +307,9 @@ public class ProfessorManagerBean implements IProfessorManager
 
 		return prof;
 	}
-	
-	
-	/**
+
+
+	/*
 	 * I due metodi successivi usano Teaching e User solo per la loro chiave primaria per andare a prendere nel DB l'oggetto managed
 	 * corrispondente, quindi invece di passare l'intero oggetto si potrebbe passare solo la chiave primaria (era così in una vecchia
 	 * versione), però è stato deciso di passare l'oggetto per avere un codice più leggibile quando vengono invocati tali metodi.
@@ -361,7 +352,7 @@ public class ProfessorManagerBean implements IProfessorManager
 			throw new IllegalArgumentException("The user " + assistant.getMail() + " is not present in the system");
 		if(!(t.getContentsRoot().getAuthors().contains(asisstantDB)))
 			throw new IllegalArgumentException("The user " + assistant.getMail() + " is not an assistant for " + t.getName());
-	
+
 		t.getContentsRoot().getAuthors().remove(asisstantDB);
 	}
 }
