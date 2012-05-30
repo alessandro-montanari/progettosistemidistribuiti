@@ -6,6 +6,7 @@ import javax.annotation.Resource;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Local;
+import javax.ejb.Remote;
 import javax.ejb.Remove;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateful;
@@ -27,6 +28,7 @@ import it.unibo.myalma.business.professor.IProfessorManager;
 @Name("contentManager")
 @Scope(ScopeType.CONVERSATION)
 @Local(IEditContent.class)
+@Remote(it.unibo.myalma.business.remote.IEditContentRemote.class)
 @RolesAllowed({"professor", "admin"})
 public class EditContentBean implements IEditContent 
 {
@@ -87,7 +89,7 @@ public class EditContentBean implements IEditContent
 			throw new IllegalStateException("Impossible to edit a null content");
 		if(parentContent == null)
 			throw new IllegalStateException("Impossible to append a content to a null category");
-		
+
 		if(!(entityManager.contains(content)))
 		{
 			// Il contenuto non c'è nel DB quindi è nuovo e deve essere aggiunto
