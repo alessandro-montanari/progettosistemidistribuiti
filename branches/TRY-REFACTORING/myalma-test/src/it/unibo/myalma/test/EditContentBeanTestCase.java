@@ -3,7 +3,6 @@ package it.unibo.myalma.test;
 import static org.junit.Assert.*;
 
 import it.unibo.myalma.business.professor.IEditContent;
-import it.unibo.myalma.business.professor.IProfessorManager;
 import it.unibo.myalma.business.search.ISearch;
 import it.unibo.myalma.model.Content;
 import it.unibo.myalma.model.ContentType;
@@ -25,14 +24,12 @@ public class EditContentBeanTestCase {
 	static TestHelper helper = new TestHelper();
 	static AutomateImportMYSQL automator = new AutomateImportMYSQL();
 	static ISearch searchBean = null;
-	static IProfessorManager profManager = null;
 	static IEditContent editContentBean = null;
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception 
 	{
 		searchBean = (ISearch)helper.lookup("myalma-ear/SearchBean/remote");
-		profManager = (IProfessorManager)helper.lookup("myalma-ear/ProfessorManagerBean/remote");
 		automator.importData("./sql-scripts/myalma-dump.sql");
 	}
 	

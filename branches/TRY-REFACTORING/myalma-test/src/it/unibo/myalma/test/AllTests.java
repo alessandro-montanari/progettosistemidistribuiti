@@ -8,7 +8,8 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses({ AdministrationBeanTestCase.class,
 				ProfessorManagerBeanTestCase.class, 
 				SearchBeanTestCase.class,
-				EditContentBeanTestCase.class })
+				EditContentBeanTestCase.class,
+				EditMaterialBeanTestCase.class })
 public class AllTests {
 
 }
