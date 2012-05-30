@@ -4,6 +4,7 @@ import java.io.File;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
+import javax.ejb.Remote;
 import javax.ejb.Stateful;
 
 import org.jboss.seam.ScopeType;
@@ -17,6 +18,7 @@ import it.unibo.myalma.model.Material;
 @Name("materialManager")
 @Scope(ScopeType.CONVERSATION)
 @Local(IEditMaterial.class)
+@Remote(it.unibo.myalma.business.remote.IEditMaterialRemote.class)
 @RolesAllowed({"professor", "admin"})
 public class EditMaterialBean extends EditContentBean implements IEditMaterial 
 {
@@ -81,7 +83,7 @@ public class EditMaterialBean extends EditContentBean implements IEditMaterial
 		}
 		
 		// Se salto il primo if significa che non è stato caricato un nuovo file
-		// ma sono state modificate altre proprietà del contenuto quindi non faccio niente
+		// ma (presumibilmente) sono state modificate altre proprietà del contenuto quindi non faccio niente
 		
 		try
 		{

@@ -7,7 +7,7 @@ import java.io.IOException;
 // TODO possibili problemi di concorrenza
 public class FileManager 
 {
-	// TODO Per cluster forse bisogna cambiare percorso
+	// TODO Per cluster probabilmente bisogna cambiare percorso
 	private String serverPath = "../server/default/data/myalma/";
 
 	public String saveFile(String fileName, byte[] fileData)
@@ -35,6 +35,13 @@ public class FileManager
 	
 	public String getServerPath() {
 		return serverPath;
+	}
+	
+	public boolean exists(String filename)
+	{
+		File file = new File(serverPath + filename);
+		boolean res = file.exists();
+		return res;
 	}
 
 	// Nel caso in cui si voglia modificare a runtime
