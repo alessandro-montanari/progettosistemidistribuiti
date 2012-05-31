@@ -5,12 +5,12 @@
     <ejb>jboss-seam.jar</ejb>
   </module>
   <module>
-    <ejb>myalma-ejb.jar</ejb>
-  </module>
-  <module>
     <web>
       <web-uri>myalma-web.war</web-uri>
       <context-root>myalma-web</context-root>
     </web>
+  </module>
+  <module>
+    <ejb>myalma-ejb.jar</ejb>
   </module>
 </application>

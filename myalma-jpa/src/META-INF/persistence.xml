@@ -6,14 +6,12 @@
 		<exclude-unlisted-classes>false</exclude-unlisted-classes>
 		
         <properties>
-         	<property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>
+         	<property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5Dialect"/>
             <property name="hibernate.hbm2ddl.auto" value="update"/>
             <property name="hibernate.archive.autodetection" value="class"/>
             
             <!-- Per poter referenziare la factory in Seam (vedi components.xml) -->
             <property name="jboss.entity.manager.factory.jndi.name" value="myalma-jpaManagerFactory"/>
-            
-     
             
         </properties>
 	</persistence-unit>

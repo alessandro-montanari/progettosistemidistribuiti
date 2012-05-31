@@ -2,11 +2,11 @@
 <project-modules id="moduleCoreId" project-version="1.5.0">
     <wb-module deploy-name="myalma-ear">
         <wb-resource deploy-path="/" source-path="/EarContent" tag="defaultRootSource"/>
-        <dependent-module archiveName="myalma-ejb.jar" deploy-path="/" handle="module:/resource/myalma-ejb/myalma-ejb">
+        <dependent-module archiveName="myalma-web.war" deploy-path="/" handle="module:/resource/myalma-web/myalma-web">
             <dependent-object/>
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="myalma-web.war" deploy-path="/" handle="module:/resource/myalma-web/myalma-web">
+        <dependent-module archiveName="myalma-ejb.jar" deploy-path="/" handle="module:/resource/myalma-ejb/myalma-ejb">
             <dependent-object/>
             <dependency-type>uses</dependency-type>
         </dependent-module>
