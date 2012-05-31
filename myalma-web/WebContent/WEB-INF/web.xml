@@ -41,6 +41,15 @@
  <listener>
   <listener-class>org.jboss.seam.servlet.SeamListener</listener-class>
  </listener>
+ 
+ <!-- jeeObserver Listener -->
+ <listener>
+    <listener-class>jeeobserver.JeeObserverListener</listener-class>
+ </listener>
+<listener>
+    <listener-class>jeeobserver.HttpSessionListener</listener-class>
+ </listener>
+ 
  <servlet>
   <servlet-name>Faces Servlet</servlet-name>
   <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
