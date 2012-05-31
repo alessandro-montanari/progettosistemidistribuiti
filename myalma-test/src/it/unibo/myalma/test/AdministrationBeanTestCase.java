@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import it.unibo.myalma.business.administration.IAdministration;
-import it.unibo.myalma.business.professor.IProfessorManager;
 import it.unibo.myalma.business.search.ISearch;
 import it.unibo.myalma.model.ContentsRoot;
 import it.unibo.myalma.model.Role;
@@ -24,7 +23,6 @@ public class AdministrationBeanTestCase {
 	static AutomateImportMYSQL automator = new AutomateImportMYSQL();
 	static ISearch searchBean = null;
 	static IAdministration adminBean = null;
-	static IProfessorManager profManager = null;
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception 
@@ -32,25 +30,6 @@ public class AdministrationBeanTestCase {
 		searchBean = (ISearch)helper.lookup("myalma-ear/SearchBean/remote");
 		adminBean = (IAdministration)helper.lookup("myalma-ear/AdministrationBean/remote");
 		automator.importData("./sql-scripts/myalma-dump.sql");
-//		profManager = (IProfessorManager)helper.lookup("myalma-ear/ProfessorManagerBean/remote");
-		
-//		Role profRole = null;
-//		for(Role r : searchBean.getAllRoles())
-//		{
-//			if(r.getRoleName().equalsIgnoreCase("professor"))
-//			{
-//				profRole = r;
-//				break;
-//			}
-//		}
-//		
-//		for(int i=0; i<=249; i++)
-//		{
-//			User u = new User(i+"mail", i+"mail", i+"", i+"");
-//			u.getRoles().add(profRole);
-//			adminBean.addUser(u);
-//			profManager.addAssistant(137, u.getMail());
-//		}
 	}
 
 	@Test
