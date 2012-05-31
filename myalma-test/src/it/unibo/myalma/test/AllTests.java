@@ -9,7 +9,8 @@ import org.junit.runners.Suite.SuiteClasses;
 				ProfessorManagerBeanTestCase.class, 
 				SearchBeanTestCase.class,
 				EditContentBeanTestCase.class,
-				EditMaterialBeanTestCase.class })
+				EditMaterialBeanTestCase.class,
+				StudentManagerTestCase.class })
 public class AllTests {
 
 }
