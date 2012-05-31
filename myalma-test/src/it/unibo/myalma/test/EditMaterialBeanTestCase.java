@@ -16,6 +16,11 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+/*
+ * Prima di avviare i test:
+ * 	- commentare le annotazioni @In e @Out su content e parentContent e @RequestParameter su contentId
+ * 	- sostituire @In su entityManager con @PersistenceContext(type=PersistenceContextType.EXTENDED) 
+ */
 public class EditMaterialBeanTestCase {
 	
 	static TestHelper helper = new TestHelper();

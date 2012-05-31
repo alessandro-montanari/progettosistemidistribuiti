@@ -11,8 +11,6 @@ import javax.ejb.Remove;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateful;
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceContextType;
 
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Create;
@@ -34,23 +32,22 @@ import it.unibo.myalma.business.professor.IProfessorManager;
 @RolesAllowed({"professor", "admin"})
 public class EditContentBean implements IEditContent 
 {
-//	@In(value="currentContent", required=false, scope=ScopeType.CONVERSATION)
-//	@Out(value="currentContent", required=false, scope=ScopeType.CONVERSATION)
+	@In(value="currentContent", required=false, scope=ScopeType.CONVERSATION)
+	@Out(value="currentContent", required=false, scope=ScopeType.CONVERSATION)
 	private Content content = null;		
 	
-//	@In(value="currentParentContent", required=false, scope=ScopeType.CONVERSATION)
-//	@Out(value="currentParentContent", required=false, scope=ScopeType.CONVERSATION)
+	@In(value="currentParentContent", required=false, scope=ScopeType.CONVERSATION)
+	@Out(value="currentParentContent", required=false, scope=ScopeType.CONVERSATION)
 	private Content parentContent = null;
 	
-//	@RequestParameter
+	@RequestParameter
 	private Integer contentId;
 
 	private User user = null;
 
 	// Qui utilizzo lo stesso contesto utilizzato in TeachingController cos“ che tutto ci˜ che carica lui
 	// io da qui non lo devo ricaricare (e viceversa) (ad esempio ogni volta che seleziono un diverso nodo padre)
-//	@In
-	@PersistenceContext(type=PersistenceContextType.EXTENDED)
+	@In
 	private EntityManager entityManager;
 
 	@EJB
