@@ -26,13 +26,6 @@ import java.util.StringTokenizer;
 
 import org.jboss.logging.Logger;
 
-/**
- * Message-Driven Bean implementation class for: ContentNotifierBean
- *
- */
-
-// TODO Ricordarsi di fare cache (con un dizionario) ogni volta che si usa un INotifier, così non è necessario
-// accedere sempre alla factory
 @MessageDriven(
 		activationConfig = { @ActivationConfigProperty(
 				propertyName = "destinationType", 
@@ -66,36 +59,14 @@ public class ContentNotifierBean implements MessageListener
 	@PersistenceContext
 	private EntityManager entityManager;
 
-	private INotifier mailNotifier;
-
 	@EJB
 	private ISearch searchBean;
-
-	/**
-	 * Default constructor. 
-	 */
-	public ContentNotifierBean() 
-	{
-		try 
-		{
-			mailNotifier = NotifierFactory.getInstance().createNotifier("mail");
-		} 
-		catch (Exception e) 
-		{
-			e.printStackTrace();
-		}	
-	}
 
 	/**
 	 * @see MessageListener#onMessage(Message)
 	 */
 	public void onMessage(Message message) 
 	{
-		// Bisognerebbe fare qualcosa che se il contenuto è stato modificato l'ultima volta 1 secondo fa
-		// non si inserisce una nuova notifica, oppure se la notifica c'è già non la si inserisce
-		// è abbastanza toso, perché si potrebbe considerare il tipo di notifica, esempio: se c'è una notifica di modifica
-		// e quel contenuto viene rimosso all'ora la notifica di modifica può essere eliminata, ecc...
-
 		log.info("-----------RICEVUTO MESSAGGIO JMS---------------");
 
 		String stringMessage = "";
@@ -165,10 +136,17 @@ public class ContentNotifierBean implements MessageListener
 
 			// Invio la mail
 			User u = searchBean.findUserBySubscription(sub.getId());
+			
+			// Qui logica per capire quale notificatore utilizzare (in questo caso solo mail) -------------
+			
+			INotifier notifier = NotifierFactory.getInstance().createNotifier("mail");
+			
+			// -----------------
+			
 			Destination dest = new Destination(u.getMail());
 
-//			TODO Decommenta per inviare le mail
-//			mailNotifier.notify(dest, msg);
+//			TODO Decommenta per inviare le notifiche
+//			notifier.notify(dest, msg);
 		}
 	}
 

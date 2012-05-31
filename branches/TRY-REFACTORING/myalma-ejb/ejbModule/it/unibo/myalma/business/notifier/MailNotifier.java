@@ -12,7 +12,6 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.mail.Session;
 
-
 public class MailNotifier implements INotifier 
 {
 	private Session session;
@@ -71,26 +70,6 @@ public class MailNotifier implements INotifier
 		}
 	}
 
-//	@Override
-//	public void notify(Destination destination, Content content, TypeOfChange type) 
-//	{
-//		String message;
-//		message = 	"Contenuto: " + content.getTitle() + "\n" +
-//					"Descrizione: " + content.getDescription() + "\n" +
-//					"è stato ";
-//		
-//		if(type.equals(TypeOfChange.CHANGE))
-//		{
-//			message += "MODIFICATO \n";
-//		}
-//		else if(type.equals(TypeOfChange.INSERT))
-//		{
-//			message += "INSERITO \n";
-//		}
-//		
-//		sendMessage(destination, message);
-//	}
-
 	@Override
 	public void notify(Destination destination, String message) 
 	{
@@ -102,7 +81,4 @@ public class MailNotifier implements INotifier
 	{
 		return "mail";
 	}
-
-
-
 }

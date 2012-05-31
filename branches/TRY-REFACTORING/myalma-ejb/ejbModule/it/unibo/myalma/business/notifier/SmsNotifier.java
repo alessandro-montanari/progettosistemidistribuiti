@@ -1,18 +1,10 @@
 package it.unibo.myalma.business.notifier;
 
-
+// Solo di esempio
 public class SmsNotifier implements INotifier 
 {
-	
 	protected SmsNotifier()
-	{
-	}
-
-//	@Override
-//	public void notify(Destination destination, Content content, TypeOfChange type) {
-//		// TODO Implementa notifica via sms
-//
-//	}
+	{}
 
 	@Override
 	public String getName() 
