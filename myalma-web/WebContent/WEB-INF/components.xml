@@ -13,7 +13,7 @@
                  http://jboss.com/products/seam/web http://jboss.com/products/seam/web-2.2.xsd
                  http://jboss.com/products/seam/components http://jboss.com/products/seam/components-2.2.xsd">
 
-	<core:init debug="true" jndi-pattern="myalma-ear/#{ejbName}/local" />
+	<core:init debug="false" jndi-pattern="myalma-ear/#{ejbName}/local" />
 
 	<core:manager concurrent-request-timeout="500"
 		conversation-timeout="120000" conversation-id-parameter="cid"
@@ -23,30 +23,7 @@
 	<!-- Make sure this URL pattern is the same as that used by the Faces Servlet -->
 	<web:hot-deploy-filter url-pattern="*.seam" />
 
-	<!-- If you are still using JBoss 4, uncomment this to have your PU started -->
-	<!-- <persistence:entity-manager-factory name="entityManagerFactory" -->
-	<!-- persistence-unit-name="myalma-web"/> -->
-	<!-- If you are still using JBoss 4, uncomment this to have the entityManagerFactory 
-		ysed -->
-	<!-- <persistence:managed-persistence-context name="entityManager" auto-create="true" -->
-	<!-- entity-manager-factory="#{entityManagerFactory}"/> -->
-
-
 	<persistence:managed-persistence-context name="entityManager" auto-create="true" 
 		persistence-unit-jndi-name="myalma-jpaManagerFactory"/>
-	
-	
-	<!--  <drools:rule-base 
-		name="securityRules"> <drools:rule-files><value>/security.drl</value></drools:rule-files> 
-		</drools:rule-base> <security:rule-based-permission-resolver security-rules="#{securityRules}"/> 
-		<security:identity jaas-config-name="myalma-security-domain" remember-me="true"/> 
-		<event type="org.jboss.seam.security.notLoggedIn"> <action execute="#{redirect.captureCurrentView}"/> 
-		</event> <event type="org.jboss.seam.security.loginSuccessful"> <action execute="#{redirect.returnToCapturedView}"/> 
-		</event> 
-	<mail:mail-session host="localhost" port="25" />  -->
-
-	<!-- For use with jBPM pageflow or process management -->
-	<!-- <bpm:jbpm> <bpm:process-definitions></bpm:process-definitions> <bpm:pageflow-definitions></bpm:pageflow-definitions> 
-		</bpm:jbpm> -->
 
 </components>

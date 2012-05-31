@@ -39,13 +39,6 @@
 		</navigation>
 	</page>
 
-
-<!-- 
-	<page view-id="/restricted/professor/modificationPages/InformationModificationCenter.xhtml">
-		<action if="#{contentManager.content == null}" execute="#{contentManager.edit}"/>
-	</page>
- -->
-
 	<!-- Questa regola cattura gli eventi che provengono dalle pagine di modifica (Information e Category), 
 		così non ripeto le regole (ci deve essere asterisco) -->
 	<page view-id="/restricted/professor/modificationPages/*">
@@ -71,9 +64,6 @@
 			</redirect>
 		</navigation>
 	</page>
-
-
-
 
 	<page view-id="/restricted/professor/TeachingExplore.xhtml">
 		<navigation from-action="cancel">
@@ -145,12 +135,6 @@
 			</redirect>
 		</navigation>
 	</page>
-
-
-
-
-
-
 
 
 

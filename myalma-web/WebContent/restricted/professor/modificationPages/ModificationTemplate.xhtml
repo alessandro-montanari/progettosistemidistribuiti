@@ -7,37 +7,21 @@
 	xmlns:rich="http://richfaces.org/rich" contentType="text/html">
 	<html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>myAlma - Docente</title>
-<link rel="shortcut icon" href="#{request.contextPath}/favicon.ico" />
-<a:loadStyle src="/stylesheet/theme.xcss" />
-<a:loadStyle src="/stylesheet/theme.css" />
-<ui:insert name="head" />
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>myAlma - Docente</title>
+	<link rel="shortcut icon" href="#{request.contextPath}/favicon.ico" />
+	<a:loadStyle src="/stylesheet/theme.xcss" />
+	<a:loadStyle src="/stylesheet/theme.css" />
+	<ui:insert name="head" />
 </head>
 <body style="text-align: center">
-
-
 	<ui:include src="../menu.xhtml">
 		<ui:param name="userName" value="#{userHelper.mail}" />
 	</ui:include>
 
-
 	<div class="body" style="text-align: left; width: 70%; margin: 0 auto;">
 
 		<rich:layout>
-			<!-- ============================ TOP ============================
-			<rich:layoutPanel position="top" width="100%"
-				style="background-color:silver; padding:7px;border-bottom-width: 1px; 
-				border-bottom-style: solid; border-bottom-color: silver;"
-				rendered="#{renderTop}">
-				
-				
-				  <ui:include src="ModificationTop.xhtml">
-					<ui:param name="new" value="false"></ui:param>
-				</ui:include>
-			</rich:layoutPanel>
-			 ======================================================== -->
-
 			<!-- ============================ LEFT ============================ -->
 			<rich:layoutPanel position="left" width="20%" style="padding:3px;"
 				rendered="#{renderLeft}">
