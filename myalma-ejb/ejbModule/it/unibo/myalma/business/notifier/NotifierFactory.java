@@ -2,7 +2,7 @@ package it.unibo.myalma.business.notifier;
 
 public class NotifierFactory 
 {
-	private String[] notifierNames = {"mail"};
+	private String[] notifierNames = {"mail", "sms"};
 	private static NotifierFactory instance = null;
 	
 	
@@ -18,14 +18,14 @@ public class NotifierFactory
 		return instance;
 	}
 	
-	public INotifier createNotifier(String name) throws Exception
+	public INotifier createNotifier(String name)
 	{
 		if(name.equals("mail"))
 			return new MailNotifier();
 		else if(name.equals("sms"))
 			return new SmsNotifier();
 		else
-			throw new Exception("Invalid argument " + name);
+			throw new IllegalArgumentException("Invalid argument " + name);
 	}
 
 	public String[] getNotifierNames() {
