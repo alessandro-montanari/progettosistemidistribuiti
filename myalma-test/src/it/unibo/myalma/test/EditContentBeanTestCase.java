@@ -114,5 +114,23 @@ public class EditContentBeanTestCase {
 		editContentBean.delete();
 		assertEquals(previousCategories-1, searchBean.findContentsByType(ContentType.CATEGORY).size());
 	}
-
+	
+	@Test
+	public void testContent()
+	{
+		Content content = searchBean.findContentsByTitle("Categoria2 Ricerca Operativa").get(0);
+		editContentBean.setContentId(content.getId());
+		editContentBean.edit();
+		assertEquals(content.getId(), editContentBean.getContentId());
+		assertEquals(content.getTitle(), editContentBean.getContent().getTitle());
+	}
+	
+	@Test
+	public void testParentContent()
+	{
+		Content parent = searchBean.findContentsByTitle("Categoria2 Ricerca Operativa").get(0);
+		editContentBean.setParentContentId(parent.getId());
+		assertEquals(parent.getId(), editContentBean.getParentContentId());
+		assertEquals(parent.getTitle(), editContentBean.getParentContent().getTitle());
+	}
 }
