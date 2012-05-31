@@ -65,6 +65,7 @@ public class TeachingControllerBean
 			root = new TreeNodeImpl<Content>();
 			TreeNode<Content> node = new TreeNodeImpl<Content>();
 			node.setData(contentsRoot);
+			// Devo inserire un dummyElement, altrimenti non viene visualizzata la freccina per espandere il nodo
 			node.addChild(dummyKey, dummyElement);
 			node.setParent(root);
 			root.addChild(contentsRoot.getId(), node);
