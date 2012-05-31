@@ -7,10 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.*;
 
-import static javax.persistence.CascadeType.MERGE;
 import static javax.persistence.CascadeType.REFRESH;
-import static javax.persistence.CascadeType.ALL;
-import static javax.persistence.CascadeType.PERSIST;
+import static javax.persistence.FetchType.LAZY;
 
 /**
  * Entity implementation class for Entity: Subscription
@@ -20,24 +18,21 @@ import static javax.persistence.CascadeType.PERSIST;
 @Table(name="subscriptions")
 @Access(AccessType.FIELD)
 public class Subscription implements Serializable {
-
-	   
+	
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column(unique = true, nullable = false)
 	private int id;
 	
-	@ManyToOne(cascade = { MERGE, REFRESH })
+	@ManyToOne(cascade = REFRESH)
 	private Teaching teaching;
 	
-	// TODO OrphanRemoval ??
-//	@OneToMany(cascade = ALL)
-//	private List<NotificationPolicy> policies = new ArrayList<NotificationPolicy>();
-	
-	@ManyToMany(cascade = { MERGE, REFRESH, PERSIST })
+	// In cascade non c'è ne MERGE ne PERSIST perché le notifiche devono essere uniche per ogni evento, ossia se un
+	// contenuto viene aggiunto c'è una sola tupla che rappresenta la notifica che sarà poi collegata con tutte le
+	// sottoscrizioni relative al corso a cui appartiene il contenuto interessato.
+	// Per motivo analogo non c'è neanche REMOVE
+	@ManyToMany(cascade = REFRESH, fetch = LAZY)
 	private List<Notification> unreadNotifications = new ArrayList<Notification>();
-	
-//	@ManyToMany(cascade = { REFRESH, MERGE, PERSIST })
-//	private List<Notification> readNotifications = new ArrayList<Notification>();
 	
 	private static final long serialVersionUID = 1L;
 
@@ -45,17 +40,10 @@ public class Subscription implements Serializable {
 		super();
 	}   
 	
-//	public Subscription(Teaching teaching, List<NotificationPolicy> policies)
-//	{
-//		this.policies = policies;
-//		this.teaching = teaching;
-//	}
-	
 	public Subscription(Teaching teaching)
 	{
 		this.teaching = teaching;
 	}
-	
 	
 	public int getId() {
 		return this.id;
@@ -77,20 +65,21 @@ public class Subscription implements Serializable {
 		this.unreadNotifications = unreadNotifications;
 	}
 	
-//	public List<Notification> getReadNotifications() {
-//		return readNotifications;
-//	}
-//	
-//	protected void setReadNotifications(List<Notification> readNotifications) {
-//		this.readNotifications = readNotifications;
-//	}
+	@Override
+	public boolean equals(Object obj) 
+	{
+		if(this == obj)
+			return true;
+		if( !(obj instanceof Subscription) )
+			return false;
+		
+		Subscription sub = (Subscription)obj;
+		return this.teaching.equals(sub.getTeaching()) && this.unreadNotifications.equals(sub.getUnreadNotifications());
+	}
 	
-//	public List<NotificationPolicy> getPolicies() {
-//		return policies;
-//	}
-//	
-//	protected void setPolicies(List<NotificationPolicy> policies) {
-//		this.policies = policies;
-//	}
-   
+	@Override
+	public int hashCode() 
+	{
+		return this.teaching.hashCode();
+	}
 }

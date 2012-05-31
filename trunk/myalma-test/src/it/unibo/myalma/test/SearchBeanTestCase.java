@@ -1,116 +1,234 @@
 package it.unibo.myalma.test;
 
-import static javax.security.auth.login.AppConfigurationEntry.LoginModuleControlFlag.REQUIRED;
 import static org.junit.Assert.*;
 
-import it.unibo.myalma.business.SearchBeanRemote;
-import it.unibo.myalma.test.helpers.*;
-
-import java.util.HashMap;
-import java.util.Hashtable;
-
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.security.auth.login.AppConfigurationEntry;
-import javax.security.auth.login.Configuration;
-import javax.security.auth.login.LoginException;
-
-import org.jboss.security.auth.callback.AppCallbackHandler;
-import org.jboss.security.client.SecurityClient;
-import org.jboss.security.client.SecurityClientFactory;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class SearchBeanTestCase {
+import it.unibo.myalma.business.search.ISearch;
+import it.unibo.myalma.model.ContentType;
+import it.unibo.myalma.test.helpers.*;
 
-	private static TestHelper helper = null;
-	private static SearchBeanRemote search = null;
+// Decommentare il modulo di login per il testing in myalma-ear/META-INF/myalma-jboss-beans.xml
 
+// Prima classe testata
+public class SearchBeanTestCase 
+{
+	static TestHelper helper = new TestHelper();
+	static AutomateImportMYSQL automator = new AutomateImportMYSQL();
+	static ISearch searchBean = null;
+	
 	@BeforeClass
-	public static void setUpClass() throws Exception
+	public static void setUpBeforeClass() throws Exception 
 	{
-		helper = new TestHelper();
-		search = (SearchBeanRemote)helper.lookup("myalma-ear/SearchBean/remote");
-		helper.login("", "");
-	}
-	
-	@AfterClass
-	public static void tearDown()
-	{
-		helper.logout();
-	}
-	
-	@Before
-	public void setUp() throws Exception 
-	{
-		
+		searchBean = (ISearch)helper.lookup("myalma-ear/SearchBean/remote");
+		automator.importData("./sql-scripts/myalma-dump.sql");
 	}
 
-	
-	@Test
-	public void testGetAllProfessorsWithAdmin() 
+	@AfterClass
+	public static void tearDownAfterClass() throws Exception 
 	{
-		assertEquals(4, search.getAllProfessors().size());
+	}
+
+
+	@Test
+	public void testGetAllProfessors() 
+	{
+		assertEquals(4, searchBean.getAllProfessors().size());
 	}
 
 	@Test
 	public void testFindProfessorsByName() 
 	{
-		assertEquals(1, search.findProfessorsByName("Silvano").size());
-		assertEquals("Silvano", search.findProfessorsByName("Silvano").get(0).getName());
+		assertEquals(1, searchBean.findProfessorsByName("Enrico").size());
+		assertEquals("Enrico",searchBean.findProfessorsByName("Enrico").get(0).getName());
 	}
 
 	@Test
-	public void testGetAllTeachings() {
-		fail("Not yet implemented"); // TODO
+	public void testGetAllTeachings() 
+	{
+		assertEquals(8, searchBean.getAllTeachings().size());
 	}
 
 	@Test
-	public void testFindTeachingsByName() {
-		fail("Not yet implemented"); // TODO
+	public void testFindTeachingByName() 
+	{
+		assertEquals("Statistica", searchBean.findTeachingByName("Statistica").getName());
 	}
 
 	@Test
-	public void testFindTeachingsByYear() {
-		fail("Not yet implemented"); // TODO
+	public void testFindTeachingsByYear() 
+	{
+		assertEquals(5, searchBean.findTeachingsByYear(1).size());
 	}
 
 	@Test
-	public void testFindTeachingsByYearRange() {
-		fail("Not yet implemented"); // TODO
+	public void testFindTeachingsByYearRange() 
+	{
+		assertEquals(2, searchBean.findTeachingsByYearRange(2,4).size());
+		assertEquals(8, searchBean.findTeachingsByYearRange(1,10).size());
+		assertEquals(1, searchBean.findTeachingsByYearRange(7,10).size());
 	}
 
 	@Test
-	public void testFindTeachingsBySsd() {
-		fail("Not yet implemented"); // TODO
-	}
-
-	@Test
-	public void testFindAllTeachingsOfProfessorEditor() {
-		fail("Not yet implemented"); // TODO
+	public void testFindTeachingsBySsd() 
+	{
+		assertEquals(7, searchBean.findTeachingsBySsd("MAT").size());
+		assertEquals("Scienza delle merendine", searchBean.findTeachingsBySsd("INF").get(0).getName());
 	}
 
 	@Test
 	public void testGetAllStudents() 
 	{
-		assertEquals(5, search.getAllStudents().size());
+		assertEquals(6, searchBean.getAllStudents().size());
 	}
 
 	@Test
-	public void testFindAllStudentsSubscribedToTeaching() {
-		fail("Not yet implemented"); // TODO
+	public void testGetAllContents() 
+	{
+		assertEquals(236, searchBean.getAllContents().size());
 	}
 
 	@Test
-	public void testFindTeachingOfContentsRoot() {
-		fail("Not yet implemented"); // TODO
+	public void testGetAllUsers() 
+	{
+		assertEquals(10, searchBean.getAllUsers().size());
 	}
 
 	@Test
-	public void testFindAllTeachingsOfProfessorAssistant() {
-		fail("Not yet implemented"); // TODO
+	public void testFindAllAssistantsByTeachingInt() 
+	{
+		assertEquals(2,searchBean.findAssistantsByTeaching(137).size());
+		assertEquals("paolo.bellavista@uunibo.it", searchBean.findAssistantsByTeaching(137).get(0).getMail());
 	}
+
+	@Test
+	public void testFindAllAssistantsByTeachingString() 
+	{
+		assertEquals(2,searchBean.findAssistantsByTeaching("Ricerca Operativa").size());
+		assertEquals("paolo.bellavista@uunibo.it", searchBean.findAssistantsByTeaching("Ricerca Operativa").get(0).getMail());
+	}
+
+	@Test
+	public void testFindAllStudentsSubscribedToTeachingInt() 
+	{
+		assertEquals(2,searchBean.findStudentsSubscribedToTeaching(137).size());
+		assertEquals(0, searchBean.findStudentsSubscribedToTeaching(131).size());
+	}
+
+	@Test
+	public void testFindAllStudentsSubscribedToTeachingString() 
+	{
+		assertEquals(2,searchBean.findStudentsSubscribedToTeaching("Ricerca Operativa").size());
+		assertEquals(0, searchBean.findStudentsSubscribedToTeaching("Scienza delle merendine").size());
+		assertEquals(0, searchBean.findStudentsSubscribedToTeaching("").size());
+	}
+
+	@Test
+	public void testFindAllTeachingsByEditorId() 
+	{
+		assertEquals(4, searchBean.findTeachingsByEditorId("silvano.martello@uunibo.it").size());
+		assertEquals(4, searchBean.findTeachingsByEditorId("enrico.denti@uunibo.it").size());
+	}
+
+	@Test
+	public void testFindAllTeachingsByEditorName() 
+	{
+		assertEquals(4, searchBean.findTeachingsByEditorName("Silvano").size());
+		assertEquals(4, searchBean.findTeachingsByEditorName("Enrico").size());
+	}
+
+	@Test
+	public void testFindAllTeachingsByAssistantId() 
+	{
+		assertEquals(1, searchBean.findTeachingsByAssistantId("paolo.bellavista@uunibo.it").size());
+		assertEquals("Ricerca Operativa", searchBean.findTeachingsByAssistantId("paolo.bellavista@uunibo.it").get(0).getName());
+		assertEquals(1, searchBean.findTeachingsByAssistantId("giuseppe.bellavia@uunibo.it").size());
+	}
+
+	@Test
+	public void testFindAllTeachingsByAssistantName() 
+	{
+		assertEquals(1, searchBean.findTeachingsByAssistantName("Paolo").size());
+		assertEquals("Ricerca Operativa", searchBean.findTeachingsByAssistantName("Paolo").get(0).getName());
+		assertEquals(1, searchBean.findTeachingsByAssistantName("Giuseppe").size());
+	}
+
+	@Test
+	public void testFindTeachingByContentsRootInt() 
+	{
+		assertEquals("Linguaggi", searchBean.findTeachingByContentsRoot(3330).getName());
+		assertEquals("Statistica", searchBean.findTeachingByContentsRoot(3325).getName());
+	}
+
+	@Test
+	public void testFindTeachingByContentsRootString() 
+	{
+		assertEquals("Linguaggi", searchBean.findTeachingByContentsRoot("Linguaggi Contents Root").getName());
+		assertEquals("Statistica", searchBean.findTeachingByContentsRoot("Statistica Contents Root").getName());
+	}
+
+	@Test
+	public void testFindContentsByTitle() 
+	{
+		assertEquals(ContentType.CONTENTS_ROOT, searchBean.findContentsByTitle("Fon. Informatica Contents Root").get(0).getContentType());
+		assertEquals(ContentType.CATEGORY, searchBean.findContentsByTitle("Categoria1 Linguaggi").get(0).getContentType());
+		assertEquals(1, searchBean.findContentsByTitle("Categoria1 Linguaggi").size());
+	}
+
+	@Test
+	public void testFindContensByType() 
+	{
+		assertEquals(8, searchBean.findContentsByType(ContentType.CONTENTS_ROOT).size());
+		assertEquals(115, searchBean.findContentsByType(ContentType.CATEGORY).size());
+	}
+
+	@Test
+	public void testFindContentById() 
+	{
+		assertEquals("Scienza delle merendine Contents Root", searchBean.findContentById(3323).getTitle());
+		assertEquals("Categoria2 Ricerca Operativa", searchBean.findContentById(3331).getTitle());
+	}
+
+	@Test
+	public void testGetAllRoles() 
+	{
+		assertEquals(3, searchBean.getAllRoles().size());
+	}
+
+	@Test
+	public void testGetAllNotifications() 
+	{
+		assertEquals(0, searchBean.getAllNotifications().size());
+	}
+
+	@Test
+	public void testFindTeachingById() 
+	{
+		assertEquals("Scienza delle costruzioni", searchBean.findTeachingById(132).getName());
+		assertEquals("Ingegneria vs Matematica", searchBean.findTeachingById(135).getName());
+	}
+	
+	@Test
+	public void testFindSubscriptionsByUserId() 
+	{
+		assertEquals(1, searchBean.findSubscriptionsByUserId("alessandro.montanar5@studio.unibo.it").size());
+		assertEquals("Ricerca Operativa", searchBean.findSubscriptionsByUserId("alessandro.montanar5@studio.unibo.it").get(0).getTeaching().getName());
+	}
+	
+	@Test
+	public void testFindSubscriptionsToTeachingString() 
+	{
+		assertEquals(2, searchBean.findSubscriptionsToTeaching("Ricerca Operativa").size());
+		assertEquals(0, searchBean.findSubscriptionsToTeaching("Scienza delle merendine").size());
+	}
+	
+	@Test
+	public void testFindSubscriptionsToTeachingInt() 
+	{
+		assertEquals(2, searchBean.findSubscriptionsToTeaching(137).size());
+		assertEquals(0, searchBean.findSubscriptionsToTeaching(131).size());
+	}
+
 }
-

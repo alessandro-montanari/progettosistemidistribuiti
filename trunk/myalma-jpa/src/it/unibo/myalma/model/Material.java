@@ -21,7 +21,6 @@ public class Material extends Content implements Serializable {
 	private String path;
 	private long size;
 	
-	
 	@Enumerated(STRING)
 	private MaterialFormat format;
 	

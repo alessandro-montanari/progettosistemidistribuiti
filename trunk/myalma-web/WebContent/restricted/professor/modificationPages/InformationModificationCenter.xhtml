@@ -12,23 +12,23 @@
 
 	<ui:param name="renderLeft" value="true" />
 	<ui:param name="renderRight" value="true" />
-	
+
 	<ui:define name="center">
 		<h:form>
 			<rich:layout>
+
 				<rich:layoutPanel position="top"
 					style="border-bottom-width: 1px; 
 				border-bottom-style: solid; 
 				border-bottom-color: silver; 
 				padding-bottom:10px">
-					<h:commandButton value="Salva"  action="#{contentManager.save}" />
-					<h:commandButton value="Salva in sessione" >
-						<f:param name="new" value="true"/>
+					<h:commandButton value="Salva" action="#{contentManager.save}" />
+					<h:commandButton value="Salva in sessione" action="#{contentManager.saveInSession}">
+						<f:param name="new" value="true" />
 					</h:commandButton>
 					<h:commandButton value="Elimina" action="#{contentManager.delete}" disabled="#{param['new']}" />
-					<h:commandButton value="Annulla" action="cancel" />
+					<h:commandButton value="Annulla" action="#{contentManager.cancel}" />
 				</rich:layoutPanel>
-
 
 				<rich:layoutPanel position="center" style="padding-top:10px">
 
@@ -52,7 +52,8 @@
 							<td><b>Descrizione:</b></td>
 						</tr>
 						<tr>
-							<td><h:inputTextarea cols="90" rows="5" value="#{currentContent.description}" /></td>
+							<td><h:inputTextarea cols="90" rows="5"
+									value="#{currentContent.description}" /></td>
 						</tr>
 						<tr>
 							<td><b>Contenuto:</b></td>
@@ -65,10 +66,7 @@
 							<td></td>
 						</tr>
 					</table>
-
-
 				</rich:layoutPanel>
-
 			</rich:layout>
 		</h:form>
 	</ui:define>

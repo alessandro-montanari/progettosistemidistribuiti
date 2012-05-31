@@ -22,9 +22,11 @@
 				border-bottom-color: silver; 
 				padding-bottom:10px">
 					<h:commandButton value="Salva" action="#{contentManager.save}" />
-					<h:commandButton value="Salva in sessione" />
+					<h:commandButton value="Salva in sessione" action="#{contentManager.saveInSession}">
+						<f:param name="new" value="true" />
+					</h:commandButton>
 					<h:commandButton value="Elimina" action="#{contentManager.delete}" disabled="#{param['new']}" />
-					<h:commandButton value="Annulla" action="cancel" />
+					<h:commandButton value="Annulla" action="#{contentManager.cancel}" />
 				</rich:layoutPanel>
 
 				<rich:layoutPanel position="center" style="padding-top:10px">
@@ -51,8 +53,6 @@
 							<td><h:inputTextarea cols="90" rows="5" value="#{currentContent.description}" /></td>
 						</tr>
 					</table>
-
-
 				</rich:layoutPanel>
 			</rich:layout>
 		</h:form>
