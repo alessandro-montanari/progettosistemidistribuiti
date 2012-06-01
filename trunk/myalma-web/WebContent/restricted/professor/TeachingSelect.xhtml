@@ -13,66 +13,78 @@
 
 	<ui:define name="center">
 		<rich:panel style="font-size:12px" header="Corsi in cui sei titolare">
-			<rich:dataTable style="font-size:12px;"
-				onRowMouseOver="this.style.backgroundColor='#F1F1F1'"
-				onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'"
+			<h:dataTable 
+				style="font-size:12px;border:1px solid silver;"
+				width="100%"
+				border="10" 
+				cellpadding="5" 
+				cellspacing="3" 
+				first="0" dir="LTR" 
+				frame="hsides" rules="all"
+				headerClass="headerClass"
 				value="#{searchBean.findTeachingsByEditorId(userHelper.mail)}"
-				var="teaching">
-				<rich:column>
+				var="teaching" >
+				<h:column>
 					<f:facet name="header">Nome</f:facet>
 					#{teaching.name}
-				</rich:column>
-				<rich:column>
+				</h:column>
+				<h:column>
 					<f:facet name="header">SSD</f:facet>
 					#{teaching.ssd} 
-				</rich:column>
-				<rich:column>
+				</h:column>
+				<h:column>
 					<f:facet name="header">Anno</f:facet>
 					#{teaching.yearOfCourse} 
-				</rich:column>
-				<rich:column>
+				</h:column>
+				<h:column>
 					<f:facet name="header">CFU</f:facet>
 					#{teaching.cfu} 
-				</rich:column>
-				<rich:column>
+				</h:column>
+				<h:column>
 					<!-- Vedere pages.xml per regole di navigazione -->
 					<s:button value="Modifica" action="teachingSelectAction">
 						<f:param name="teachingId" value="#{teaching.id}" />
 					</s:button>
-				</rich:column>
-			</rich:dataTable>
+				</h:column>
+			</h:dataTable>
 		</rich:panel>
 
 		<rich:panel style="font-size:12px"
 			header="Corsi in cui sei assistente">
-			<rich:dataTable style="font-size:12px;"
-				onRowMouseOver="this.style.backgroundColor='#F1F1F1'"
-				onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'"
+			<h:dataTable 
+				style="font-size:12px;border:1px solid silver;"
+				width="100%"
+				border="10" 
+				cellpadding="5" 
+				cellspacing="3" 
+				first="0" dir="LTR" 
+				frame="hsides" rules="all"
+				headerClass="headerClass"
 				value="#{searchBean.findTeachingsByAssistantId(userHelper.mail)}"
 				var="teaching">
-				<rich:column>
+				<h:column>
 					<f:facet name="header">Nome</f:facet>
 					#{teaching.name}
-				</rich:column>
-				<rich:column>
+				</h:column>
+				<h:column>
 					<f:facet name="header">SSD</f:facet>
 					#{teaching.ssd} 
-				</rich:column>
-				<rich:column>
+				</h:column>
+				<h:column>
 					<f:facet name="header">Anno</f:facet>
 					#{teaching.yearOfCourse} 
-				</rich:column>
-				<rich:column>
+				</h:column>
+				<h:column>
 					<f:facet name="header">CFU</f:facet>
 					#{teaching.cfu} 
-				</rich:column>
-				<rich:column>
+				</h:column>
+				<h:column>
 					<!-- Vedere pages.xml per regole di navigazione -->
 					<s:button value="Modifica" action="teachingSelectAction">
 						<f:param name="teachingId" value="#{teaching.id}" />
 					</s:button>
-				</rich:column>
-			</rich:dataTable>
+				</h:column>
+			</h:dataTable>
 		</rich:panel>
 	</ui:define>
 </ui:composition>
