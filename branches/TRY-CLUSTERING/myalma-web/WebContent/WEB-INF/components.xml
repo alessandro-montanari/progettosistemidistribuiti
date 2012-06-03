@@ -13,7 +13,27 @@
                  http://jboss.com/products/seam/web http://jboss.com/products/seam/web-2.2.xsd
                  http://jboss.com/products/seam/components http://jboss.com/products/seam/components-2.2.xsd">
 
-	<core:init debug="false" jndi-pattern="myalma-ear/#{ejbName}/local" />
+	<core:init distributable="true" debug="true" jndi-pattern="myalma-ear/#{ejbName}/local">
+		<core:interceptors>
+	      <value>org.jboss.seam.core.SynchronizationInterceptor</value>
+	      <value>org.jboss.seam.async.AsynchronousInterceptor</value>
+	      <value>org.jboss.seam.ejb.RemoveInterceptor</value>
+	      <value>org.jboss.seam.persistence.HibernateSessionProxyInterceptor</value>
+	      <value>org.jboss.seam.persistence.EntityManagerProxyInterceptor</value>
+	      <value>org.jboss.seam.core.MethodContextInterceptor</value>
+	      <value>org.jboss.seam.core.EventInterceptor</value>
+	      <value>org.jboss.seam.core.ConversationalInterceptor</value>
+	      <value>org.jboss.seam.bpm.BusinessProcessInterceptor</value>
+	      <value>org.jboss.seam.core.ConversationInterceptor</value>
+	      <value>org.jboss.seam.core.BijectionInterceptor</value>
+	      <value>org.jboss.seam.transaction.RollbackInterceptor</value>
+	      <value>org.jboss.seam.transaction.TransactionInterceptor</value>
+	      <value>org.jboss.seam.webservice.WSSecurityInterceptor</value>
+	      <value>org.jboss.seam.security.SecurityInterceptor</value>
+	      <value>org.jboss.seam.persistence.ManagedEntityInterceptor</value>  
+	   </core:interceptors>
+	
+	</core:init>
 
 	<core:manager concurrent-request-timeout="500"
 		conversation-timeout="120000" conversation-id-parameter="cid"
