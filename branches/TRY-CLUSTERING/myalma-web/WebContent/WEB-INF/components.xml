@@ -13,7 +13,7 @@
                  http://jboss.com/products/seam/web http://jboss.com/products/seam/web-2.2.xsd
                  http://jboss.com/products/seam/components http://jboss.com/products/seam/components-2.2.xsd">
 
-	<core:init distributable="true" debug="true" jndi-pattern="myalma-ear/#{ejbName}/local">
+	<core:init distributable="true" debug="false" jndi-pattern="myalma-ear/#{ejbName}/local">
 		<core:interceptors>
 	      <value>org.jboss.seam.core.SynchronizationInterceptor</value>
 	      <value>org.jboss.seam.async.AsynchronousInterceptor</value>
