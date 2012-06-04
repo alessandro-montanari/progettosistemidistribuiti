@@ -8,6 +8,7 @@ import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateful;
 
+import org.jboss.ejb3.annotation.Clustered;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
@@ -21,6 +22,7 @@ import it.unibo.myalma.model.Material;
 @Local(IEditMaterial.class)
 //@Remote(it.unibo.myalma.business.remote.IEditMaterialRemote.class)
 @RolesAllowed({"professor", "admin"})
+@Clustered
 public class EditMaterialBean extends EditContentBean implements IEditMaterial, Serializable
 {
 

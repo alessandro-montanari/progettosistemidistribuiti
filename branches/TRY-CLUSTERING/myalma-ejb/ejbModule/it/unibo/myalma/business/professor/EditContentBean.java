@@ -35,6 +35,7 @@ import it.unibo.myalma.business.professor.IProfessorManager;
 @Local(IEditContent.class)
 //@Remote(it.unibo.myalma.business.remote.IEditContentRemote.class)
 @RolesAllowed({"professor", "admin"})
+@Clustered
 public class EditContentBean implements IEditContent, Serializable
 {
 	private static final long serialVersionUID = 1L;
