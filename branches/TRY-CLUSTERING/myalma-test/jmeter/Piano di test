@@ -26,20 +26,88 @@ Think times
 	- think-time (ms): uniforme tra 3000 e 5000
 
 - Loggati
-	- tempo per il logout: uniforme tra 5min e 10min (vedere timeout)
-
-Test singole funzionalità
-- per ogni funzionalità
-	- utenti: 	1 10 100 600 1000 [1500]
-	- ramp-up (sec):1 10 100 300 500  [750]
+	- think-time (ms): uniforme tra 1000 e 5000
+	- tempo per il logout: uniforme tra 3min e 8min (vedere timeout)
 
 Test scenario/i reale/i
-- scenario 1 (ramp-up per tutti (sec): 500)
+- scenario 1 (ramp-up (sec): 1, ripetizioni: 10)
+	- 0 x Loggati			
+	- 1 x Aggiunta categoria	
+	- 0 x Aggiunta Informazione
+	- 0 x Modifica contenuti
+	- 0 x Navigazione dei corsi
+	- 0 x Rimozione contenuti
+
+- scenario 2 (ramp-up per tutti (sec): 500) (riduci il tempo di quelli loggati)
+	- 1 x Loggati			
+	- 2 x Aggiunta categoria	
+	- 2 x Aggiunta Informazione
+	- 2 x Modifica contenuti
+	- 2 x Navigazione dei corsi
+	- 1 x Rimozione contenuti
+
+- scenario 3 (ramp-up per tutti (sec): 500) (riduci il tempo di quelli loggati)
+	- 10 x Loggati			
+	- 20 x Aggiunta categoria	
+	- 20 x Aggiunta Informazione
+	- 20 x Modifica contenuti
+	- 20 x Navigazione dei corsi
+	- 10 x Rimozione contenuti
+
+- scenario 4 (ramp-up per tutti (sec): 500)
+	- 50 x Loggati			
+	- 100 x Aggiunta categoria	
+	- 100 x Aggiunta Informazione
+	- 100 x Modifica contenuti
+	- 100 x Navigazione dei corsi
+	- 50 x Rimozione contenuti
+
+- scenario 5 (ramp-up per tutti (sec): 500)
+	- 100 x Loggati			
+	- 200 x Aggiunta categoria	
+	- 200 x Aggiunta Informazione
+	- 200 x Modifica contenuti
+	- 100 x Navigazione dei corsi
+	- 100 x Rimozione contenuti
+
+- scenario 6 (ramp-up per tutti (sec): 500)
 	- 100 x Loggati			
 	- 200 x Aggiunta categoria	
 	- 200 x Aggiunta Informazione
 	- 200 x Modifica contenuti
 	- 200 x Navigazione dei corsi
+	- 100 x Rimozione contenuti
+
+- scenario 7 (ramp-up per tutti (sec): 500)
+	- 100 x Loggati			
+	- 250 x Aggiunta categoria	
+	- 200 x Aggiunta Informazione
+	- 200 x Modifica contenuti
+	- 200 x Navigazione dei corsi
+	- 100 x Rimozione contenuti
+
+- scenario 8 (ramp-up per tutti (sec): 500)
+	- 100 x Loggati			
+	- 250 x Aggiunta categoria	
+	- 250 x Aggiunta Informazione
+	- 200 x Modifica contenuti
+	- 200 x Navigazione dei corsi
+	- 100 x Rimozione contenuti
+
+- scenario 9 (ramp-up per tutti (sec): 500)
+	- 100 x Loggati			
+	- 250 x Aggiunta categoria	
+	- 250 x Aggiunta Informazione
+	- 250 x Modifica contenuti
+	- 200 x Navigazione dei corsi
+	- 100 x Rimozione contenuti
+
+- scenario 10 (ramp-up per tutti (sec): 500)
+	- 100 x Loggati			
+	- 250 x Aggiunta categoria	
+	- 250 x Aggiunta Informazione
+	- 250 x Modifica contenuti
+	- 250 x Navigazione dei corsi
 	- 100 x Rimozione contenuti
 
 
