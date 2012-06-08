@@ -5,6 +5,18 @@
 	version="3.1">
 	<display-name>myalma-ejb</display-name>
 
+	<enterprise-beans>
+		<session>
+			<ejb-name>EditContentBean</ejb-name>
+			<ejb-class>it.unibo.myalma.business.professor.EditContentBean</ejb-class>
+		</session>
+		
+		<session>
+			<ejb-name>EditMaterialBean</ejb-name>
+			<ejb-class>it.unibo.myalma.business.professor.EditMaterialBean</ejb-class>
+		</session>
+	</enterprise-beans>
+	
 	<interceptors>
 		<interceptor>
 			<interceptor-class>org.jboss.seam.ejb.SeamInterceptor</interceptor-class>
@@ -17,4 +29,6 @@
 			<interceptor-class>org.jboss.seam.ejb.SeamInterceptor</interceptor-class>
 		</interceptor-binding>
 	</assembly-descriptor>
+	
+	
 </ejb-jar>
