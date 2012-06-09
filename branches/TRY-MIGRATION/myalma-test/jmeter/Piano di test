@@ -1,0 +1,46 @@
+---------------------------------------------------------------------------------
+The ramp-up period tells JMeter how long to take to "ramp-up" to the full number of threads chosen. If 10 threads are used, and the ramp-up period is 100 seconds, then JMeter will take 100 seconds to get all 10 threads up and running. Each thread will start 10 (100/10) seconds after the previous thread was begun. If there are 30 threads and a ramp-up period of 120 seconds, then each successive thread will be delayed by 4 seconds.
+
+Ramp-up needs to be long enough to avoid too large a work-load at the start of a test, and short enough that the last threads start running before the first ones finish (unless one wants that to happen).
+
+Start with Ramp-up = number of threads and adjust up or down as needed. 
+
+NON MI INTERESSA SE ALCUNI UTENTI TERMINANO PRIMA CHE TUTTI SIANO UP, � TROPPO AMBIZIOSO.
+---------------------------------------------------------------------------------
+Target 1000 utenti in 500 secondi (2 al secondo)
+
+Think times
+- Aggiunta categoria (i dati da inserire sono pochi)
+	- think-time (ms): uniforme tra 3000 e 10000
+
+- Aggiunta informazione (molti dati da inserire)
+	- think-time (ms): uniforme tra 3000 e 20000
+
+- Modifica contenuti(molti dati da inserire)
+	- think-time (ms): uniforme tra 3000 e 20000
+
+- Navigazione dei corsi (passate veloci, solo check)
+	- think-time (ms): uniforme tra 3000 e 5000
+
+- Rimozione contenuti
+	- think-time (ms): uniforme tra 3000 e 5000
+
+- Loggati
+	- tempo per il logout: uniforme tra 5min e 10min (vedere timeout)
+
+Test singole funzionalità
+- per ogni funzionalità
+	- utenti: 	1 10 100 600 1000 [1500]
+	- ramp-up (sec):1 10 100 300 500  [750]
+
+Test scenario/i reale/i
+- scenario 1 (ramp-up per tutti (sec): 500)
+	- 100 x Loggati			
+	- 200 x Aggiunta categoria	
+	- 200 x Aggiunta Informazione
+	- 200 x Modifica contenuti
+	- 200 x Navigazione dei corsi
+	- 100 x Rimozione contenuti
+
+
+
