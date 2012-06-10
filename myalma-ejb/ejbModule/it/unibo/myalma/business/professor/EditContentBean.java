@@ -30,7 +30,7 @@ import it.unibo.myalma.business.professor.IProfessorManager;
 @Name("contentManager")
 @Scope(ScopeType.CONVERSATION)
 @Local(IEditContent.class)
-@Remote(it.unibo.myalma.business.remote.IEditContentRemote.class)
+//@Remote(it.unibo.myalma.business.remote.IEditContentRemote.class)
 @RolesAllowed({"professor", "admin"})
 public class EditContentBean implements IEditContent 
 {

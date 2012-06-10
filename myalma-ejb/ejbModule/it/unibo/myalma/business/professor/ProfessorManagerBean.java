@@ -42,7 +42,7 @@ import it.unibo.myalma.business.exceptions.*;
 @Stateless
 @Name("professorManager")
 @Local(IProfessorManager.class)
-@Remote(it.unibo.myalma.business.remote.IProfessorManagerRemote.class)
+//@Remote(it.unibo.myalma.business.remote.IProfessorManagerRemote.class)
 @RolesAllowed({"professor", "admin"})
 public class ProfessorManagerBean implements IProfessorManager 
 {
@@ -54,36 +54,36 @@ public class ProfessorManagerBean implements IProfessorManager
 	@Resource
 	private SessionContext context;
 
-	@Resource(mappedName="java:/JmsXA") 
-	private TopicConnectionFactory topicConnectionFactory;
+//	@Resource(mappedName="java:/JmsXA") 
+//	private TopicConnectionFactory topicConnectionFactory;
 
-	@Resource(mappedName="/jms/topics/contentEvents") 
-	private Topic eventsTopic;
+//	@Resource(mappedName="/jms/topics/contentEvents") 
+//	private Topic eventsTopic;
 
 	private void sendMessage(String message)
 	{
-		Connection connection = null;
-		Session session = null;
-		MessageProducer sender = null;
-		try {
-			// Non serve fare start sulla connessione
-			connection = topicConnectionFactory.createConnection("alessandro.montanar5@studio.unibo.it","ale");
-			// I due parametri sono ignorati dal container (vedi libro EJB 3.1)
-			session = connection.createSession(true, 0);
-			sender = session.createProducer(eventsTopic);
-			TextMessage msg = session.createTextMessage();
-			msg.setText(message);
-			sender.send(msg);
-		}
-		catch (Exception e) 
-		{
-			log.warn("Impossible to send JMS message, trace:" + e.getStackTrace());
-		}
-		finally {
-			if (sender != null) try { sender.close(); } catch (Exception ignore) { }
-			if (session != null) try { session.close(); } catch (Exception ignore) { }
-			if (connection != null) try { connection.close(); } catch (Exception ignore) { }
-		}
+//		Connection connection = null;
+//		Session session = null;
+//		MessageProducer sender = null;
+//		try {
+//			// Non serve fare start sulla connessione
+//			connection = topicConnectionFactory.createConnection("alessandro.montanar5@studio.unibo.it","ale");
+//			// I due parametri sono ignorati dal container (vedi libro EJB 3.1)
+//			session = connection.createSession(true, 0);
+//			sender = session.createProducer(eventsTopic);
+//			TextMessage msg = session.createTextMessage();
+//			msg.setText(message);
+//			sender.send(msg);
+//		}
+//		catch (Exception e) 
+//		{
+//			log.warn("Impossible to send JMS message, trace:" + e.getStackTrace());
+//		}
+//		finally {
+//			if (sender != null) try { sender.close(); } catch (Exception ignore) { }
+//			if (session != null) try { session.close(); } catch (Exception ignore) { }
+//			if (connection != null) try { connection.close(); } catch (Exception ignore) { }
+//		}
 	}
 
 	private String createMessage(Content content, TypeOfChange change, User modifier)
