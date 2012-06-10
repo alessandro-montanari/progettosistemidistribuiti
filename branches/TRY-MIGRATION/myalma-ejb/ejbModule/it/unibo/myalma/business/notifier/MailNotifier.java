@@ -21,7 +21,7 @@ public class MailNotifier implements INotifier
 	protected MailNotifier()
 	{
 		Hashtable<String, String> prop = new Hashtable<String, String>();
-		prop.put(Context.INITIAL_CONTEXT_FACTORY, "org.jnp.interfaces.NamingContextFactory");
+		prop.put(Context.INITIAL_CONTEXT_FACTORY, "org.jboss.as.naming.InitialContextFactory");
 		prop.put(Context.PROVIDER_URL, "jnp://localhost:1099/");
 		try 
 		{
