@@ -41,8 +41,15 @@ public class Material extends Content implements Serializable {
 		this.setPath(path);
 	}
 	
-	public String getPath() {
-		return this.path;
+	public String getPath() 
+	{
+		return path;
+	}
+	
+	public String getFileName()
+	{
+		File file = new File(path);
+		return file.getName();
 	}
 
 	public void setPath(String path) {
