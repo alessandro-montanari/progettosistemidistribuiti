@@ -6,6 +6,7 @@ import it.unibo.myalma.business.notifier.NotifierFactory;
 import it.unibo.myalma.model.TypeOfChange;
 import it.unibo.myalma.business.search.ISearch;
 
+import javax.annotation.security.RunAs;
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.EJB;
 import javax.ejb.MessageDriven;
@@ -33,7 +34,7 @@ import org.jboss.logging.Logger;
 
 				@ActivationConfigProperty(
 						propertyName = "destination", 
-						propertyValue = "contentEvents"),
+						propertyValue = "jms/topics/contentEvents"),
 
 						@ActivationConfigProperty(
 								propertyName="subscriptionDurability", 
@@ -52,6 +53,7 @@ import org.jboss.logging.Logger;
 														propertyName="password", 
 														propertyValue="ale")
 		})
+@RunAs("admin") // Serve per poter invocare i metodi del searchBean
 public class ContentNotifierBean implements MessageListener 
 {	
 	private static final Logger log = Logger.getLogger(ContentNotifierBean.class.getName());
