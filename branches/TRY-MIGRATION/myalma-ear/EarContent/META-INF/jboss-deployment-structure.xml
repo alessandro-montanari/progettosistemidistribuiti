@@ -4,7 +4,6 @@
   <deployment>
       <dependencies>
           <module name="javax.faces.api" slot="1.2" export="true"/>
-          <!-- <module name="org.hornetq" export="true"/>  -->
 		  <module name="org.dom4j" export="true"/>
         </dependencies>
   </deployment>
