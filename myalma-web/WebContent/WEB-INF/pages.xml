@@ -141,33 +141,33 @@
 
 
 	<exception class="javax.ejb.EJBAccessException">
-		<redirect view-id="/error.xhtml">
+		<redirect view-id="/errors/error.xhtml">
 			<message severity="warn">Invalid User or caller unauthorized</message>
 		</redirect>
 	</exception>
 	<exception class="org.jboss.seam.framework.EntityNotFoundException">
-		<redirect view-id="/error.xhtml">
+		<redirect view-id="/errors/error.xhtml">
 			<message severity="warn">Record not found</message>
 		</redirect>
 	</exception>
 	<exception class="javax.persistence.EntityNotFoundException">
-		<redirect view-id="/error.xhtml">
+		<redirect view-id="/errors/error.xhtml">
 			<message severity="warn">Record not found</message>
 		</redirect>
 	</exception>
 	<exception class="javax.persistence.EntityExistsException">
-		<redirect view-id="/error.xhtml">
+		<redirect view-id="/errors/error.xhtml">
 			<message severity="warn">Duplicate record</message>
 		</redirect>
 	</exception>
 	<exception class="javax.persistence.OptimisticLockException">
 		<end-conversation />
-		<redirect view-id="/error.xhtml">
+		<redirect view-id="/errors/error.xhtml">
 			<message severity="warn">Another user changed the same data, please try again</message>
 		</redirect>
 	</exception>
 	<exception class="org.jboss.seam.security.AuthorizationException">
-		<redirect view-id="/error.xhtml">
+		<redirect view-id="/errors/error.xhtml">
 			<message severity="error">You don't have permission to access this resource</message>
 		</redirect>
 	</exception>
@@ -177,7 +177,7 @@
 		</redirect>
 	</exception>
 	<exception class="javax.faces.application.ViewExpiredException">
-		<redirect view-id="/error.xhtml">
+		<redirect view-id="/errors/error.xhtml">
 			<message severity="warn">Your session has timed out, please try again</message>
 		</redirect>
 	</exception>
@@ -186,7 +186,7 @@
 		<http-error error-code="503" />
 	</exception>
 	<exception>
-		<redirect view-id="/error.xhtml">
+		<redirect view-id="/errors/error.xhtml">
 			<message severity="error">Unexpected error, please try again</message>
 		</redirect>
 	</exception>
