@@ -23,10 +23,10 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 
 @Name("searchBean")
-@Scope(ScopeType.APPLICATION)
+@Scope(ScopeType.STATELESS)
 @Stateless
 @Local(ISearch.class)
-@Remote(it.unibo.myalma.business.remote.ISearchRemote.class)
+//@Remote(it.unibo.myalma.business.remote.ISearchRemote.class)
 public class SearchBean implements ISearch 
 {
 	@PersistenceContext(unitName="myalma-jpa")

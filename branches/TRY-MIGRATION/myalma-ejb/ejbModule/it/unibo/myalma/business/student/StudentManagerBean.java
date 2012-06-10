@@ -16,7 +16,7 @@ import javax.ejb.Local;
 
 @Stateless
 @Local(IStudentManager.class)
-@Remote(it.unibo.myalma.business.remote.IStudentManagerRemote.class)
+//@Remote(it.unibo.myalma.business.remote.IStudentManagerRemote.class)
 @RolesAllowed({"student"})
 public class StudentManagerBean implements IStudentManager 
 {
