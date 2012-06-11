@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pages xmlns="http://jboss.com/products/seam/pages" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd">
+
+	<page view-id="/restricted/professor/TeachingSelect.xhtml">
+		<!-- Prendo il parametro teachingId e lo metto nel bean teachingControllerBean -->
+		<param name="teachingId" value="#{teachingControllerBean.teachingId}" />
+		<navigation from-action="teachingSelectAction">
+			<rule>
+				<begin-conversation />
+				<redirect view-id="/restricted/professor/TeachingExplore.xhtml" />
+			</rule>
+		</navigation>
+	</page>
+
+	<page view-id="/restricted/professor/modificationPages/MaterialModificationCenter.xhtml">
+		<action if="#{materialManager.content == null}" execute="#{materialManager.edit}"/>
+		
+		<navigation from-action="#{materialManager.cancel}">
+			<end-conversation />
+			<redirect view-id="/restricted/professor/TeachingExplore.xhtml">
+				<message>Modifiche annullate</message>
+			</redirect>
+		</navigation>
+
+		<!-- Vedere di utilizzare una factory bean -->
+		<navigation from-action="#{materialManager.save}">
+			<end-conversation />
+			<redirect view-id="/restricted/professor/TeachingExplore.xhtml">
+				<message>Contenuto salvato correttamente</message>
+			</redirect>
+		</navigation>
+
+		<navigation from-action="#{materialManager.delete}">
+			<end-conversation />
+			<redirect view-id="/restricted/professor/TeachingExplore.xhtml">
+				<message>Contenuto eliminato correttamente</message>
+			</redirect>
+		</navigation>
+	</page>
+
+	<!-- Questa regola cattura gli eventi che provengono dalle pagine di modifica (Information e Category), 
+		così non ripeto le regole (ci deve essere asterisco) -->
+	<page view-id="/restricted/professor/modificationPages/*">
+		<action if="#{contentManager.content == null}" execute="#{contentManager.edit}"/>
+		<navigation from-action="#{contentManager.cancel}">
+			<end-conversation />
+			<redirect view-id="/restricted/professor/TeachingExplore.xhtml">
+				<message>Modifiche annullate</message>
+			</redirect>
+		</navigation>
+
+		<navigation from-action="#{contentManager.save}">
+			<end-conversation />
+			<redirect view-id="/restricted/professor/TeachingExplore.xhtml">
+				<message>Contenuto salvato correttamente</message>
+			</redirect>
+		</navigation>
+
+		<navigation from-action="#{contentManager.delete}">
+			<end-conversation />
+			<redirect view-id="/restricted/professor/TeachingExplore.xhtml">
+				<message>Contenuto eliminato correttamente</message>
+			</redirect>
+		</navigation>
+	</page>
+
+	<page view-id="/restricted/professor/TeachingExplore.xhtml">
+		<navigation from-action="cancel">
+			<rule>
+				<end-conversation />
+				<redirect view-id="/restricted/professor/TeachingSelect.xhtml" />
+			</rule>
+		</navigation>
+
+		<!-- Questa regola cattura gli eventi di MODIFICA di contenuti (vedi from-action) -->
+		<navigation evaluate="#{param['contentType']}" from-action="modifyContent">
+			<rule if-outcome="INFORMATION">
+				<begin-conversation nested="true" flush-mode="manual" />
+				<redirect view-id="/restricted/professor/modificationPages/InformationModificationCenter.xhtml">
+					<param name="new" value="false" />
+					<param name="contentId" value="#{param['contentId']}" />
+				</redirect>
+			</rule>
+			<rule if-outcome="NOTICE">
+				<begin-conversation nested="true" flush-mode="manual" />
+				<redirect view-id="/restricted/professor/modificationPages/InformationModificationCenter.xhtml">
+					<param name="new" value="false" />
+					<param name="contentId" value="#{param['contentId']}" />
+				</redirect>
+			</rule>
+			<rule if-outcome="CATEGORY">
+				<begin-conversation nested="true" flush-mode="manual" />
+				<redirect view-id="/restricted/professor/modificationPages/CategoryModificationCenter.xhtml">
+					<param name="new" value="false" />
+					<param name="contentId" value="#{param['contentId']}" />
+				</redirect>
+			</rule>
+			<rule if-outcome="MATERIAL">
+				<begin-conversation nested="true" flush-mode="manual" />
+				<redirect view-id="/restricted/professor/modificationPages/MaterialModificationCenter.xhtml">
+					<param name="new" value="false" />
+					<param name="contentId" value="#{param['contentId']}" />
+				</redirect>
+			</rule>
+		</navigation>
+
+		<!-- Questa regola cattura gli eventi di aggiunta di NUOVI contenuti -->
+		<navigation from-action="#{contentManager.newContent('INFORMATION')}">
+			<begin-conversation nested="true" flush-mode="manual" />
+			<redirect view-id="/restricted/professor/modificationPages/InformationModificationCenter.xhtml">
+				<param name="new" value="true" />
+			</redirect>
+		</navigation>
+		
+		<navigation from-action="#{contentManager.newContent('NOTICE')}">
+			<begin-conversation nested="true" flush-mode="manual" />
+			<redirect view-id="/restricted/professor/modificationPages/InformationModificationCenter.xhtml">
+				<param name="new" value="true" />
+			</redirect>
+		</navigation>
+		
+		<navigation from-action="#{contentManager.newContent('CATEGORY')}">
+			<begin-conversation nested="true" flush-mode="manual" />
+			<redirect view-id="/restricted/professor/modificationPages/CategoryModificationCenter.xhtml">
+				<param name="new" value="true" />
+			</redirect>
+		</navigation>
+		
+		<navigation from-action="#{materialManager.newContent('MATERIAL')}">
+			<begin-conversation nested="true" flush-mode="manual" />
+			<redirect view-id="/restricted/professor/modificationPages/MaterialModificationCenter.xhtml">
+				<param name="new" value="true" />
+				<param name="multi" value="true" />
+			</redirect>
+		</navigation>
+	</page>
+
+
+
+
+
+	<exception class="javax.ejb.EJBAccessException">
+		<redirect view-id="/errors/error.xhtml">
+			<message severity="warn">Invalid User or caller unauthorized</message>
+		</redirect>
+	</exception>
+	<exception class="org.jboss.seam.framework.EntityNotFoundException">
+		<redirect view-id="/errors/error.xhtml">
+			<message severity="warn">Record not found</message>
+		</redirect>
+	</exception>
+	<exception class="javax.persistence.EntityNotFoundException">
+		<redirect view-id="/errors/error.xhtml">
+			<message severity="warn">Record not found</message>
+		</redirect>
+	</exception>
+	<exception class="javax.persistence.EntityExistsException">
+		<redirect view-id="/errors/error.xhtml">
+			<message severity="warn">Duplicate record</message>
+		</redirect>
+	</exception>
+	<exception class="javax.persistence.OptimisticLockException">
+		<end-conversation />
+		<redirect view-id="/errors/error.xhtml">
+			<message severity="warn">Another user changed the same data, please try again</message>
+		</redirect>
+	</exception>
+	<exception class="org.jboss.seam.security.AuthorizationException">
+		<redirect view-id="/errors/error.xhtml">
+			<message severity="error">You don't have permission to access this resource</message>
+		</redirect>
+	</exception>
+	<exception class="org.jboss.seam.security.NotLoggedInException">
+		<redirect view-id="/login.xhtml">
+			<message severity="warn">#{messages['org.jboss.seam.NotLoggedIn']}</message>
+		</redirect>
+	</exception>
+	<exception class="javax.faces.application.ViewExpiredException">
+		<redirect view-id="/errors/error.xhtml">
+			<message severity="warn">Your session has timed out, please try again</message>
+		</redirect>
+	</exception>
+	<exception class="org.jboss.seam.ConcurrentRequestTimeoutException"
+		log-level="trace">
+		<http-error error-code="503" />
+	</exception>
+	<exception>
+		<redirect view-id="/errors/error.xhtml">
+			<message severity="error">Unexpected error, please try again</message>
+		</redirect>
+	</exception>
+</pages>

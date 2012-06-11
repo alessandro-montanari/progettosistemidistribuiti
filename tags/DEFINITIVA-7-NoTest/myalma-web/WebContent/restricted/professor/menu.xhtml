@@ -1,0 +1,29 @@
+<rich:toolBar xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:rich="http://richfaces.org/rich" height="30">
+
+	<!-- userName viene passato da ModificationTemplate.xhtml -->
+	<rich:toolBarGroup>
+		<!--  <rich:separator lineType="none" style="width:70%"></rich:separator>-->
+		<s:link view="/restricted/professor/TeachingSelect.xhtml" value="myAlma" />
+		<h:outputText>
+			Benvenuto,  #{userName}
+		</h:outputText>
+		<s:link id="menuLogoutId" view="/Home.seam"
+			action="#{org.jboss.seam.web.session.invalidate}" value="Logout"
+			rendered="#{userHelper.logged}" propagation="none" />
+	</rich:toolBarGroup>
+
+
+	<!-- @newMenuItem@ 
+	<rich:toolBarGroup location="right">
+		<rich:inplaceInput defaultLabel="Cosa vuoi cercare?" />
+		<s:button value="Cerca" />
+	</rich:toolBarGroup>-->
+
+</rich:toolBar>
+
+
