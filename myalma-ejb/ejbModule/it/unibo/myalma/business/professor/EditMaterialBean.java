@@ -18,7 +18,7 @@ import it.unibo.myalma.model.Material;
 @Name("materialManager")
 @Scope(ScopeType.CONVERSATION)
 @Local(IEditMaterial.class)
-@Remote(it.unibo.myalma.business.remote.IEditMaterialRemote.class)
+//@Remote(it.unibo.myalma.business.remote.IEditMaterialRemote.class)
 @RolesAllowed({"professor", "admin"})
 public class EditMaterialBean extends EditContentBean implements IEditMaterial 
 {
