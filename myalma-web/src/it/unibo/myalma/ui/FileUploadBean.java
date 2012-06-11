@@ -1,5 +1,7 @@
 package it.unibo.myalma.ui;
 
+import java.io.Serializable;
+
 import it.unibo.myalma.business.professor.IEditMaterial;
 
 import org.jboss.seam.ScopeType;
@@ -14,8 +16,13 @@ import org.richfaces.model.UploadItem;
 // Vedi opzioni in web.xml per dimensione massima e salvataggio in cartella temporanea
 @Name("fileUploadBean")
 @Scope(ScopeType.CONVERSATION)
-public class FileUploadBean implements FileUploadListener
+public class FileUploadBean implements FileUploadListener, Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public void processUpload(UploadEvent event) 
 	{
 		UploadItem item = event.getUploadItem();

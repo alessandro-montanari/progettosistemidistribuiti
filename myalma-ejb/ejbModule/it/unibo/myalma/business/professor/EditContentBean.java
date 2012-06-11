@@ -1,5 +1,7 @@
 package it.unibo.myalma.business.professor;
 
+import java.io.Serializable;
+
 import it.unibo.myalma.model.*;
 
 import javax.annotation.Resource;
@@ -14,6 +16,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceContextType;
 
+import org.jboss.ejb3.annotation.Clustered;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Create;
 import org.jboss.seam.annotations.Destroy;
@@ -32,8 +35,14 @@ import it.unibo.myalma.business.professor.IProfessorManager;
 @Local(IEditContent.class)
 //@Remote(it.unibo.myalma.business.remote.IEditContentRemote.class)
 @RolesAllowed({"professor", "admin"})
-public class EditContentBean implements IEditContent 
+@Clustered
+public class EditContentBean implements IEditContent, Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@In(value="currentContent", required=false, scope=ScopeType.CONVERSATION)
 	@Out(value="currentContent", required=false, scope=ScopeType.CONVERSATION)
 	private Content content = null;		
