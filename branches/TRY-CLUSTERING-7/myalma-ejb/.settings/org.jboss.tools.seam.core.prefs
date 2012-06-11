@@ -1,0 +1,16 @@
+action.package=it.unibo.myalma.business
+action.sources=/myalma-ejb/ejbModule
+eclipse.preferences.version=1
+model.package=it.unibo.myalma.model
+model.sources=/myalma-jpa/src
+seam.ejb.project=myalma-ejb
+seam.parent.project=myalma-web
+seam.project.deployment.type=ear
+seam.project.settings.version=1.1
+seam.project.web.root.folder=/myalma-web/WebContent
+seam.runtime.name=jboss-seam-2.2.2.Final
+seam.settings.changed.by.user=true
+seam.test.creating=false
+seam.test.project=myalma-ejb
+test.package=org.domain.myalmaejb.test
+test.sources=/myalma-ejb/ejbModule

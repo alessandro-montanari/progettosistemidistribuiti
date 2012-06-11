@@ -1,0 +1,90 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/restricted/professor/modificationPages/ModificationTemplate.xhtml">
+
+	<ui:param name="renderLeft" value="false" />
+	<ui:param name="renderRight" value="false" />
+
+	<ui:define name="center">
+		<rich:panel style="font-size:12px" header="Corsi in cui sei titolare">
+			<h:dataTable 
+				style="font-size:12px;border:1px solid silver;"
+				width="100%"
+				border="10" 
+				cellpadding="5" 
+				cellspacing="3" 
+				first="0" dir="LTR" 
+				frame="hsides" rules="all"
+				headerClass="headerClass"
+				value="#{searchBean.findTeachingsByEditorId(userHelper.mail)}"
+				var="teaching" >
+				<h:column>
+					<f:facet name="header">Nome</f:facet>
+					#{teaching.name}
+				</h:column>
+				<h:column>
+					<f:facet name="header">SSD</f:facet>
+					#{teaching.ssd} 
+				</h:column>
+				<h:column>
+					<f:facet name="header">Anno</f:facet>
+					#{teaching.yearOfCourse} 
+				</h:column>
+				<h:column>
+					<f:facet name="header">CFU</f:facet>
+					#{teaching.cfu} 
+				</h:column>
+				<h:column>
+					<!-- Vedere pages.xml per regole di navigazione -->
+					<s:button value="Modifica" action="teachingSelectAction">
+						<f:param name="teachingId" value="#{teaching.id}" />
+					</s:button>
+				</h:column>
+			</h:dataTable>
+		</rich:panel>
+
+		<rich:panel style="font-size:12px"
+			header="Corsi in cui sei assistente">
+			<h:dataTable 
+				style="font-size:12px;border:1px solid silver;"
+				width="100%"
+				border="10" 
+				cellpadding="5" 
+				cellspacing="3" 
+				first="0" dir="LTR" 
+				frame="hsides" rules="all"
+				headerClass="headerClass"
+				value="#{searchBean.findTeachingsByAssistantId(userHelper.mail)}"
+				var="teaching">
+				<h:column>
+					<f:facet name="header">Nome</f:facet>
+					#{teaching.name}
+				</h:column>
+				<h:column>
+					<f:facet name="header">SSD</f:facet>
+					#{teaching.ssd} 
+				</h:column>
+				<h:column>
+					<f:facet name="header">Anno</f:facet>
+					#{teaching.yearOfCourse} 
+				</h:column>
+				<h:column>
+					<f:facet name="header">CFU</f:facet>
+					#{teaching.cfu} 
+				</h:column>
+				<h:column>
+					<!-- Vedere pages.xml per regole di navigazione -->
+					<s:button value="Modifica" action="teachingSelectAction">
+						<f:param name="teachingId" value="#{teaching.id}" />
+					</s:button>
+				</h:column>
+			</h:dataTable>
+		</rich:panel>
+	</ui:define>
+</ui:composition>
