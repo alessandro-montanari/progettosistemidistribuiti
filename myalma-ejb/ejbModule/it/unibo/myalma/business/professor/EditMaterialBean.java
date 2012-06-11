@@ -1,12 +1,15 @@
 package it.unibo.myalma.business.professor;
 
 import java.io.File;
+import java.io.Serializable;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateful;
 
+import org.jboss.ejb3.annotation.CacheConfig;
+import org.jboss.ejb3.annotation.Clustered;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
@@ -18,10 +21,12 @@ import it.unibo.myalma.model.Material;
 @Name("materialManager")
 @Scope(ScopeType.CONVERSATION)
 @Local(IEditMaterial.class)
-@Remote(it.unibo.myalma.business.remote.IEditMaterialRemote.class)
+//@Remote(it.unibo.myalma.business.remote.IEditMaterialRemote.class)
 @RolesAllowed({"professor", "admin"})
-public class EditMaterialBean extends EditContentBean implements IEditMaterial 
+public class EditMaterialBean extends EditContentBean implements IEditMaterial, Serializable
 {
+
+	private static final long serialVersionUID = 1L;
 	private byte[] fileData = null;
 	private String fileName = "";
 	private FileManager fileManager = null;

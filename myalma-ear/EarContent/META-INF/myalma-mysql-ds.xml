@@ -13,8 +13,8 @@ http://www.mysql.com/downloads/api-jdbc-stable.html
     <jndi-name>myalma-ds</jndi-name>
     <connection-url>jdbc:mysql://localhost:3306/sd10db</connection-url>
     <driver-class>com.mysql.jdbc.Driver</driver-class>
-    <user-name>sd10user</user-name>
-    <password>sd10pwd</password>
+    <user-name>sd12</user-name>
+    <password>sd12pwd</password>
     <exception-sorter-class-name>org.jboss.resource.adapter.jdbc.vendor.MySQLExceptionSorter</exception-sorter-class-name>
     
     <!-- 	Altrimenti con tanti utenti non gli sta dietro e scatta LazyLoadException: penso perché JMeter fa scattare il timeout
@@ -22,7 +22,8 @@ http://www.mysql.com/downloads/api-jdbc-stable.html
     		caricate le informazioni dalla richiesta precedente (PROVARE A CAMBIARE IL TIMEOUT IN HTTP REQUEST DEFAULTS) -->
     <!-- Max numero di connessioni su MYSQL http://dev.mysql.com/doc/refman//5.5/en/too-many-connections.html 
     										http://stackoverflow.com/questions/1208077/optimal-number-of-connections-in-connection-pool -->
-     <max-pool-size>40</max-pool-size>
+     <min-pool-size>20</min-pool-size>
+     <max-pool-size>35</max-pool-size>
     
     <!-- should only be used on drivers after 3.22.1 with "ping" support
     <valid-connection-checker-class-name>org.jboss.resource.adapter.jdbc.vendor.MySQLValidConnectionChecker</valid-connection-checker-class-name>

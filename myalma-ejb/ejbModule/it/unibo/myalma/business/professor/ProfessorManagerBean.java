@@ -25,6 +25,7 @@ import org.jboss.logging.Logger;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 
+import java.io.Serializable;
 import java.lang.reflect.Method;
 
 import javax.ejb.Local;
@@ -42,9 +43,9 @@ import it.unibo.myalma.business.exceptions.*;
 @Stateless
 @Name("professorManager")
 @Local(IProfessorManager.class)
-@Remote(it.unibo.myalma.business.remote.IProfessorManagerRemote.class)
+//@Remote(it.unibo.myalma.business.remote.IProfessorManagerRemote.class)
 @RolesAllowed({"professor", "admin"})
-public class ProfessorManagerBean implements IProfessorManager 
+public class ProfessorManagerBean implements IProfessorManager
 {
 	private static final Logger log = Logger.getLogger(ProfessorManagerBean.class.getName());
 
