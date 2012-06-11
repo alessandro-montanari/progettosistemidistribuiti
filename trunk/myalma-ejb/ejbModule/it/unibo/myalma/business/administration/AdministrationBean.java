@@ -19,7 +19,7 @@ import javax.persistence.PersistenceContext;
  */
 @Stateless
 @Local(IAdministration.class)
-@Remote(it.unibo.myalma.business.remote.IAdministrationBeanRemote.class)
+//@Remote(it.unibo.myalma.business.remote.IAdministrationBeanRemote.class)
 @RolesAllowed("admin")
 public class AdministrationBean implements IAdministration 
 {

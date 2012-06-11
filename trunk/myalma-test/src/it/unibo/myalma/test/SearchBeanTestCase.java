@@ -10,7 +10,7 @@ import it.unibo.myalma.business.search.ISearch;
 import it.unibo.myalma.model.ContentType;
 import it.unibo.myalma.test.helpers.*;
 
-// Decommentare il modulo di login per il testing in myalma-ear/META-INF/myalma-jboss-beans.xml
+// Decommentare il modulo di login per il testing in standalone-full.xml
 
 // Prima classe testata
 public class SearchBeanTestCase 
@@ -22,7 +22,7 @@ public class SearchBeanTestCase
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception 
 	{
-		searchBean = (ISearch)helper.lookup("myalma-ear/SearchBean/remote");
+		searchBean = (ISearch)helper.lookup("java:myalma-ear/myalma-ejb//SearchBean!it.unibo.myalma.business.remote.ISearchRemote");
 		automator.importData("./sql-scripts/myalma-dump.sql");
 	}
 

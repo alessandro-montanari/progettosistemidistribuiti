@@ -13,7 +13,7 @@
                  http://jboss.com/products/seam/web http://jboss.com/products/seam/web-2.2.xsd
                  http://jboss.com/products/seam/components http://jboss.com/products/seam/components-2.2.xsd">
 
-	<core:init debug="false" jndi-pattern="myalma-ear/#{ejbName}/local" />
+	<core:init debug="false" jndi-pattern="java:app/myalma-ejb/#{ejbName}" />
 
 	<core:manager concurrent-request-timeout="500"
 		conversation-timeout="120000" conversation-id-parameter="cid"
@@ -23,7 +23,12 @@
 	<!-- Make sure this URL pattern is the same as that used by the Faces Servlet -->
 	<web:hot-deploy-filter url-pattern="*.seam" />
 
-	<persistence:managed-persistence-context name="entityManager" auto-create="true" 
-		persistence-unit-jndi-name="myalma-jpaManagerFactory"/>
+	<persistence:managed-persistence-context
+		name="entityManager" auto-create="true" persistence-unit-jndi-name="myalma-jpaManagerFactory" />
+
+	<component class="org.jboss.seam.transaction.EjbSynchronizations"
+		jndi-name="java:app/jboss-seam/EjbSynchronizations" />
+	<component class="org.jboss.seam.async.TimerServiceDispatcher"
+		jndi-name="java:app/jboss-seam/TimerServiceDispatcher" />
 
 </components>

@@ -42,7 +42,7 @@ import it.unibo.myalma.business.exceptions.*;
 @Stateless
 @Name("professorManager")
 @Local(IProfessorManager.class)
-@Remote(it.unibo.myalma.business.remote.IProfessorManagerRemote.class)
+//@Remote(it.unibo.myalma.business.remote.IProfessorManagerRemote.class)
 @RolesAllowed({"professor", "admin"})
 public class ProfessorManagerBean implements IProfessorManager 
 {
@@ -57,7 +57,7 @@ public class ProfessorManagerBean implements IProfessorManager
 	@Resource(mappedName="java:/JmsXA") 
 	private TopicConnectionFactory topicConnectionFactory;
 
-	@Resource(mappedName="/jms/topics/contentEvents") 
+	@Resource(mappedName="java:jboss/exported/jms/topic/contentEvents") 
 	private Topic eventsTopic;
 
 	private void sendMessage(String message)
@@ -68,6 +68,7 @@ public class ProfessorManagerBean implements IProfessorManager
 		try {
 			// Non serve fare start sulla connessione
 			connection = topicConnectionFactory.createConnection("alessandro.montanar5@studio.unibo.it","ale");
+			connection.start();
 			// I due parametri sono ignorati dal container (vedi libro EJB 3.1)
 			session = connection.createSession(true, 0);
 			sender = session.createProducer(eventsTopic);

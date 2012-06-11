@@ -8,7 +8,13 @@ import java.io.IOException;
 public class FileManager 
 {
 	// TODO Per cluster probabilmente bisogna cambiare percorso
-	private String serverPath = "./server/default/data/myalma/";
+	private String serverPath = "";
+	
+	public FileManager()
+	{
+		serverPath = System.getProperty("jboss.server.data.dir");
+		serverPath += File.separator + "myalma" + File.separator;
+	}
 
 	public String saveFile(String fileName, byte[] fileData)
 	{
