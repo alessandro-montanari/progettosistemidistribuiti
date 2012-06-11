@@ -28,8 +28,11 @@ public class TestHelper
 	public TestHelper()
 	{
 		Hashtable<String, String> prop = new Hashtable<String, String>();
-		prop.put(Context.INITIAL_CONTEXT_FACTORY, "org.jnp.interfaces.NamingContextFactory");
-		prop.put(Context.PROVIDER_URL, "jnp://localhost:1099/");
+		prop.put(Context.URL_PKG_PREFIXES, "org.jboss.ejb.client.naming");
+		prop.put(Context.INITIAL_CONTEXT_FACTORY, "org.jboss.naming.remote.client.InitialContextFactory");
+		prop.put(Context.PROVIDER_URL, "remote://localhost:4447");
+		prop.put(Context.SECURITY_PRINCIPAL, "guest");
+		prop.put(Context.SECURITY_CREDENTIALS, "password");
 		try {
 			ctx = new InitialContext(prop);
 		} catch (NamingException e) {

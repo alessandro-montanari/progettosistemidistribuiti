@@ -42,13 +42,13 @@
   <listener-class>org.jboss.seam.servlet.SeamListener</listener-class>
  </listener>
  
- <!-- jeeObserver Listener -->
+ <!-- jeeObserver Listener 
  <listener>
     <listener-class>jeeobserver.JeeObserverListener</listener-class>
  </listener>
 <listener>
     <listener-class>jeeobserver.HttpSessionListener</listener-class>
- </listener>
+ </listener> -->
  
  <servlet>
   <servlet-name>Faces Servlet</servlet-name>
@@ -114,7 +114,7 @@
   <auth-method>FORM</auth-method>
   <form-login-config>
    <form-login-page>/PreLogin.html</form-login-page>
-   <form-error-page>/error.xhtml</form-error-page>
+   <form-error-page>/errors/error.xhtml</form-error-page>
   </form-login-config>
  </login-config>
  
