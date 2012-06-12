@@ -74,8 +74,8 @@ public class SearchBean implements ISearch
 	@Override
 	@RolesAllowed({ "professor", "student", "admin"})
 	public List<Teaching> findTeachingsByYear(int year) {
-		return entityManager.createQuery("SELECT t FROM Teaching t WHERE t.yearOfCourse=?")
-				.setParameter(1, year)
+		return entityManager.createQuery("SELECT t FROM Teaching t WHERE t.yearOfCourse=:year")
+				.setParameter("year", year)
 				.getResultList();
 	}
 
@@ -83,9 +83,9 @@ public class SearchBean implements ISearch
 	@Override
 	@RolesAllowed({ "professor", "student", "admin"})
 	public List<Teaching> findTeachingsByYearRange(int year1, int year2) {
-		return entityManager.createQuery("SELECT t FROM Teaching t WHERE t.yearOfCourse>=?1 and t.yearOfCourse<=?2")
-				.setParameter(1, year1)
-				.setParameter(2, year2)
+		return entityManager.createQuery("SELECT t FROM Teaching t WHERE t.yearOfCourse>=:year1 and t.yearOfCourse<=:year2")
+				.setParameter("year1", year1)
+				.setParameter("year2", year2)
 				.getResultList();
 	}
 
@@ -93,8 +93,8 @@ public class SearchBean implements ISearch
 	@Override
 	@RolesAllowed({ "professor", "student", "admin"})
 	public List<Teaching> findTeachingsBySsd(String ssd) {
-		return entityManager.createQuery("SELECT t FROM Teaching t WHERE t.ssd=?")
-				.setParameter(1, ssd)
+		return entityManager.createQuery("SELECT t FROM Teaching t WHERE t.ssd=:ssd")
+				.setParameter("ssd", ssd)
 				.getResultList();
 	}
 
@@ -147,8 +147,8 @@ public class SearchBean implements ISearch
 	@RolesAllowed({ "professor", "admin"})
 	public List<User> findStudentsSubscribedToTeaching(int teachingId) 
 	{
-		return entityManager.createQuery("SELECT u FROM Subscriber u, IN ( u.subscriptions ) sub WHERE sub.teaching.id=?")
-						.setParameter(1, teachingId)
+		return entityManager.createQuery("SELECT u FROM Subscriber u, IN ( u.subscriptions ) sub WHERE sub.teaching.id=:id")
+						.setParameter("id", teachingId)
 						.getResultList();
 	}
 
@@ -157,8 +157,8 @@ public class SearchBean implements ISearch
 	@RolesAllowed({ "professor", "admin"})
 	public List<User> findStudentsSubscribedToTeaching(String teachingName) 
 	{
-		return entityManager.createQuery("SELECT u FROM Subscriber u, IN ( u.subscriptions ) sub WHERE sub.teaching.name=?")
-				.setParameter(1, teachingName)
+		return entityManager.createQuery("SELECT u FROM Subscriber u, IN ( u.subscriptions ) sub WHERE sub.teaching.name=:name")
+				.setParameter("name", teachingName)
 				.getResultList();
 	}
 
@@ -167,8 +167,8 @@ public class SearchBean implements ISearch
 	@RolesAllowed({ "professor", "student", "admin"})
 	public List<Teaching> findTeachingsByEditorId(String profId) 
 	{
-		return entityManager.createQuery("SELECT t FROM Teaching t WHERE t.contentsRoot.editor.id=?")
-						.setParameter(1, profId)
+		return entityManager.createQuery("SELECT t FROM Teaching t WHERE t.contentsRoot.editor.id=:id")
+						.setParameter("id", profId)
 						.getResultList();
 	}
 
@@ -177,8 +177,8 @@ public class SearchBean implements ISearch
 	@RolesAllowed({ "professor", "student", "admin"})
 	public List<Teaching> findTeachingsByEditorName(String profName) 
 	{
-		return entityManager.createQuery("SELECT t FROM Teaching t WHERE t.contentsRoot.editor.name=?")
-				.setParameter(1, profName)
+		return entityManager.createQuery("SELECT t FROM Teaching t WHERE t.contentsRoot.editor.name=:name")
+				.setParameter("name", profName)
 				.getResultList();
 	}
 
@@ -187,8 +187,8 @@ public class SearchBean implements ISearch
 	@RolesAllowed({ "professor", "student", "admin"})
 	public List<Teaching> findTeachingsByAssistantId(String profId) 
 	{
-		return entityManager.createQuery("SELECT t FROM Teaching t, IN (t.contentsRoot.authors) auth WHERE auth.id=?")
-				.setParameter(1, profId)
+		return entityManager.createQuery("SELECT t FROM Teaching t, IN (t.contentsRoot.authors) auth WHERE auth.id=:id")
+				.setParameter("id", profId)
 				.getResultList();
 	}
 
@@ -197,8 +197,8 @@ public class SearchBean implements ISearch
 	@RolesAllowed({ "professor", "student", "admin"})
 	public List<Teaching> findTeachingsByAssistantName(String profName) 
 	{
-		return entityManager.createQuery("SELECT t FROM Teaching t, IN (t.contentsRoot.authors) auth WHERE auth.name=?")
-				.setParameter(1, profName)
+		return entityManager.createQuery("SELECT t FROM Teaching t, IN (t.contentsRoot.authors) auth WHERE auth.name=:name")
+				.setParameter("name", profName)
 				.getResultList();
 	}
 
@@ -206,8 +206,8 @@ public class SearchBean implements ISearch
 	@RolesAllowed({ "professor", "admin"})
 	public Teaching findTeachingByContentsRoot(int rootId) 
 	{
-		return (Teaching) entityManager.createQuery("SELECT t FROM Teaching t WHERE t.contentsRoot.id=?")
-						.setParameter(1, rootId)
+		return (Teaching) entityManager.createQuery("SELECT t FROM Teaching t WHERE t.contentsRoot.id=:id")
+						.setParameter("id", rootId)
 						.getSingleResult();
 	}
 
@@ -215,8 +215,8 @@ public class SearchBean implements ISearch
 	@RolesAllowed({ "professor", "admin"})
 	public Teaching findTeachingByContentsRoot(String rootTitle) 
 	{
-		return (Teaching) entityManager.createQuery("SELECT t FROM Teaching t WHERE t.contentsRoot.title=?")
-				.setParameter(1, rootTitle)
+		return (Teaching) entityManager.createQuery("SELECT t FROM Teaching t WHERE t.contentsRoot.title=:title")
+				.setParameter("title", rootTitle)
 				.getSingleResult();
 	}
 
@@ -225,8 +225,8 @@ public class SearchBean implements ISearch
 	@RolesAllowed({ "professor", "student", "admin"})
 	public List<Content> findContentsByTitle(String title) 
 	{
-		return entityManager.createQuery("SELECT c FROM Content c WHERE c.title LIKE ?")
-				.setParameter(1, title)
+		return entityManager.createQuery("SELECT c FROM Content c WHERE c.title LIKE :title")
+				.setParameter("title", title)
 				.getResultList();
 	}
 
@@ -235,8 +235,8 @@ public class SearchBean implements ISearch
 	@RolesAllowed({ "professor", "student", "admin"})
 	public List<Content> findContentsByType(ContentType type) 
 	{
-		return entityManager.createQuery("SELECT c FROM Content c WHERE c.contentType=?")
-				.setParameter(1, type)
+		return entityManager.createQuery("SELECT c FROM Content c WHERE c.contentType=:type")
+				.setParameter("type", type)
 				.getResultList();
 	}
 
@@ -276,8 +276,8 @@ public class SearchBean implements ISearch
 	@RolesAllowed({ "professor", "admin"})
 	public List<Subscription> findSubscriptionsByUserId(String mail) 
 	{
-		return entityManager.createQuery("SELECT sub FROM Subscriber u, IN ( u.subscriptions ) sub WHERE u.mail=?")
-				.setParameter(1, mail)
+		return entityManager.createQuery("SELECT sub FROM Subscriber u, IN ( u.subscriptions ) sub WHERE u.mail=:mail")
+				.setParameter("mail", mail)
 				.getResultList();
 	}
 
@@ -287,8 +287,8 @@ public class SearchBean implements ISearch
 	@RolesAllowed({ "professor", "admin"})
 	public List<Subscription> findSubscriptionsToTeaching(String name) 
 	{
-		return entityManager.createQuery("SELECT sub FROM Subscription sub WHERE sub.teaching.name=?")
-				.setParameter(1, name)
+		return entityManager.createQuery("SELECT sub FROM Subscription sub WHERE sub.teaching.name=:name")
+				.setParameter("name", name)
 				.getResultList();
 	}
 
@@ -298,8 +298,8 @@ public class SearchBean implements ISearch
 	@RolesAllowed({ "professor", "admin"})
 	public List<Subscription> findSubscriptionsToTeaching(int teachingId) 
 	{
-		return entityManager.createQuery("SELECT sub FROM Subscription sub WHERE sub.teaching.id=?")
-				.setParameter(1, teachingId)
+		return entityManager.createQuery("SELECT sub FROM Subscription sub WHERE sub.teaching.id=:id")
+				.setParameter("id", teachingId)
 				.getResultList();
 	}
 
@@ -307,8 +307,8 @@ public class SearchBean implements ISearch
 	@RolesAllowed({ "professor", "admin"})
 	public User findUserBySubscription(int subscriptionId) 
 	{
-		return (User) entityManager.createQuery("SELECT s FROM Subscriber s, IN ( s.subscriptions ) sub WHERE sub.id=?")
-						.setParameter(1, subscriptionId)
+		return (User) entityManager.createQuery("SELECT s FROM Subscriber s, IN ( s.subscriptions ) sub WHERE sub.id=:id")
+						.setParameter("id", subscriptionId)
 						.getSingleResult();
 	}
 }
