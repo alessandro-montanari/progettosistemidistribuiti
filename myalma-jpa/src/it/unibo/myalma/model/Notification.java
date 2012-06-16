@@ -10,6 +10,12 @@ import static javax.persistence.EnumType.STRING;
 @Entity
 @Table(name = "notifications")
 @Access(AccessType.FIELD)
+@NamedQueries(
+{
+	@NamedQuery( 	name= "getAllNotifications",
+					query="SELECT n FROM Notification n",
+					hints={ @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
+})
 public class Notification implements Serializable {
 
 	@Id

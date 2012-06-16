@@ -11,6 +11,12 @@ import javax.persistence.*;
 @Entity
 @Table(name = "roles")
 @Access(AccessType.FIELD)
+@NamedQueries(
+{
+	@NamedQuery( 	name= "getAllRoles",
+					query="SELECT r FROM Role r",
+					hints={ @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
+})
 public class Role implements Serializable {
 	   
 	@Id
