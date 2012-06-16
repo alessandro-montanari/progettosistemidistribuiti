@@ -56,7 +56,7 @@ public class EditContentBean implements IEditContent, Serializable
 
 	private User user = null;
 
-	// Qui utilizzo lo stesso contesto utilizzato in TeachingController cos“ che tutto ci˜ che carica lui
+	// Qui utilizzo lo stesso contesto utilizzato in treeController cos“ che tutto ci˜ che carica lui
 	// io da qui non lo devo ricaricare (e viceversa) (ad esempio ogni volta che seleziono un diverso nodo padre)
 	@In
 	private EntityManager entityManager;

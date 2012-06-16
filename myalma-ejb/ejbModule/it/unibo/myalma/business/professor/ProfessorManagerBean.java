@@ -34,7 +34,7 @@ import it.unibo.myalma.business.exceptions.*;
 /*
  * Note:
  * - Contesto di persistenza gestito da Seam (@In private EntityManager ...): viene utilizzato perchŽ in questo modo non ne deve essere aperto
- * 	uno nuovo (teachingControllerBean -> EditoContentBean -> ProfessorManagerBean) e quindi le modifiche fatte su questo contesto sono direttamente
+ * 	uno nuovo (treeControllerBean -> EditoContentBean -> ProfessorManagerBean) e quindi le modifiche fatte su questo contesto sono direttamente
  * 	visibili anche agli altri bean e quindi di conseguenza anche sull'UI senza dover fare alcun refresh() (vedi vecchie revisioni).
  * 	E' possibile utilizzare anche un contesto di persistenza gestito dal container J2EE (sostituire @In con @PersistenceContext) senza nessun 
  * 	problema (provare i test ProfessorManagerBeanTestCase dopo la modifica).

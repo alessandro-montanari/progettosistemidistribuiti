@@ -3,8 +3,8 @@
 	xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd">
 
 	<page view-id="/restricted/professor/TeachingSelect.xhtml">
-		<!-- Prendo il parametro teachingId e lo metto nel bean teachingControllerBean -->
-		<param name="teachingId" value="#{teachingControllerBean.teachingId}" />
+		<!-- Prendo il parametro teachingId e lo metto nel bean treeControllerBean -->
+		<param name="teachingId" value="#{treeControllerBean.teachingId}" />
 		<navigation from-action="teachingSelectAction">
 			<rule>
 				<begin-conversation />

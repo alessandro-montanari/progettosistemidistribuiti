@@ -30,9 +30,9 @@
 					<h:form style="margin-bottom:0px">
 						<rich:tree style="overflow:auto;height:460px;max-height:460px;"
 							switchType="ajax" ajaxSubmitSelection="true"
-							nodeSelectListener="#{teachingControllerBean.selectionChanged}"
-							changeExpandListener="#{teachingControllerBean.nodeToggled}"
-							value="#{teachingControllerBean.rootNode}" var="content"
+							nodeSelectListener="#{treeControllerBean.selectionChanged}"
+							changeExpandListener="#{treeControllerBean.nodeToggled}"
+							value="#{treeControllerBean.rootNode}" var="content"
 							icon="/img/icon/node.png"
 							iconLeaf="/img/icon/node.png"
 							reRender="center">
