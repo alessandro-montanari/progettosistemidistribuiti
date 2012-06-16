@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.*;
+
 import static javax.persistence.AccessType.FIELD;
 import org.jboss.crypto.CryptoUtil;
 import static javax.persistence.CascadeType.REFRESH;
@@ -18,6 +19,30 @@ import static javax.persistence.FetchType.EAGER;
 @Entity
 @Table(name="users")
 @Access(FIELD)
+@NamedQueries(
+{
+	@NamedQuery( 	name= "findStudentsSubscribedToTeachingId",
+					query="SELECT u FROM Subscriber u, IN ( u.subscriptions ) sub WHERE sub.teaching.id=:id",
+					hints={ @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
+	@NamedQuery( 	name= "findStudentsSubscribedToTeachingName",
+					query="SELECT u FROM Subscriber u, IN ( u.subscriptions ) sub WHERE sub.teaching.name=:name",
+					hints={ @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
+	@NamedQuery( 	name= "findProfessorsByName",
+					query="SELECT u FROM User u WHERE u.name LIKE :name",
+					hints={ @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
+	@NamedQuery( 	name= "getAllProfessors",
+					query="SELECT u FROM User u, IN( u.roles ) r WHERE r.roleName='professor'",
+					hints={ @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
+	@NamedQuery( 	name= "getAllStudents",
+					query="SELECT u FROM User u, IN( u.roles ) r WHERE r.roleName='student'",
+					hints={ @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
+	@NamedQuery( 	name= "getAllUsers",
+					query="SELECT u FROM User u",
+					hints={ @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
+	@NamedQuery( 	name= "findUserBySubscription",
+					query="SELECT s FROM Subscriber s, IN ( s.subscriptions ) sub WHERE sub.id=:id",
+					hints={ @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
+})
 public class User implements Serializable {
 
 	@Id

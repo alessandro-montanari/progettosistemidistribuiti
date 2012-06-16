@@ -16,7 +16,9 @@
             <property name="jboss.entity.manager.factory.jndi.name" value="myalma-jpaManagerFactory"/>
             
             <property name="hibernate.cache.use_second_level_cache" value="true"/>
+            <property name="hibernate.cache.use_query_cache" value="true" />
 			<property name="hibernate.cache.use_minimal_puts" value="true"/> 
+			<property name="hibernate.cache.infinispan.collection.cfg" value="collections"/>
             
         </properties>
 	</persistence-unit>
