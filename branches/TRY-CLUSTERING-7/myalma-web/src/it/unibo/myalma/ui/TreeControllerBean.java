@@ -24,9 +24,9 @@ import org.richfaces.model.TreeRowKey;
 import org.richfaces.component.html.HtmlTree;
 import org.richfaces.component.state.TreeState;
 
-@Name("teachingControllerBean")
+@Name("treeControllerBean")
 @Scope(ScopeType.CONVERSATION)
-public class TeachingControllerBean implements Serializable
+public class TreeControllerBean implements Serializable
 {
 	/**
 	 * 
