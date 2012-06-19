@@ -21,10 +21,10 @@ import javax.ejb.Local;
 public class StudentManagerBean implements IStudentManager 
 {
 	@PersistenceContext
-	private EntityManager entityManager;
+	protected EntityManager entityManager;
 
 	@Resource
-	private SessionContext context;
+	protected SessionContext context;
 
 	@Override
 	public void subscribeToTeaching(Teaching teaching)

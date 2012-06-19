@@ -59,13 +59,13 @@ public class EditContentBean implements IEditContent, Serializable
 	// Qui utilizzo lo stesso contesto utilizzato in treeController cos“ che tutto ci˜ che carica lui
 	// io da qui non lo devo ricaricare (e viceversa) (ad esempio ogni volta che seleziono un diverso nodo padre)
 	@In
-	private EntityManager entityManager;
+	protected EntityManager entityManager;
 
 	@EJB
-	private IProfessorManager profManager;
+	protected IProfessorManager profManager;
 
 	@Resource
-	private SessionContext context;
+	protected SessionContext context;
 
 	public EditContentBean() 
 	{ }
