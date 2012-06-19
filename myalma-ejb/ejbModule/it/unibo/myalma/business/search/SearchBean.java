@@ -34,7 +34,7 @@ import org.jboss.seam.annotations.Scope;
 public class SearchBean implements ISearch 
 {
 	@PersistenceContext(unitName="myalma-jpa")
-	private EntityManager entityManager;
+	protected EntityManager entityManager;
 
 	public SearchBean() { }
 

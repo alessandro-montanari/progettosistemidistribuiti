@@ -49,16 +49,16 @@ public class ProfessorManagerBean implements IProfessorManager
 	private static final Logger log = Logger.getLogger(ProfessorManagerBean.class.getName());
 
 	@In
-	private EntityManager entityManager;
+	protected EntityManager entityManager;
 
 	@Resource
-	private SessionContext context;
+	protected SessionContext context;
 
 	@Resource(mappedName="java:/JmsXA") 
-	private TopicConnectionFactory topicConnectionFactory;
+	protected TopicConnectionFactory topicConnectionFactory;
 
 	@Resource(mappedName="java:jboss/exported/jms/topic/contentEvents") 
-	private Topic eventsTopic;
+	protected Topic eventsTopic;
 
 	private void sendMessage(String message)
 	{

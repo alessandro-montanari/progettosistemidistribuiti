@@ -13,7 +13,7 @@ import org.jboss.seam.annotations.Name;
 public class UserHelperBean implements IUserHelper
 {
 	@Resource
-	SessionContext context;
+	protected SessionContext context;
 	
 	@Override
 	public String getMail()
