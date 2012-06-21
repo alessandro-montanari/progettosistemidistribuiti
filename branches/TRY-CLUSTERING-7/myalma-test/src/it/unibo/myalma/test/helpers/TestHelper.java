@@ -1,7 +1,10 @@
 package it.unibo.myalma.test.helpers;
 
 import static javax.security.auth.login.AppConfigurationEntry.LoginModuleControlFlag.REQUIRED;
-
+import javax.naming.*; 
+import java.security.Security; 
+import java.util.*;
+import org.jboss.sasl.JBossSaslProvider;
 import java.util.HashMap;
 import java.util.Hashtable;
 
@@ -20,6 +23,7 @@ import org.jboss.security.client.SecurityClientFactory;
 
 public class TestHelper 
 {
+	static { Security.addProvider(new JBossSaslProvider()); }
 	
 	ISearch search = null;
 	static Context ctx = null;
@@ -29,10 +33,10 @@ public class TestHelper
 	{
 		Hashtable<String, String> prop = new Hashtable<String, String>();
 		prop.put(Context.URL_PKG_PREFIXES, "org.jboss.ejb.client.naming");
-		prop.put(Context.INITIAL_CONTEXT_FACTORY, "org.jboss.naming.remote.client.InitialContextFactory");
-		prop.put(Context.PROVIDER_URL, "remote://localhost:4447");
-		prop.put(Context.SECURITY_PRINCIPAL, "guest");
-		prop.put(Context.SECURITY_CREDENTIALS, "password");
+//		prop.put(Context.INITIAL_CONTEXT_FACTORY, "org.jboss.naming.remote.client.InitialContextFactory");
+//		prop.put(Context.PROVIDER_URL, "remote://localhost:4447");
+//		prop.put(Context.SECURITY_PRINCIPAL, "guest");
+//		prop.put(Context.SECURITY_CREDENTIALS, "password");
 		try {
 			ctx = new InitialContext(prop);
 		} catch (NamingException e) {
