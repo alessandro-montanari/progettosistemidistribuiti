@@ -58,15 +58,15 @@ import static javax.persistence.FetchType.LAZY;
 @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
 @NamedQueries(
 {
-	@NamedQuery( 	name= "findContentsByTitle",
-					query="SELECT c FROM Content c WHERE c.title LIKE :title",
-					hints={ @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
-	@NamedQuery( 	name= "findContentsByType",
-					query="SELECT c FROM Content c WHERE c.contentType=:type",
-					hints={ @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
-	@NamedQuery( 	name= "getAllContents",
-					query="SELECT c FROM Content c",
-					hints={ @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
+	@NamedQuery(name= "findContentsByTitle",
+				query="SELECT c FROM Content c WHERE c.title LIKE :title",
+				hints={ @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
+	@NamedQuery(name= "findContentsByType",
+				query="SELECT c FROM Content c WHERE c.contentType=:type",
+				hints={ @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
+	@NamedQuery(name= "getAllContents",
+				query="SELECT c FROM Content c",
+				hints={ @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
 })
 public abstract class Content implements Serializable, Cloneable {
 
