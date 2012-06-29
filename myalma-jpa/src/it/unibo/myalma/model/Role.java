@@ -13,9 +13,9 @@ import javax.persistence.*;
 @Access(AccessType.FIELD)
 @NamedQueries(
 {
-	@NamedQuery( 	name= "getAllRoles",
-					query="SELECT r FROM Role r",
-					hints={ @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
+	@NamedQuery(name= "getAllRoles",
+				query="SELECT r FROM Role r",
+				hints={ @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
 })
 public class Role implements Serializable {
 	   
