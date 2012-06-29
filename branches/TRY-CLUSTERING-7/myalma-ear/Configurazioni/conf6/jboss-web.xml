@@ -12,9 +12,14 @@
      -->
     
      <security-domain>java:/jaas/myalma-security-domain</security-domain> 
+     <valve>
+   	<class-name>org.jboss.web.tomcat.service.sso.ClusteredSingleSignOn</class-name>
+   </valve>
      
       <replication-config>
       <replication-granularity>ATTRIBUTE</replication-granularity>
    </replication-config>
+   
+   
     
 </jboss-web>
