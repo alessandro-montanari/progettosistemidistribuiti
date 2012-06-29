@@ -17,7 +17,7 @@
           <boolProp name="LoopController.continue_forever">false</boolProp>
           <stringProp name="LoopController.loops">1</stringProp>
         </elementProp>
-        <stringProp name="ThreadGroup.num_threads">100</stringProp>
+        <stringProp name="ThreadGroup.num_threads">150</stringProp>
         <stringProp name="ThreadGroup.ramp_time">500</stringProp>
         <longProp name="ThreadGroup.start_time">1332404804000</longProp>
         <longProp name="ThreadGroup.end_time">1332404804000</longProp>
@@ -32,8 +32,8 @@
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
-            <stringProp name="HTTPSampler.domain">192.168.70.173</stringProp>
-            <stringProp name="HTTPSampler.port">8000</stringProp>
+            <stringProp name="HTTPSampler.domain">192.168.70.168</stringProp>
+            <stringProp name="HTTPSampler.port">8080</stringProp>
             <stringProp name="HTTPSampler.connect_timeout"></stringProp>
             <stringProp name="HTTPSampler.response_timeout"></stringProp>
             <stringProp name="HTTPSampler.protocol"></stringProp>
@@ -414,7 +414,7 @@
           <boolProp name="LoopController.continue_forever">false</boolProp>
           <stringProp name="LoopController.loops">1</stringProp>
         </elementProp>
-        <stringProp name="ThreadGroup.num_threads">250</stringProp>
+        <stringProp name="ThreadGroup.num_threads">350</stringProp>
         <stringProp name="ThreadGroup.ramp_time">500</stringProp>
         <longProp name="ThreadGroup.start_time">1332404804000</longProp>
         <longProp name="ThreadGroup.end_time">1332404804000</longProp>
@@ -429,8 +429,8 @@
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
-            <stringProp name="HTTPSampler.domain">192.168.70.173</stringProp>
-            <stringProp name="HTTPSampler.port">8000</stringProp>
+            <stringProp name="HTTPSampler.domain">192.168.70.168</stringProp>
+            <stringProp name="HTTPSampler.port">8080</stringProp>
             <stringProp name="HTTPSampler.connect_timeout"></stringProp>
             <stringProp name="HTTPSampler.response_timeout"></stringProp>
             <stringProp name="HTTPSampler.protocol"></stringProp>
@@ -1590,7 +1590,7 @@
           <boolProp name="LoopController.continue_forever">false</boolProp>
           <stringProp name="LoopController.loops">1</stringProp>
         </elementProp>
-        <stringProp name="ThreadGroup.num_threads">250</stringProp>
+        <stringProp name="ThreadGroup.num_threads">350</stringProp>
         <stringProp name="ThreadGroup.ramp_time">500</stringProp>
         <longProp name="ThreadGroup.start_time">1332404804000</longProp>
         <longProp name="ThreadGroup.end_time">1332404804000</longProp>
@@ -1605,8 +1605,8 @@
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
-            <stringProp name="HTTPSampler.domain">192.168.70.173</stringProp>
-            <stringProp name="HTTPSampler.port">8000</stringProp>
+            <stringProp name="HTTPSampler.domain">192.168.70.168</stringProp>
+            <stringProp name="HTTPSampler.port">8080</stringProp>
             <stringProp name="HTTPSampler.connect_timeout"></stringProp>
             <stringProp name="HTTPSampler.response_timeout"></stringProp>
             <stringProp name="HTTPSampler.protocol"></stringProp>
@@ -2766,7 +2766,7 @@
           <boolProp name="LoopController.continue_forever">false</boolProp>
           <stringProp name="LoopController.loops">1</stringProp>
         </elementProp>
-        <stringProp name="ThreadGroup.num_threads">250</stringProp>
+        <stringProp name="ThreadGroup.num_threads">350</stringProp>
         <stringProp name="ThreadGroup.ramp_time">500</stringProp>
         <longProp name="ThreadGroup.start_time">1332404804000</longProp>
         <longProp name="ThreadGroup.end_time">1332404804000</longProp>
@@ -2781,8 +2781,8 @@
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
-            <stringProp name="HTTPSampler.domain">192.168.70.173</stringProp>
-            <stringProp name="HTTPSampler.port">8000</stringProp>
+            <stringProp name="HTTPSampler.domain">192.168.70.168</stringProp>
+            <stringProp name="HTTPSampler.port">8080</stringProp>
             <stringProp name="HTTPSampler.connect_timeout"></stringProp>
             <stringProp name="HTTPSampler.response_timeout"></stringProp>
             <stringProp name="HTTPSampler.protocol"></stringProp>
@@ -4724,7 +4724,7 @@ TestoTestoTestoTestoTestoTestoTestoTestoTestoTestoTesto</stringProp>
           <boolProp name="LoopController.continue_forever">false</boolProp>
           <stringProp name="LoopController.loops">1</stringProp>
         </elementProp>
-        <stringProp name="ThreadGroup.num_threads">250</stringProp>
+        <stringProp name="ThreadGroup.num_threads">350</stringProp>
         <stringProp name="ThreadGroup.ramp_time">500</stringProp>
         <longProp name="ThreadGroup.start_time">1332404804000</longProp>
         <longProp name="ThreadGroup.end_time">1332404804000</longProp>
@@ -4739,8 +4739,8 @@ TestoTestoTestoTestoTestoTestoTestoTestoTestoTestoTesto</stringProp>
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
-            <stringProp name="HTTPSampler.domain">192.168.70.173</stringProp>
-            <stringProp name="HTTPSampler.port">8000</stringProp>
+            <stringProp name="HTTPSampler.domain">192.168.70.168</stringProp>
+            <stringProp name="HTTPSampler.port">8080</stringProp>
             <stringProp name="HTTPSampler.connect_timeout"></stringProp>
             <stringProp name="HTTPSampler.response_timeout"></stringProp>
             <stringProp name="HTTPSampler.protocol"></stringProp>
@@ -9230,7 +9230,7 @@ TestoTestoTestoTestoTestoTestoTestoTestoTestoTestoTesto</stringProp>
           <boolProp name="LoopController.continue_forever">false</boolProp>
           <stringProp name="LoopController.loops">1</stringProp>
         </elementProp>
-        <stringProp name="ThreadGroup.num_threads">50</stringProp>
+        <stringProp name="ThreadGroup.num_threads">75</stringProp>
         <stringProp name="ThreadGroup.ramp_time">500</stringProp>
         <longProp name="ThreadGroup.start_time">1332404804000</longProp>
         <longProp name="ThreadGroup.end_time">1332404804000</longProp>
@@ -9245,8 +9245,8 @@ TestoTestoTestoTestoTestoTestoTestoTestoTestoTestoTesto</stringProp>
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
-            <stringProp name="HTTPSampler.domain">192.168.70.173</stringProp>
-            <stringProp name="HTTPSampler.port">8000</stringProp>
+            <stringProp name="HTTPSampler.domain">192.168.70.168</stringProp>
+            <stringProp name="HTTPSampler.port">8080</stringProp>
             <stringProp name="HTTPSampler.connect_timeout"></stringProp>
             <stringProp name="HTTPSampler.response_timeout"></stringProp>
             <stringProp name="HTTPSampler.protocol"></stringProp>
@@ -10517,7 +10517,7 @@ TestoTestoTestoTestoTestoTestoTestoTestoTestoTestoTesto</stringProp>
           <boolProp name="LoopController.continue_forever">false</boolProp>
           <stringProp name="LoopController.loops">1</stringProp>
         </elementProp>
-        <stringProp name="ThreadGroup.num_threads">50</stringProp>
+        <stringProp name="ThreadGroup.num_threads">75</stringProp>
         <stringProp name="ThreadGroup.ramp_time">500</stringProp>
         <longProp name="ThreadGroup.start_time">1332404804000</longProp>
         <longProp name="ThreadGroup.end_time">1332404804000</longProp>
@@ -10532,8 +10532,8 @@ TestoTestoTestoTestoTestoTestoTestoTestoTestoTestoTesto</stringProp>
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
-            <stringProp name="HTTPSampler.domain">192.168.70.173</stringProp>
-            <stringProp name="HTTPSampler.port">8000</stringProp>
+            <stringProp name="HTTPSampler.domain">192.168.70.168</stringProp>
+            <stringProp name="HTTPSampler.port">8080</stringProp>
             <stringProp name="HTTPSampler.connect_timeout"></stringProp>
             <stringProp name="HTTPSampler.response_timeout"></stringProp>
             <stringProp name="HTTPSampler.protocol"></stringProp>
