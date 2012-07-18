@@ -113,6 +113,13 @@ public class EditContentBean implements IEditContent, Serializable
 			// Siccome il contenuto potrebbere essere stato modificato, prima dello spostamento salvo le modifiche
 			content = profManager.updateContent(content);
 			content = profManager.removeContent(content);
+			
+			// Devo clonare il contenuto perché siccome ho orphanRemoval = true quando invoco profManager.removeContent(content),
+			// il contenuto viene marcato come deleted e non posso fare di nuovo persist (in profManager.appendContent(parentContent, content))
+			// viene lanciata l'eccezione javax.persistence.EntityNotFoundException: deleted entity passed to persist.
+			// Per risolvere il problema faccio una deep copy dell'entity (vedere clone() in category) con la semantica che l'oggetto clonato 
+			// non viene inserito nel DB ovviamente, quindi avrà id = -1 e non è associato a nessun albero parent e root = null, è quindi un 
+			// contenuto libero
 			Content clonato = null;
 			try {
 				clonato = (Content) content.clone();
