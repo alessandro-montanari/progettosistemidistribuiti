@@ -20,7 +20,7 @@ import static javax.persistence.FetchType.LAZY;
  * Entity implementation class for Entity: Content
  *
  * Note: 
- * - questa classe non è @MappedResource perché altrienti non sarebbe possibile fare delle query su di essa e collegarla ad altre
+ * - questa classe non è @MappedSuperclass perché altrienti non sarebbe possibile fare delle query su di essa e collegarla ad altre
  * 	entity tramite relazioni (non c'è una tabella per una @MappedSuperclass), quindi si è deciso di renderla abstract, 
  * 	in questo modo la classe può essere annotata @Entity.
  * 
