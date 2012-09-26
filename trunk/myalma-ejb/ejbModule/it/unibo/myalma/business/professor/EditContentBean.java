@@ -1,5 +1,7 @@
 package it.unibo.myalma.business.professor;
 
+import java.io.Serializable;
+
 import it.unibo.myalma.model.*;
 
 import javax.annotation.Resource;
@@ -14,6 +16,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceContextType;
 
+import org.jboss.ejb3.annotation.Clustered;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Create;
 import org.jboss.seam.annotations.Destroy;
@@ -32,8 +35,14 @@ import it.unibo.myalma.business.professor.IProfessorManager;
 @Local(IEditContent.class)
 //@Remote(it.unibo.myalma.business.remote.IEditContentRemote.class)
 @RolesAllowed({"professor", "admin"})
-public class EditContentBean implements IEditContent 
+@Clustered
+public class EditContentBean implements IEditContent, Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@In(value="currentContent", required=false, scope=ScopeType.CONVERSATION)
 	@Out(value="currentContent", required=false, scope=ScopeType.CONVERSATION)
 	private Content content = null;		
@@ -47,16 +56,16 @@ public class EditContentBean implements IEditContent
 
 	private User user = null;
 
-	// Qui utilizzo lo stesso contesto utilizzato in TeachingController così che tutto ciò che carica lui
+	// Qui utilizzo lo stesso contesto utilizzato in treeController così che tutto ciò che carica lui
 	// io da qui non lo devo ricaricare (e viceversa) (ad esempio ogni volta che seleziono un diverso nodo padre)
 	@In
-	private EntityManager entityManager;
+	protected EntityManager entityManager;
 
 	@EJB
-	private IProfessorManager profManager;
+	protected IProfessorManager profManager;
 
 	@Resource
-	private SessionContext context;
+	protected SessionContext context;
 
 	public EditContentBean() 
 	{ }
@@ -104,6 +113,13 @@ public class EditContentBean implements IEditContent
 			// Siccome il contenuto potrebbere essere stato modificato, prima dello spostamento salvo le modifiche
 			content = profManager.updateContent(content);
 			content = profManager.removeContent(content);
+			
+			// Devo clonare il contenuto perché siccome ho orphanRemoval = true quando invoco profManager.removeContent(content),
+			// il contenuto viene marcato come deleted e non posso fare di nuovo persist (in profManager.appendContent(parentContent, content))
+			// viene lanciata l'eccezione javax.persistence.EntityNotFoundException: deleted entity passed to persist.
+			// Per risolvere il problema faccio una deep copy dell'entity (vedere clone() in category) con la semantica che l'oggetto clonato 
+			// non viene inserito nel DB ovviamente, quindi avrà id = -1 e non è associato a nessun albero parent e root = null, è quindi un 
+			// contenuto libero
 			Content clonato = null;
 			try {
 				clonato = (Content) content.clone();

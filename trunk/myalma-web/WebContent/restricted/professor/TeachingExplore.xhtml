@@ -35,11 +35,11 @@
 			<rich:layoutPanel position="center" style="padding-top:10px">
 				<h:messages id="messages" globalOnly="true" style="padding-bottom:5px; padding-top:5px;background:yellow;"/>
 				
-				<h:outputText style="font-size:20px;font-weight:bold;" id="selectedContentTitle" value="#{teachingControllerBean.selectedContent.title}" />
+				<h:outputText style="font-size:20px;font-weight:bold;" id="selectedContentTitle" value="#{treeControllerBean.selectedContent.title}" />
 				<span>
 					<s:link id="modifyCategoryLink" value="Modifica Categoria" action="modifyContent" >
 						<f:param name="contentType" value="CATEGORY"/>
-						<f:param name="contentId" value="#{teachingControllerBean.selectedContent.id}"/>
+						<f:param name="contentId" value="#{treeControllerBean.selectedContent.id}"/>
 					</s:link>
 				</span>
 				
@@ -52,7 +52,7 @@
 					first="0" dir="LTR" 
 					frame="hsides" rules="all"
 					headerClass="headerClass"
-					value="#{teachingControllerBean.childsOfSelectedContent}"
+					value="#{treeControllerBean.childsOfSelectedContent}"
 					var="content"
 					id="contentsTable">
 				<h:column>

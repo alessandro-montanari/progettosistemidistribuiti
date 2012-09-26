@@ -22,13 +22,15 @@ public class SearchBeanTestCase
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception 
 	{
-		searchBean = (ISearch)helper.lookup("java:myalma-ear/myalma-ejb//SearchBean!it.unibo.myalma.business.remote.ISearchRemote");
+		searchBean = (ISearch)helper.lookup("ejb:myalma-ear/myalma-ejb//SearchBean!it.unibo.myalma.business.remote.ISearchRemote");
 		automator.importData("./sql-scripts/myalma-dump.sql");
+		helper.login("silvano.martello@uunibo.it", "silvano");
 	}
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception 
 	{
+		helper.logout();
 	}
 
 
