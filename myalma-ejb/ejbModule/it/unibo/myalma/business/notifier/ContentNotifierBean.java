@@ -59,7 +59,7 @@ public class ContentNotifierBean implements MessageListener
 	private static final Logger log = Logger.getLogger(ContentNotifierBean.class.getName());
 
 	@PersistenceContext
-	private EntityManager entityManager;
+	protected EntityManager entityManager;
 
 	@EJB
 	private ISearch searchBean;

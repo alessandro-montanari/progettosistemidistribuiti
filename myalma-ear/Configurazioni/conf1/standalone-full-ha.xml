@@ -1,12 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 
-<!-- ATTENZIONE: QUESTO FILE VIENE MODIFICATO DA JBOSS AD OGNI AVVIO DEL SERVERE E RIMUOVE I COMMENTI QUINDI è STATO SALVATO SUL REPOSITORY
-	 NELLA CARTELLA myalma-ear/Configurazioni -->
-	 
 <server xmlns="urn:jboss:domain:1.2">
 
     <extensions>
         <extension module="org.jboss.as.clustering.infinispan"/>
+        <extension module="org.jboss.as.clustering.jgroups"/>
         <extension module="org.jboss.as.cmp"/>
         <extension module="org.jboss.as.configadmin"/>
         <extension module="org.jboss.as.connector"/>
@@ -23,6 +21,7 @@
         <extension module="org.jboss.as.logging"/>
         <extension module="org.jboss.as.mail"/>
         <extension module="org.jboss.as.messaging"/>
+        <extension module="org.jboss.as.modcluster"/>
         <extension module="org.jboss.as.naming"/>
         <extension module="org.jboss.as.osgi"/>
         <extension module="org.jboss.as.pojo"/>
@@ -111,7 +110,7 @@
                     </security>
                 </datasource>
                 <datasource jndi-name="java:/myalma-ds" pool-name="myalma-ds" enabled="true" use-java-context="true">
-                    <connection-url>jdbc:mysql://localhost:3306/sd10db</connection-url>
+                    <connection-url>jdbc:mysql://192.168.70.166:3306/sd10db</connection-url>
                     <driver>mysql</driver>
                     <transaction-isolation>TRANSACTION_READ_COMMITTED</transaction-isolation>
                     <pool>
@@ -121,8 +120,8 @@
                         <use-strict-min>false</use-strict-min>
                     </pool>
                     <security>
-                        <user-name>sd10user</user-name>
-                        <password>sd10pwd</password>
+                        <user-name>sd12</user-name>
+                        <password>sd12pwd</password>
                     </security>
                     <validation>
                         <validate-on-match>false</validate-on-match>
@@ -150,7 +149,7 @@
                 <stateless>
                     <bean-instance-pool-ref pool-name="slsb-strict-max-pool"/>
                 </stateless>
-                <stateful default-access-timeout="5000" cache-ref="simple"/>
+                <stateful default-access-timeout="5000" cache-ref="simple" clustered-cache-ref="clustered"/>
                 <singleton default-access-timeout="5000"/>
             </session-bean>
             <mdb>
@@ -166,9 +165,11 @@
             <caches>
                 <cache name="simple" aliases="NoPassivationCache"/>
                 <cache name="passivating" passivation-store-ref="file" aliases="SimpleStatefulCache"/>
+                <cache name="clustered" passivation-store-ref="infinispan" aliases="StatefulTreeCache"/>
             </caches>
             <passivation-stores>
                 <file-passivation-store name="file"/>
+                <cluster-passivation-store name="infinispan" cache-container="ejb"/>
             </passivation-stores>
             <async thread-pool-name="default"/>
             <timer-service thread-pool-name="default">
@@ -183,22 +184,56 @@
             </thread-pools>
             <iiop enable-by-default="false" use-qualified-name="false"/>
         </subsystem>
-        <subsystem xmlns="urn:jboss:domain:infinispan:1.2" default-cache-container="hibernate">
+        <subsystem xmlns="urn:jboss:domain:infinispan:1.2" default-cache-container="cluster">
+            <cache-container name="cluster" aliases="ha-partition" default-cache="default">
+                <transport lock-timeout="60000"/>
+                <replicated-cache name="default" mode="SYNC" batching="true">
+                    <locking isolation="REPEATABLE_READ"/>
+                </replicated-cache>
+            </cache-container>
+            <cache-container name="web" aliases="standard-session-cache" default-cache="dist">
+                <transport lock-timeout="60000"/>
+                <replicated-cache name="repl" mode="ASYNC" batching="true">
+                    <file-store/>
+                </replicated-cache>
+                <replicated-cache name="sso" mode="SYNC" batching="true"/>
+                <distributed-cache name="dist" owners="1" async-marshalling="false" mode="ASYNC" batching="true">
+                    <locking striping="false" isolation="REPEATABLE_READ"/>
+                    <transaction locking="OPTIMISTIC"/>
+                    <eviction strategy="LRU"/>
+                    <file-store passivation="true" fetch-state="false" purge="true"/>
+                </distributed-cache>
+            </cache-container>
+            <cache-container name="ejb" aliases="sfsb sfsb-cache" default-cache="dist">
+                <transport lock-timeout="60000"/>
+                <replicated-cache name="repl" mode="ASYNC" batching="true">
+                    <eviction strategy="LRU"/>
+                    <file-store/>
+                </replicated-cache>
+                <replicated-cache name="remote-connector-client-mappings" mode="SYNC" batching="true"/>
+                <distributed-cache name="dist" owners="1" async-marshalling="false" mode="ASYNC" batching="true">
+                    <locking striping="false" isolation="REPEATABLE_READ"/>
+                    <transaction locking="OPTIMISTIC"/>
+                    <eviction strategy="LRU"/>
+                    <file-store passivation="true" fetch-state="false" purge="true"/>
+                </distributed-cache>
+            </cache-container>
             <cache-container name="hibernate" default-cache="local-query">
-                <local-cache name="entity">
-                    <transaction mode="NON_XA"/>
-                    <eviction strategy="LRU" max-entries="10000"/>
-                    <expiration max-idle="100000"/>
-                </local-cache>
+                <transport lock-timeout="60000"/>
                 <local-cache name="local-query">
                     <transaction mode="NONE"/>
                     <eviction strategy="LRU" max-entries="10000"/>
                     <expiration max-idle="100000"/>
                 </local-cache>
-                <local-cache name="timestamps">
+                <invalidation-cache name="entity" mode="SYNC">
+                    <transaction mode="NON_XA"/>
+                    <eviction strategy="LRU" max-entries="10000"/>
+                    <expiration max-idle="100000"/>
+                </invalidation-cache>
+                <replicated-cache name="timestamps" mode="ASYNC">
                     <transaction mode="NONE"/>
                     <eviction strategy="NONE"/>
-                </local-cache>
+                </replicated-cache>
             </cache-container>
         </subsystem>
         <subsystem xmlns="urn:jboss:domain:jacorb:1.1">
@@ -231,6 +266,40 @@
             <cached-connection-manager/>
         </subsystem>
         <subsystem xmlns="urn:jboss:domain:jdr:1.0"/>
+        <subsystem xmlns="urn:jboss:domain:jgroups:1.1" default-stack="udp">
+            <stack name="udp">
+                <transport type="UDP" socket-binding="jgroups-udp" diagnostics-socket-binding="jgroups-diagnostics"/>
+                <protocol type="PING"/>
+                <protocol type="MERGE2"/>
+                <protocol type="FD_SOCK" socket-binding="jgroups-udp-fd"/>
+                <protocol type="FD"/>
+                <protocol type="VERIFY_SUSPECT"/>
+                <protocol type="BARRIER"/>
+                <protocol type="pbcast.NAKACK"/>
+                <protocol type="UNICAST2"/>
+                <protocol type="pbcast.STABLE"/>
+                <protocol type="pbcast.GMS"/>
+                <protocol type="UFC"/>
+                <protocol type="MFC"/>
+                <protocol type="FRAG2"/>
+            </stack>
+            <stack name="tcp">
+                <transport type="TCP" socket-binding="jgroups-tcp" diagnostics-socket-binding="jgroups-diagnostics"/>
+                <protocol type="MPING" socket-binding="jgroups-mping"/>
+                <protocol type="MERGE2"/>
+                <protocol type="FD_SOCK" socket-binding="jgroups-tcp-fd"/>
+                <protocol type="FD"/>
+                <protocol type="VERIFY_SUSPECT"/>
+                <protocol type="BARRIER"/>
+                <protocol type="pbcast.NAKACK"/>
+                <protocol type="UNICAST2"/>
+                <protocol type="pbcast.STABLE"/>
+                <protocol type="pbcast.GMS"/>
+                <protocol type="UFC"/>
+                <protocol type="MFC"/>
+                <protocol type="FRAG2"/>
+            </stack>
+        </subsystem>
         <subsystem xmlns="urn:jboss:domain:jmx:1.1">
             <show-model value="true"/>
             <remoting-connector/>
@@ -251,8 +320,10 @@
         </subsystem>
         <subsystem xmlns="urn:jboss:domain:messaging:1.1">
             <hornetq-server>
+                <clustered>true</clustered>
                 <persistence-enabled>true</persistence-enabled>
                 <security-domain>myalma-security-domain</security-domain>
+                <cluster-password>ale</cluster-password>
                 <journal-file-size>102400</journal-file-size>
                 <journal-min-files>2</journal-min-files>
 
@@ -272,6 +343,33 @@
                     </netty-acceptor>
                     <in-vm-acceptor name="in-vm" server-id="0"/>
                 </acceptors>
+
+                <broadcast-groups>
+                    <broadcast-group name="bg-group1">
+                        <group-address>231.7.7.7</group-address>
+                        <group-port>9876</group-port>
+                        <broadcast-period>5000</broadcast-period>
+                        <connector-ref>
+                            netty
+                        </connector-ref>
+                    </broadcast-group>
+                </broadcast-groups>
+
+                <discovery-groups>
+                    <discovery-group name="dg-group1">
+                        <group-address>231.7.7.7</group-address>
+                        <group-port>9876</group-port>
+                        <refresh-timeout>10000</refresh-timeout>
+                    </discovery-group>
+                </discovery-groups>
+
+                <cluster-connections>
+                    <cluster-connection name="my-cluster">
+                        <address>jms</address>
+                        <connector-ref>netty</connector-ref>
+                        <discovery-group-ref discovery-group-name="dg-group1"/>
+                    </cluster-connection>
+                </cluster-connections>
 
                 <security-settings>
                     <security-setting match="#">
@@ -298,6 +396,7 @@
                         <max-size-bytes>10485760</max-size-bytes>
                         <address-full-policy>BLOCK</address-full-policy>
                         <message-counter-history-day-limit>10</message-counter-history-day-limit>
+                        <redistribution-delay>1000</redistribution-delay>
                     </address-setting>
                 </address-settings>
 
@@ -344,6 +443,13 @@
                     </jms-topic>
                 </jms-destinations>
             </hornetq-server>
+        </subsystem>
+        <subsystem xmlns="urn:jboss:domain:modcluster:1.0">
+            <mod-cluster-config advertise-socket="modcluster" proxy-list="192.168.70.173:6666">
+                <dynamic-load-provider>
+                    <load-metric type="busyness"/>
+                </dynamic-load-provider>
+            </mod-cluster-config>
         </subsystem>
         <subsystem xmlns="urn:jboss:domain:naming:1.1"/>
         <subsystem xmlns="urn:jboss:domain:osgi:1.2" activation="lazy">
@@ -428,11 +534,13 @@
             <recovery-environment socket-binding="txn-recovery-environment" status-socket-binding="txn-status-manager"/>
             <coordinator-environment default-timeout="300"/>
         </subsystem>
-        <subsystem xmlns="urn:jboss:domain:web:1.1" default-virtual-server="default-host" native="false">
+        <subsystem xmlns="urn:jboss:domain:web:1.1" default-virtual-server="default-host" instance-id="${jboss.node.name}" native="false">
             <connector name="http" protocol="HTTP/1.1" scheme="http" socket-binding="http"/>
+            <connector name="ajp" protocol="AJP/1.3" scheme="http" socket-binding="ajp"/>
             <virtual-server name="default-host" enable-welcome-root="true">
                 <alias name="localhost"/>
                 <alias name="example.com"/>
+                <sso cache-container="web" cache-name="sso" reauthenticate="false"/>
             </virtual-server>
         </subsystem>
         <subsystem xmlns="urn:jboss:domain:webservices:1.1">
@@ -469,8 +577,15 @@
         <socket-binding name="https" port="8443"/>
         <socket-binding name="jacorb" interface="unsecure" port="3528"/>
         <socket-binding name="jacorb-ssl" interface="unsecure" port="3529"/>
+        <socket-binding name="jgroups-diagnostics" port="0" multicast-address="224.0.75.75" multicast-port="7500"/>
+        <socket-binding name="jgroups-mping" port="0" multicast-address="${jboss.default.multicast.address:230.0.0.4}" multicast-port="45700"/>
+        <socket-binding name="jgroups-tcp" port="7600"/>
+        <socket-binding name="jgroups-tcp-fd" port="57600"/>
+        <socket-binding name="jgroups-udp" port="55200" multicast-address="${jboss.default.multicast.address:230.0.0.4}" multicast-port="45688"/>
+        <socket-binding name="jgroups-udp-fd" port="54200"/>
         <socket-binding name="messaging" port="5445"/>
         <socket-binding name="messaging-throughput" port="5455"/>
+        <socket-binding name="modcluster" port="0" multicast-address="224.0.1.105" multicast-port="23364"/>
         <socket-binding name="osgi-http" interface="management" port="8090"/>
         <socket-binding name="remoting" port="4447"/>
         <socket-binding name="txn-recovery-environment" port="4712"/>

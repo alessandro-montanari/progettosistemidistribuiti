@@ -5,6 +5,8 @@
 		<jta-data-source>java:/myalma-ds</jta-data-source>
 		<exclude-unlisted-classes>false</exclude-unlisted-classes>
 		
+		<shared-cache-mode>ALL</shared-cache-mode>
+		
         <properties>
          	<property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5Dialect"/>
             <property name="hibernate.hbm2ddl.auto" value="update"/>
@@ -12,6 +14,11 @@
             
             <!-- Per poter referenziare la factory in Seam (vedi components.xml) -->
             <property name="jboss.entity.manager.factory.jndi.name" value="myalma-jpaManagerFactory"/>
+            
+            <property name="hibernate.cache.use_second_level_cache" value="true"/>
+            <property name="hibernate.cache.use_query_cache" value="true" />
+			<property name="hibernate.transaction.factory_class" value="org.hibernate.transaction.CMTTransactionFactory"/>
+			<property name="hibernate.transaction.manager_lookup_class" value="org.hibernate.transaction.JBossTransactionManagerLookup"/>
             
         </properties>
 	</persistence-unit>

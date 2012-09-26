@@ -24,7 +24,7 @@ import javax.persistence.PersistenceContext;
 public class AdministrationBean implements IAdministration 
 {
 	@PersistenceContext(unitName="myalma-jpa")
-	EntityManager entityManager;
+	protected EntityManager entityManager;
 
 	@Override
 	public User addUser(User aUser) 

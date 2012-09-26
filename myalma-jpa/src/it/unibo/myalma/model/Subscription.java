@@ -17,6 +17,18 @@ import static javax.persistence.FetchType.LAZY;
 @Entity
 @Table(name="subscriptions")
 @Access(AccessType.FIELD)
+@NamedQueries(
+{
+	@NamedQuery(name= "findSubscriptionsByUserId",
+				query="SELECT sub FROM Subscriber u, IN ( u.subscriptions ) sub WHERE u.mail=:mail",
+				hints={ @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
+	@NamedQuery(name= "findSubscriptionsToTeachingName",
+				query="SELECT sub FROM Subscription sub WHERE sub.teaching.name=:name",
+				hints={ @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
+	@NamedQuery(name= "findSubscriptionsToTeachingId",
+				query="SELECT sub FROM Subscription sub WHERE sub.teaching.id=:id",
+				hints={ @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
+})
 public class Subscription implements Serializable {
 	
 	@Id

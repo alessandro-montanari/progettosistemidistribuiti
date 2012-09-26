@@ -20,7 +20,7 @@ import static javax.persistence.FetchType.LAZY;
  * Entity implementation class for Entity: Content
  *
  * Note: 
- * - questa classe non è @MappedResource perché altrienti non sarebbe possibile fare delle query su di essa e collegarla ad altre
+ * - questa classe non è @MappedSuperclass perché altrienti non sarebbe possibile fare delle query su di essa e collegarla ad altre
  * 	entity tramite relazioni (non c'è una tabella per una @MappedSuperclass), quindi si è deciso di renderla abstract, 
  * 	in questo modo la classe può essere annotata @Entity.
  * 
@@ -56,6 +56,18 @@ import static javax.persistence.FetchType.LAZY;
 @Access(FIELD)																		
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
+@NamedQueries(
+{
+	@NamedQuery(name= "findContentsByTitle",
+				query="SELECT c FROM Content c WHERE c.title LIKE :title",
+				hints={ @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
+	@NamedQuery(name= "findContentsByType",
+				query="SELECT c FROM Content c WHERE c.contentType=:type",
+				hints={ @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
+	@NamedQuery(name= "getAllContents",
+				query="SELECT c FROM Content c",
+				hints={ @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
+})
 public abstract class Content implements Serializable, Cloneable {
 
 	@Id

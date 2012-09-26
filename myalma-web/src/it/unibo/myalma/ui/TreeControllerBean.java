@@ -1,5 +1,6 @@
 package it.unibo.myalma.ui;
 
+import java.io.Serializable;
 import java.util.List;
 
 import it.unibo.myalma.model.Content;
@@ -23,10 +24,15 @@ import org.richfaces.model.TreeRowKey;
 import org.richfaces.component.html.HtmlTree;
 import org.richfaces.component.state.TreeState;
 
-@Name("teachingControllerBean")
+@Name("treeControllerBean")
 @Scope(ScopeType.CONVERSATION)
-public class TeachingControllerBean 
+public class TreeControllerBean implements Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@In
 	private EntityManager entityManager;
 	

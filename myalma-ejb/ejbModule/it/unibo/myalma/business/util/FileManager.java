@@ -3,11 +3,15 @@ package it.unibo.myalma.business.util;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.Serializable;
 
 // TODO possibili problemi di concorrenza
-public class FileManager 
+public class FileManager implements Serializable
 {
-	// TODO Per cluster probabilmente bisogna cambiare percorso
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String serverPath = "";
 	
 	public FileManager()

@@ -23,7 +23,7 @@ import org.junit.Test;
  * Note:
  * - il Lazy Inizialization rende un po' più difficile il testing da fuori il container (aka cliente remoto), tale probelma
  * 	può essere risolto utilzzando ad esempio Arquillian che permette di eseguire i test all'interno del container. A sua volta
- * 	Arquillian è pò complesso da utilizzare se non si usa Maven e in caso di logi di utenti, quindi per questi motivi non è stato
+ * 	Arquillian è pò complesso da utilizzare se non si usa Maven e in caso di login di utenti, quindi per questi motivi non è stato
  * 	utilizzato qui.
  */
 
